@@ -9,6 +9,7 @@
 package org.esaude.matchingschema;
 
 import java.math.BigInteger;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
@@ -42,6 +43,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  * 
  */
+@SuppressWarnings("restriction")
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "referencedValueType", propOrder = {
     "constantValue",

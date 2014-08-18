@@ -28,6 +28,7 @@ import javax.xml.namespace.QName;
  * provided in this class.
  * 
  */
+@SuppressWarnings("restriction")
 @XmlRegistry
 public class ObjectFactory {
 
