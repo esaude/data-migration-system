@@ -9,7 +9,7 @@ import java.util.Date;
  * @since 21-08-2014
  */
 public class Info extends Event {
-	public final static String TYPE = "ERROR";
+	public final static String TYPE = "INFO";
 	
 	public Info() {
 		super();
