@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<!-- Migration Config Schema VERSION 0.1.0 -->
+
+	<!--
+		Changes log: Valério João - EGPAF (21/08/2014): Created basic structure
+	-->
+
+<config xmlns="http://schema.config.dmt.esaude.org" targetNamespace="http://schema.config.dmt.esaude.org">
+	<!-- the matching file in XLS info goes here -->
+	<matching_input>
+		<file_name>OpenMRS_SESP_Matching_Table_210820141022</file_name>
+		<format>xls</format>
+		<location>C:\EMR_Architecture</location>
+	</matching_input>
+	<!-- the left side database info goes here -->
+	<targetDs>
+		<drive_name></drive_name>
+		<username></username>
+		<password></password>
+		<database_name></database_name>
+		<database_location></database_location>
+	</targetDs>
+	<!-- the right side databases info goes here -->
+	<sourceDs>
+		<drive_name></drive_name>
+		<username></username>
+		<password></password>
+		<database_name></database_name>
+		<database_location></database_location>
+	</sourceDs>
+	
+</config>
