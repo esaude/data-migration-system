@@ -4,7 +4,7 @@
  * Esta classe define os metodos que escrevem os eventos no logfile 
  * 
  */
-package org.esaude.core.util;
+package org.esaude.dmt.util;
 import org.apache.log4j.Logger;
 import org.apache.log4j.xml.DOMConfigurator;
 

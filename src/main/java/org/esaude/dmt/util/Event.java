@@ -1,19 +1,32 @@
-/*
- * 
- * classe que define um evento
- */
-package org.esaude.core.util;
+package org.esaude.dmt.util;
 
 import java.util.Date;
 
-public class Event {
+/**
+ * Classe que define um evento para Log
+ * @author Edias Jambaia
+ * @author Valério João
+ * @since 21-08-2014
+ */
+public abstract class Event {
 	
 	private String descricao;
 	private String fase;
-	Date timestamp;
+	private Date timestamp;
 	
+	/**
+	 * Default constructor
+	 */
+	public Event() {
+	}
+	
+	/**
+	 * Parameterized constructor
+	 * @param descricao
+	 * @param fase
+	 * @param timestamp
+	 */
 	public Event(String descricao, String fase, Date timestamp) {
-		super();
 		this.descricao = descricao;
 		this.fase = fase;
 		this.timestamp = timestamp;
@@ -37,8 +50,10 @@ public class Event {
 	public void setFase(String fase) {
 		this.fase = fase;
 	}
-
-
 	
-
+	/**
+	 * Specializations must provide their event type through this method
+	 * @return
+	 */
+	public abstract String getType();
 }
