@@ -31,7 +31,7 @@ For the development of data migration tool here are the minimum specs of the dev
  
 The project is *mavenized* (maven project). Some dependencies to consider:
 -         JaCoCo - For test coverage control, considering that one of our criteria for the DoD (Definition of Done) is that all code should be 100% test coverage.
- -         Mokito - for unit testing without necessarily exist all integrated systems, eg. databases (https://code.google.com/p/mockito/)
+-         Mokito - for unit testing without necessarily exist all integrated systems, eg. databases (https://code.google.com/p/mockito/)
  
 -         Jaxcel API - for XLS processing (http://www.vogella.com/tutorials/JavaExcel/article.html)
  
