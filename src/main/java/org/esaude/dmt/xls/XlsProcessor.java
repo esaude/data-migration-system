@@ -16,14 +16,14 @@ import org.esaude.dmt.util.ConfigReader;
  * @since 21-08-2014
  *
  */
-public class XslProcessor {
+public class XlsProcessor {
 	private final Config config = ConfigReader.getInstance().getConfig();
 	private Workbook workbook;
 	
 	/**
 	 * Default constructor
 	 */
-	public XslProcessor() {
+	public XlsProcessor() {
 		//get the matching file using config info
 	    File inputWorkbook = new File(config.getMatchingInput().getLocation() + 
 	    		"/" +
@@ -42,7 +42,7 @@ public class XslProcessor {
 	 * Parameterized constructor
 	 * @param workbook
 	 */
-	public XslProcessor(Workbook workbook) {
+	public XlsProcessor(Workbook workbook) {
 		this.workbook = workbook;
 	}
 	
