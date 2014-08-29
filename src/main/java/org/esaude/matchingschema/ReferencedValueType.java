@@ -52,7 +52,7 @@ import javax.xml.bind.annotation.XmlType;
 public class ReferencedValueType {
 
     protected String constantValue;
-    protected BigInteger fkValue;
+    protected Long fkValue;
 
     /**
      * Gets the value of the constantValue property.
@@ -83,10 +83,10 @@ public class ReferencedValueType {
      * 
      * @return
      *     possible object is
-     *     {@link BigInteger }
+     *     {@link Long }
      *     
      */
-    public BigInteger getFkValue() {
+    public Long getFkValue() {
         return fkValue;
     }
 
@@ -95,10 +95,10 @@ public class ReferencedValueType {
      * 
      * @param value
      *     allowed object is
-     *     {@link BigInteger }
+     *     {@link Long }
      *     
      */
-    public void setFkValue(BigInteger value) {
+    public void setFkValue(Long value) {
         this.fkValue = value;
     }
 

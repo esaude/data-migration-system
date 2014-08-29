@@ -8,8 +8,11 @@
 
 package org.esaude.matchingschema;
 
+import java.math.BigInteger;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
@@ -27,10 +30,12 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="referencee" type="{http://esaude.org/matchingschema}referenceSideType"/>
  *         &lt;element name="referenced" type="{http://esaude.org/matchingschema}referenceSideType"/>
  *         &lt;element name="name_desc" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="isDirect" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
- *         &lt;element name="predecessor" type="{http://esaude.org/matchingschema}referenceType"/>
+ *         &lt;element name="datatype" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="size" type="{http://www.w3.org/2001/XMLSchema}integer"/>
+ *         &lt;element name="predecessor" type="{http://www.w3.org/2001/XMLSchema}integer"/>
  *         &lt;element name="referencedValue" type="{http://esaude.org/matchingschema}referencedValueType"/>
  *       &lt;/sequence>
+ *       &lt;attribute name="id" use="required" type="{http://www.w3.org/2001/XMLSchema}integer" />
  *     &lt;/restriction>
  *   &lt;/complexContent>
  * &lt;/complexType>
@@ -44,7 +49,8 @@ import javax.xml.bind.annotation.XmlType;
     "referencee",
     "referenced",
     "nameDesc",
-    "isDirect",
+    "datatype",
+    "size",
     "predecessor",
     "referencedValue"
 })
@@ -54,13 +60,18 @@ public class ReferenceType {
     protected ReferenceSideType referencee;
     @XmlElement(required = true)
     protected ReferenceSideType referenced;
-    @XmlElement(name = "name_desc", required = true)
+    @XmlElement(name = "name_desc")
     protected String nameDesc;
-    protected boolean isDirect;
     @XmlElement(required = true)
-    protected ReferenceType predecessor;
+    protected String datatype;
+    @XmlElement(required = true)
+    protected Integer size;
+    @XmlElement(required = true)
+    protected Integer predecessor;
     @XmlElement(required = true)
     protected ReferencedValueType referencedValue;
+    @XmlAttribute(name = "id", required = true)
+    protected Integer id;
 
     /**
      * Gets the value of the referencee property.
@@ -135,19 +146,35 @@ public class ReferenceType {
     }
 
     /**
-     * Gets the value of the isDirect property.
+     * Gets the value of the datatype property.
      * 
      */
-    public boolean isIsDirect() {
-        return isDirect;
+    public String getDatatype() {
+        return datatype;
     }
 
     /**
-     * Sets the value of the isDirect property.
+     * Sets the value of the datatype property.
      * 
      */
-    public void setIsDirect(boolean value) {
-        this.isDirect = value;
+    public void setDatatype(String datatype) {
+        this.datatype = datatype;
+    }
+    
+    /**
+     * Gets the value of the size property.
+     * 
+     */
+    public Integer getSize() {
+        return size;
+    }
+
+    /**
+     * Sets the value of the size property.
+     * 
+     */
+    public void setSize(Integer size) {
+        this.size = size;
     }
 
     /**
@@ -155,10 +182,10 @@ public class ReferenceType {
      * 
      * @return
      *     possible object is
-     *     {@link ReferenceType }
+     *     {@link Integer }
      *     
      */
-    public ReferenceType getPredecessor() {
+    public Integer getPredecessor() {
         return predecessor;
     }
 
@@ -167,10 +194,10 @@ public class ReferenceType {
      * 
      * @param value
      *     allowed object is
-     *     {@link ReferenceType }
+     *     {@link Integer }
      *     
      */
-    public void setPredecessor(ReferenceType value) {
+    public void setPredecessor(Integer value) {
         this.predecessor = value;
     }
 
@@ -196,6 +223,30 @@ public class ReferenceType {
      */
     public void setReferencedValue(ReferencedValueType value) {
         this.referencedValue = value;
+    }
+    
+    /**
+     * Gets the value of the id property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Integer }
+     *     
+     */
+    public Integer getId() {
+        return id;
+    }
+
+    /**
+     * Sets the value of the id property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Integer }
+     *     
+     */
+    public void setId(Integer value) {
+        this.id = value;
     }
 
 }

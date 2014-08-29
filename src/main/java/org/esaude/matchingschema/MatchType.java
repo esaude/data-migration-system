@@ -8,8 +8,6 @@
 
 package org.esaude.matchingschema;
 
-import java.math.BigInteger;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -34,6 +32,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="right" type="{http://esaude.org/matchingschema}matchSideType"/>
  *         &lt;element name="hasValueMatch" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *         &lt;element name="rightReference" type="{http://esaude.org/matchingschema}referenceType" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="hasValueMatch" type="{http://www.w3.org/2001/XMLSchema}anyType"/>
  *       &lt;/sequence>
  *       &lt;attribute name="id" use="required" type="{http://www.w3.org/2001/XMLSchema}integer" />
  *     &lt;/restriction>
@@ -64,7 +63,9 @@ public class MatchType {
     protected boolean hasValueMatch;
     protected List<ReferenceType> rightReference;
     @XmlAttribute(name = "id", required = true)
-    protected BigInteger id;
+    @XmlElement(required = false)
+	private Object defaultValue;
+    protected Integer id;
 
     /**
      * Gets the value of the terminology property.
@@ -158,17 +159,17 @@ public class MatchType {
      * Gets the value of the rightReference property.
      * 
      * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the rightReference property.
+     * Objects of the following type(s) are allowed in the list
+     * {@link ReferenceType }
      * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getRightReference().add(newItem);
-     * </pre>
      * 
+     */
+    public List<ReferenceType> getRightReference() {
+        return this.rightReference;
+    }
+    
+    /**
+     * Sets the value of the rightReference property.
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
@@ -176,11 +177,8 @@ public class MatchType {
      * 
      * 
      */
-    public List<ReferenceType> getRightReference() {
-        if (rightReference == null) {
-            rightReference = new ArrayList<ReferenceType>();
-        }
-        return this.rightReference;
+    public void getRightReference(List<ReferenceType> rightReference) {
+        this.rightReference =  rightReference;
     }
 
     /**
@@ -188,10 +186,10 @@ public class MatchType {
      * 
      * @return
      *     possible object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public BigInteger getId() {
+    public Integer getId() {
         return id;
     }
 
@@ -200,11 +198,35 @@ public class MatchType {
      * 
      * @param value
      *     allowed object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public void setId(BigInteger value) {
+    public void setId(Integer value) {
         this.id = value;
     }
+
+    /**
+     * Gets the value of the defaultValue property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Object }
+     *     
+     */
+	public Object getDefaultValue() {
+		return defaultValue;
+	}
+
+	/**
+     * Sets the value of the defaultValue property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Object }
+     *     
+     */
+	public void setDefaultValue(Object defaultValue) {
+		this.defaultValue = defaultValue;
+	}
 
 }

@@ -50,14 +50,14 @@ import javax.xml.bind.annotation.XmlType;
 })
 public class MatchSideType {
 
-    @XmlElement(required = true)
+    @XmlElement(required = false)
     protected String table;
     @XmlElement(required = true)
     protected String column;
     @XmlElement(required = true)
     protected String datatype;
     @XmlElement(required = true)
-    protected BigInteger size;
+    protected Integer size;
     protected boolean isRequired;
 
     /**
@@ -137,10 +137,10 @@ public class MatchSideType {
      * 
      * @return
      *     possible object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public BigInteger getSize() {
+    public Integer getSize() {
         return size;
     }
 
@@ -149,10 +149,10 @@ public class MatchSideType {
      * 
      * @param value
      *     allowed object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public void setSize(BigInteger value) {
+    public void setSize(Integer value) {
         this.size = value;
     }
 

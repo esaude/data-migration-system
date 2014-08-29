@@ -5,7 +5,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -16,8 +15,8 @@ import java.util.Map;
  * (2) The first value of each line (head) is compatible with all the types that follows the line
  * (3) If the value that follows the line is also a head in another line, it means that there is a 
  * compatibility between the two lines:
- * 		(a) The containing line can take the contained line values without any issue
- * 		(b) The contained line can be transformed to take values of the containing line
+ * 		(a) The containing line can receive the contained line values without any issue
+ * 		(b) The contained line can be transformed to receive values of the containing line
  * (4) The logic assumes that the contained line is always on top of the containing line
  * 
  * @author Valério João
@@ -97,7 +96,7 @@ public final class DatatypeMappingReader {
 	}
 	
 	/**
-	 * Recursively look for containing mapping lines
+	 * Recursively look for contained mapping lines
 	 * @param datatypeMapping
 	 * @param right
 	 * @return

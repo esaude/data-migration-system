@@ -8,7 +8,6 @@
 
 package org.esaude.matchingschema;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,7 +33,6 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="desc" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="match" type="{http://esaude.org/matchingschema}matchType" maxOccurs="unbounded"/>
  *         &lt;element name="leftReference" type="{http://esaude.org/matchingschema}referenceType" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="followingTuples" type="{http://esaude.org/matchingschema}tupleType" maxOccurs="unbounded" minOccurs="0"/>
  *       &lt;/sequence>
  *       &lt;attribute name="id" use="required" type="{http://www.w3.org/2001/XMLSchema}integer" />
  *     &lt;/restriction>
@@ -51,8 +49,7 @@ import javax.xml.bind.annotation.XmlType;
     "table",
     "desc",
     "match",
-    "leftReference",
-    "followingTuples"
+    "leftReference"
 })
 public class TupleType {
 
@@ -65,9 +62,8 @@ public class TupleType {
     @XmlElement(required = true)
     protected List<MatchType> match;
     protected List<ReferenceType> leftReference;
-    protected List<TupleType> followingTuples;
     @XmlAttribute(name = "id", required = true)
-    protected BigInteger id;
+    protected Integer id;
 
     /**
      * Gets the value of the terminology property.
@@ -174,17 +170,17 @@ public class TupleType {
      * Gets the value of the leftReference property.
      * 
      * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the leftReference property.
+     * Objects of the following type(s) are allowed in the list
+     * {@link ReferenceType }
      * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getLeftReference().add(newItem);
-     * </pre>
      * 
+     */
+    public List<ReferenceType> getLeftReference() {
+        return this.leftReference;
+    }
+    
+    /**
+     * Sets the value of the leftReference property.
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
@@ -192,40 +188,8 @@ public class TupleType {
      * 
      * 
      */
-    public List<ReferenceType> getLeftReference() {
-        if (leftReference == null) {
-            leftReference = new ArrayList<ReferenceType>();
-        }
-        return this.leftReference;
-    }
-
-    /**
-     * Gets the value of the followingTuples property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the followingTuples property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getFollowingTuples().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link TupleType }
-     * 
-     * 
-     */
-    public List<TupleType> getFollowingTuples() {
-        if (followingTuples == null) {
-            followingTuples = new ArrayList<TupleType>();
-        }
-        return this.followingTuples;
+    public void getLeftReference(List<ReferenceType> leftReference) {
+        this.leftReference = leftReference;
     }
 
     /**
@@ -233,10 +197,10 @@ public class TupleType {
      * 
      * @return
      *     possible object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public BigInteger getId() {
+    public Integer getId() {
         return id;
     }
 
@@ -245,10 +209,10 @@ public class TupleType {
      * 
      * @param value
      *     allowed object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public void setId(BigInteger value) {
+    public void setId(Integer value) {
         this.id = value;
     }
 

@@ -21,7 +21,6 @@ public class XlsProcessorTest {
 
 	@Test
 	public void testGetFirstIdValueOfTupleSheet() {
-		final int ROW = 1;
 		Object found = processor.process(Sheets.TUPLE.INDEX, Sheets.TUPLE.ID, Sheets.TUPLE.ROW_START);
 		
 		assertNotNull(found);
@@ -30,7 +29,6 @@ public class XlsProcessorTest {
 	
 	@Test
 	public void testGetFirstTableValueOfTupleSheet() {
-		final int ROW = 1;
 		Object found = processor.process(Sheets.TUPLE.INDEX, Sheets.TUPLE.TABLE, Sheets.TUPLE.ROW_START);
 		
 		assertNotNull(found);
@@ -39,7 +37,6 @@ public class XlsProcessorTest {
 	
 	@Test
 	public void testGetFirstPredecessorValueOfTupleSheet() {
-		final int ROW = 1;
 		Object found = processor.process(Sheets.TUPLE.INDEX, Sheets.TUPLE.PREDECESSOR, Sheets.TUPLE.ROW_START);
 		
 		assertNotNull(found);
@@ -48,7 +45,6 @@ public class XlsProcessorTest {
 	
 	@Test
 	public void testGetFirstTerminologyValueOfTupleSheet() {
-		final int ROW = 1;
 		Object found = processor.process(Sheets.TUPLE.INDEX, Sheets.TUPLE.TERMINOLOGY, Sheets.TUPLE.ROW_START);
 		
 		assertNotNull(found);
