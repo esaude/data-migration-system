@@ -12,7 +12,7 @@ import java.util.Date;
  */
 public class Warning extends Event implements Codable {
 	private String codigo;
-	public final static String TYPE = "ERROR";
+	public final static String TYPE = "WARNING";
 	
 	/**
 	 * Default constructor
