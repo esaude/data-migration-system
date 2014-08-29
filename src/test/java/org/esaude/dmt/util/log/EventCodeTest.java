@@ -23,9 +23,8 @@ public class EventCodeTest {
 	public void testReadConfigData() {
 	
 			
-		assertEquals("!key!",EventCode.getString("key"));
+		assertNull(EventCode.getString("key"));
 		assertEquals("code",EventCode.getString("code.test"));
-		assertNotNull(EventCode.getString("something"));
 		
 	}
 

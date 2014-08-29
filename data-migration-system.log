@@ -7,3 +7,9 @@
 29-08-2014 10:33:44 [main] INFO  .esaude.dmt.util.log.LogWriter - INFO AT: VALID: O Tipo de dados a esquerda não corresponde ao tipo de dados a direita
 29-08-2014 10:33:44 [main] WARN  .esaude.dmt.util.log.LogWriter - WARNING error.test.00001 AT: VALID: O Tipo de dados a esquerda não corresponde ao tipo de dados a direita
 29-08-2014 10:33:44 [main] ERROR .esaude.dmt.util.log.LogWriter - ERROR error.test.00001 AT: VALID: O Tipo de dados a esquerda não corresponde ao tipo de dados a direita
+29-08-2014 10:45:30 [main] ERROR .esaude.dmt.util.log.LogWriter - ERROR error.test.00001 AT: VALID: O Tipo de dados a esquerda não corresponde ao tipo de dados a direita
+29-08-2014 10:45:30 [main] WARN  .esaude.dmt.util.log.LogWriter - WARNING error.test.00001 AT: VALID: O Tipo de dados a esquerda não corresponde ao tipo de dados a direita
+29-08-2014 10:45:30 [main] INFO  .esaude.dmt.util.log.LogWriter - INFO AT: VALID: O Tipo de dados a esquerda não corresponde ao tipo de dados a direita
+29-08-2014 10:51:49 [main] INFO  .esaude.dmt.util.log.LogWriter - INFO AT: VALID: O Tipo de dados a esquerda não corresponde ao tipo de dados a direita
+29-08-2014 10:51:49 [main] WARN  .esaude.dmt.util.log.LogWriter - WARNING error.test.00001 AT: VALID: O Tipo de dados a esquerda não corresponde ao tipo de dados a direita
+29-08-2014 10:51:49 [main] ERROR .esaude.dmt.util.log.LogWriter - ERROR error.test.00001 AT: VALID: O Tipo de dados a esquerda não corresponde ao tipo de dados a direita
