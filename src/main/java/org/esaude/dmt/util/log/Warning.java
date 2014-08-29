@@ -1,24 +1,23 @@
+package org.esaude.dmt.util.log;
+
+import java.util.Date;
+
 /**
  * 
- * Classe que define os atributos para eventos do tipo ERROR
+ * Classe que define os atributos para eventos do tipo WARNING
  * 
  * @author Edias Jambaia
  * @author Valério João
  * @since 21-08-2014
  */
-package org.esaude.dmt.util;
-
-import java.util.Date;
-
-public class Error extends Event implements Codable {
-	
+public class Warning extends Event implements Codable {
 	private String codigo;
-	public final static String TYPE = "ERROR"; 
+	public final static String TYPE = "WARNING";
 	
 	/**
 	 * Default constructor
 	 */
-	public Error() {
+	public Warning() {
 		super();
 	}
 	
@@ -29,7 +28,7 @@ public class Error extends Event implements Codable {
 	 * @param timestamp
 	 * @param codigo
 	 */
-	public Error(String descricao, String fase, Date timestamp, String codigo) {
+	public Warning(String descricao, String fase, Date timestamp, String codigo) {
 		super(descricao, fase, timestamp);
 		this.codigo = codigo;
 	}
@@ -45,6 +44,11 @@ public class Error extends Event implements Codable {
 
 	@Override
 	public String getType() {
-		return Error.TYPE;
+		return Warning.TYPE;
+	}
+	
+	@Override
+	public String toString() {
+		return Warning.TYPE + " " + getCodigo() + " AT: " + getFase() + ": " + getDescricao();	
 	}
 }

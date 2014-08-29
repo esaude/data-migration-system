@@ -1,4 +1,4 @@
-package org.esaude.dmt.util;
+package org.esaude.dmt.util.log;
 
 import java.util.Date;
 
@@ -22,5 +22,10 @@ public class Info extends Event {
 	@Override
 	public String getType() {
 		return Info.TYPE;
+	}
+	
+	@Override
+	public String toString() {
+		return Info.TYPE + " AT: " + getFase() + ": " + getDescricao();	
 	}
 }

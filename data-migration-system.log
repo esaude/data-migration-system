@@ -1,2 +1,9 @@
-26-08-2014 12:13:01 [main] ERROR                 org.esaude.App - Tipo Evento: ERROR Código: codigo Fase: fase Desc: descricao
-
+29-08-2014 10:17:48 [main] INFO  .esaude.dmt.util.log.LogWriter - INFO AT: VALID: O Tipo de dados a esquerda não corresponde ao tipo de dados a direita
+29-08-2014 10:19:08 [main] INFO  .esaude.dmt.util.log.LogWriter - INFO AT: VALID: O Tipo de dados a esquerda não corresponde ao tipo de dados a direita
+29-08-2014 10:30:26 [main] WARN  .esaude.dmt.util.log.LogWriter - WARNING O Tipo de dados a esquerda não corresponde ao tipo de dados a direita AT: VALID: O Tipo de dados a esquerda não corresponde ao tipo de dados a direita
+29-08-2014 10:31:47 [main] WARN  .esaude.dmt.util.log.LogWriter - WARNING error.test.00001 AT: VALID: O Tipo de dados a esquerda não corresponde ao tipo de dados a direita
+29-08-2014 10:32:19 [main] WARN  .esaude.dmt.util.log.LogWriter - WARNING error.test.00001 AT: VALID: O Tipo de dados a esquerda não corresponde ao tipo de dados a direita
+29-08-2014 10:32:50 [main] WARN  .esaude.dmt.util.log.LogWriter - WARNING error.test.00001 AT: VALID: O Tipo de dados a esquerda não corresponde ao tipo de dados a direita
+29-08-2014 10:33:44 [main] INFO  .esaude.dmt.util.log.LogWriter - INFO AT: VALID: O Tipo de dados a esquerda não corresponde ao tipo de dados a direita
+29-08-2014 10:33:44 [main] WARN  .esaude.dmt.util.log.LogWriter - WARNING error.test.00001 AT: VALID: O Tipo de dados a esquerda não corresponde ao tipo de dados a direita
+29-08-2014 10:33:44 [main] ERROR .esaude.dmt.util.log.LogWriter - ERROR error.test.00001 AT: VALID: O Tipo de dados a esquerda não corresponde ao tipo de dados a direita

@@ -1,4 +1,4 @@
-package org.esaude.dmt.util;
+package org.esaude.dmt.util.log;
 
 /**
  * Contract for events that must log a code

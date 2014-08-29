@@ -1,4 +1,4 @@
-package org.esaude.dmt.util;
+package org.esaude.dmt.util.log;
 
 import java.util.Date;
 
