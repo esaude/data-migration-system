@@ -36,13 +36,10 @@ public class TupleBuilder {
 		tupleType.setTable(table);
 		tupleType.setDesc(desc);
 		//set the head of the three if doesn't exist one
-		if(tree.getHead() == null) {
+		if(parent == null) {
 			tree.setHead(tupleType);
 		} else {
-			if(parent == null) {
-				throw new SystemException("Value of parent parameter cannot be null for leaf tuple");
-			}
-			tree.addLeaf(tupleType);
+			tree.getTree(parent).addLeaf(tupleType);
 		}
 		return this;
 	}

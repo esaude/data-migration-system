@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNotNull;
 
 import java.util.Calendar;
 
+import org.esaude.dmt.helper.EventCodeContants;
 import org.esaude.dmt.helper.ProcessPhases;
 import org.junit.Before;
 import org.junit.Test;
@@ -37,43 +38,43 @@ private LogWriter writer;
 	
 	@Test
 	public void testWriteInfoEvent() {
-		Event info = new Info(EventCode.getString("error.test.00001"), 
+		Event info = new Info(EventCode.getString(EventCodeContants.ERR001), 
 				ProcessPhases.VALIDATION,
-				Calendar.getInstance().getTime());
+				Calendar.getInstance().getTime(), 1, 1, "MATCH_L_TO_R");
 		
 		String log = writer.writeLog(info);
 		
-		assertEquals("INFO AT: VALID: O Tipo de dados a esquerda não corresponde ao tipo de dados a direita", log);
+		assertEquals("INFO at: VALID TUPLE:1 MATCH_L_TO_R:1 - The mapping must have a default value", log);
 		
 	}
 	
 	@Test
 	public void testWriteWarningEvent() {
-		String code = "error.test.00001";
-		Event warning = new Warning(EventCode.getString(code), 
-				ProcessPhases.VALIDATION,
-				Calendar.getInstance().getTime(),
-				code);
-		
+		Event warning = new Warning(
+				EventCode.getString(EventCodeContants.ERR001),
+				ProcessPhases.VALIDATION, Calendar.getInstance().getTime(),
+				EventCodeContants.ERR001, 1, 1, "MATCH_L_TO_R");
+
 		String log = writer.writeLog(warning);
-		
-		assertEquals("WARNING error.test.00001 AT: VALID: O Tipo de dados a esquerda não "
-				+ "corresponde ao tipo de dados a direita", log);
-		
+
+		assertEquals(
+				"WARNING ERR001 at: VALID TUPLE:1 MATCH_L_TO_R:1 - The mapping must have a default value",
+				log);
+
 	}
 	
 	@Test
 	public void testWriteErrorEvent() {
-		String code = "error.test.00001";
-		Event warning = new Error(EventCode.getString(code), 
+		Event warning = new Error(EventCode.getString(EventCodeContants.ERR001), 
 				ProcessPhases.VALIDATION,
 				Calendar.getInstance().getTime(),
-				code);
+				EventCodeContants.ERR001, 1, 1, "MATCH_L_TO_R");
 		
 		String log = writer.writeLog(warning);
 		
-		assertEquals("ERROR error.test.00001 AT: VALID: O Tipo de dados a esquerda não "
-				+ "corresponde ao tipo de dados a direita", log);
+		assertEquals(
+				"ERROR ERR001 at: VALID TUPLE:1 MATCH_L_TO_R:1 - The mapping must have a default value",
+				log);
 		
 	}
 }

@@ -72,12 +72,4 @@ public class TupleBuilderTest {
 		assertNotNull(tree2.getParent());
 		assertEquals(tree1, tree2.getParent());
 	}
-	
-	@Test(expected = SystemException.class)
-	public void testCreateChildTupleWithoutParent() throws SystemException {
-		tupleBuilder.createTuple(1, "personal", "PERSON",
-				"personal data", null)
-				.createTuple(2, "address", "ADDRESS",
-				"address data", null);
-	}
 }

@@ -28,9 +28,12 @@ public class Error extends Event implements Codable {
 	 * @param fase
 	 * @param timestamp
 	 * @param codigo
+	 * @param tupleId
+	 * @param partId
+	 * @param partName
 	 */
-	public Error(String descricao, String fase, Date timestamp, String codigo) {
-		super(descricao, fase, timestamp);
+	public Error(String descricao, String fase, Date timestamp, String codigo, int tupleId, int partId , String partName) {
+		super(descricao, fase, timestamp, tupleId, partId, partName);
 		this.codigo = codigo;
 	}
 
@@ -50,6 +53,7 @@ public class Error extends Event implements Codable {
 	
 	@Override
 	public String toString() {
-		return Error.TYPE + " " + getCodigo() + " AT: " + getFase() + ": " + getDescricao();	
+		return Error.TYPE + " " + getCodigo() + " at: " + getFase() + " TUPLE:"
+				+ getTupleId() + " " + getPartName() + ":" + getPartId() + " - " + getDescricao();
 	}
 }

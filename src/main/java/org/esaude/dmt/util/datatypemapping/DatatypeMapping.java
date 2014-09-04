@@ -12,6 +12,7 @@ import java.util.List;
  */
 public class DatatypeMapping {
 	private String head;
+	private String current;
 	private List<String> members;
 	private List<String> containedMappings;
 	
@@ -21,6 +22,14 @@ public class DatatypeMapping {
 	public DatatypeMapping() {
 	}
 
+	public String getCurrent() {
+		return current;
+	}
+
+	public void setCurrent(String current) {
+		this.current = current;
+	}
+	
 	public String getHead() {
 		return head;
 	}

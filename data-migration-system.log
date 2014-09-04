@@ -13,3 +13,17 @@
 29-08-2014 10:51:49 [main] INFO  .esaude.dmt.util.log.LogWriter - INFO AT: VALID: O Tipo de dados a esquerda não corresponde ao tipo de dados a direita
 29-08-2014 10:51:49 [main] WARN  .esaude.dmt.util.log.LogWriter - WARNING error.test.00001 AT: VALID: O Tipo de dados a esquerda não corresponde ao tipo de dados a direita
 29-08-2014 10:51:49 [main] ERROR .esaude.dmt.util.log.LogWriter - ERROR error.test.00001 AT: VALID: O Tipo de dados a esquerda não corresponde ao tipo de dados a direita
+31-08-2014 21:32:11 [main] INFO  .esaude.dmt.util.log.LogWriter - INFO at: VALID TUPLE: 1 MATCH_L_TO_R: 1: The mapping must have a default value
+31-08-2014 21:34:21 [main] INFO  .esaude.dmt.util.log.LogWriter - INFO at: VALID TUPLE:1 MATCH_L_TO_R:1 - The mapping must have a default value
+31-08-2014 21:35:34 [main] INFO  .esaude.dmt.util.log.LogWriter - INFO at: VALID TUPLE:1 MATCH_L_TO_R:1 - The mapping must have a default value
+31-08-2014 21:36:45 [main] WARN  .esaude.dmt.util.log.LogWriter - WARNING ERR001 at: VALID TUPLE:1 MATCH_L_TO_R:1 - The mapping must have a default value
+31-08-2014 21:38:18 [main] INFO  .esaude.dmt.util.log.LogWriter - INFO at: VALID TUPLE:1 MATCH_L_TO_R:1 - The mapping must have a default value
+31-08-2014 21:38:18 [main] WARN  .esaude.dmt.util.log.LogWriter - WARNING ERR001 at: VALID TUPLE:1 MATCH_L_TO_R:1 - The mapping must have a default value
+31-08-2014 21:38:18 [main] ERROR .esaude.dmt.util.log.LogWriter - ERROR ERR001 at: VALID TUPLE:1 MATCH_L_TO_R:1 - The mapping must have a default value
+01-09-2014 14:06:04 [main] ERROR .esaude.dmt.util.log.LogWriter - ERROR ERR002 at: VALID TUPLE:1 MATCH_L_TO_R:3 - The mapping datatype on left is not compatible with the one on right
+04-09-2014 09:35:07 [main] ERROR .esaude.dmt.util.log.LogWriter - ERROR ERR001 at: VALID TUPLE:4 MATCH_L_TO_R:33 - The mapping must have a default value
+04-09-2014 09:36:53 [main] ERROR .esaude.dmt.util.log.LogWriter - ERROR ERR001 at: VALID TUPLE:5 MATCH_L_TO_R:34 - The mapping must have a default value
+04-09-2014 09:40:22 [main] ERROR .esaude.dmt.util.log.LogWriter - ERROR ERR001 at: VALID TUPLE:10 MATCH_L_TO_R:42 - The mapping must have a default value
+04-09-2014 10:32:21 [main] ERROR .esaude.dmt.util.log.LogWriter - ERROR ERR001 at: VALID TUPLE:10 MATCH_L_TO_R:43 - The mapping must have a default value
+04-09-2014 10:33:19 [main] ERROR .esaude.dmt.util.log.LogWriter - ERROR ERR001 at: VALID TUPLE:10 MATCH_L_TO_R:43 - The mapping must have a default value
+04-09-2014 10:34:43 [main] ERROR .esaude.dmt.util.log.LogWriter - ERROR ERR001 at: VALID TUPLE:14 MATCH_L_TO_R:54 - The mapping must have a default value

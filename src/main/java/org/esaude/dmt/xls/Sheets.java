@@ -9,15 +9,18 @@ package org.esaude.dmt.xls;
 public class Sheets {
 	
 	public static final class TUPLE {
+		public static final String NAME = "TUPLE"; 
 		public static final int INDEX = 0;
 		public static final int ROW_START = 1;
 		public static final int ID = 0;
 		public static final int TERMINOLOGY = 1;
 		public static final int TABLE = 2;
 		public static final int PREDECESSOR = 3;
+		public static final int DESC = 4;
 	}
 	
 	public static final class MATCH_L_TO_R {
+		public static final String NAME = "MATCH_L_TO_R"; 
 		public static final int INDEX = 1;
 		public static final int ROW_START = 2;
 		public static final int TUPLE_ID = 0;
@@ -38,6 +41,7 @@ public class Sheets {
 	}
 	
 	public static final class REFERENCES_L {
+		public static final String NAME = "REFERENCES_L"; 
 		public static final int INDEX = 2;
 		public static final int ROW_START = 1;
 		public static final int ID = 0;
@@ -54,6 +58,7 @@ public class Sheets {
 	}
 	
 	public static final class REFERENCES_R {
+		public static final String NAME = "REFERENCES_R"; 
 		public static final int INDEX = 3;
 		public static final int ROW_START = 1;
 		public static final int ID = 0;
@@ -70,6 +75,7 @@ public class Sheets {
 	}
 	
 	public static final class VALUE_MATCH {
+		public static final String NAME = "VALUE_MATCH"; 
 		public static final int INDEX = 4;
 		public static final int ROW_START = 2;
 		public static final int ID = 0;

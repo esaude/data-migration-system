@@ -26,6 +26,7 @@ public class MatchBuilder {
 	
 	/**
 	 * Create a match of tuple with basic data
+	 * @param tupleId
 	 * @param id
 	 * @param terminology
 	 * @param hasValueMatch
@@ -33,13 +34,14 @@ public class MatchBuilder {
 	 * @return
 	 * @throws SystemException
 	 */
-	public MatchBuilder createMatch(final Integer id, final String terminology,
-			final boolean hasValueMatch, final Object defaultValue) {
+	public MatchBuilder createMatch(final Integer tupleId, final Integer id, final String terminology,
+			final Object valueMatchId, final Object defaultValue) {
 
 		matchType = new MatchType();
+		matchType.setTupleId(tupleId);
 		matchType.setId(id);
 		matchType.setTerminology(terminology);
-		matchType.setHasValueMatch(hasValueMatch);
+		matchType.setValueMatchId(valueMatchId);
 		matchType.setDefaultValue(defaultValue);
 
 		matches.add(matchType);
@@ -62,7 +64,7 @@ public class MatchBuilder {
 			final String column, 
 			final String type, 
 			final Integer size, 
-			final boolean isRequired, 
+			final String isRequired, 
 			final String side) 
 			throws SystemException {
 		if(matchType == null) {
@@ -88,6 +90,10 @@ public class MatchBuilder {
 	
 	public List<MatchType> process() {
 		return matches;
+	}
+	
+	public MatchType getMatch() {
+		return matchType;
 	}
 
 }

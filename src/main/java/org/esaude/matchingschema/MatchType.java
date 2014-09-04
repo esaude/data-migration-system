@@ -27,10 +27,11 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
+ *         &lt;element name="terminology" type="{http://www.w3.org/2001/XMLSchema}integer"/>
  *         &lt;element name="terminology" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="left" type="{http://esaude.org/matchingschema}matchSideType"/>
  *         &lt;element name="right" type="{http://esaude.org/matchingschema}matchSideType"/>
- *         &lt;element name="hasValueMatch" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
+ *         &lt;element name="valueMatchId" type="{http://www.w3.org/2001/XMLSchema}anyType"/>
  *         &lt;element name="rightReference" type="{http://esaude.org/matchingschema}referenceType" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element name="hasValueMatch" type="{http://www.w3.org/2001/XMLSchema}anyType"/>
  *       &lt;/sequence>
@@ -45,14 +46,17 @@ import javax.xml.bind.annotation.XmlType;
 @SuppressWarnings("restriction")
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "matchType", propOrder = {
+	"tupleId",
     "terminology",
     "left",
     "right",
-    "hasValueMatch",
+    "valueMatchId",
     "rightReference"
 })
 public class MatchType {
 
+	@XmlElement(required = true)
+	private Integer tupleId;
     @XmlElement(required = true)
     protected String terminology;
     @XmlElement(required = true)
@@ -60,7 +64,7 @@ public class MatchType {
     @XmlElement(required = true)
     protected MatchSideType right;
     @XmlElement(defaultValue = "false")
-    protected boolean hasValueMatch;
+    protected Object valueMatchId;
     protected List<ReferenceType> rightReference;
     @XmlAttribute(name = "id", required = true)
     @XmlElement(required = false)
@@ -140,19 +144,19 @@ public class MatchType {
     }
 
     /**
-     * Gets the value of the hasValueMatch property.
+     * Gets the value of the valueMatchId property.
      * 
      */
-    public boolean isHasValueMatch() {
-        return hasValueMatch;
+    public Object getValueMatchId() {
+        return valueMatchId;
     }
 
     /**
-     * Sets the value of the hasValueMatch property.
+     * Sets the value of the valueMatchId property.
      * 
      */
-    public void setHasValueMatch(boolean value) {
-        this.hasValueMatch = value;
+    public void setValueMatchId(Object value) {
+        this.valueMatchId = value;
     }
 
     /**
@@ -227,6 +231,30 @@ public class MatchType {
      */
 	public void setDefaultValue(Object defaultValue) {
 		this.defaultValue = defaultValue;
+	}
+
+	/**
+     * Gets the value of the tupleId property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Integer }
+     *     
+     */
+	public Integer getTupleId() {
+		return tupleId;
+	}
+
+	/**
+     * Sets the value of the tupleId property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Integer }
+     *     
+     */
+	public void setTupleId(Integer tupleId) {
+		this.tupleId = tupleId;
 	}
 
 }

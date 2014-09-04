@@ -26,7 +26,7 @@ public class MatchBuilderTest {
 
 	@Test
 	public void testCreateMatchWithoutSides() {
-		List<MatchType> matches = matchBuilder.createMatch(1, "personal", true,
+		List<MatchType> matches = matchBuilder.createMatch(1, 1, "personal", 1,
 				"AI").process();
 
 		assertNotNull(matches);
@@ -35,17 +35,18 @@ public class MatchBuilderTest {
 
 		MatchType match = matches.get(0);
 
+		assertEquals(Integer.valueOf(1), match.getTupleId());
 		assertEquals(Integer.valueOf(1), match.getId());
 		assertEquals("personal", match.getTerminology());
-		assertTrue(match.isHasValueMatch());
+		assertEquals(Integer.valueOf(1), match.getValueMatchId());
 		assertEquals("AI", match.getDefaultValue());
 	}
 
 	@Test
 	public void testCreatesMatchWithoutSides() {
 		List<MatchType> matches = matchBuilder
-				.createMatch(1, "personal", true, "AI")
-				.createMatch(2, "identifier", true, "NULL").process();
+				.createMatch(1, 1, "personal", 1, "AI")
+				.createMatch(1, 2, "identifier", 1, "NULL").process();
 
 		assertNotNull(matches);
 		assertFalse(matches.isEmpty());
@@ -53,27 +54,29 @@ public class MatchBuilderTest {
 
 		MatchType match = matches.get(0);
 
+		assertEquals(Integer.valueOf(1), match.getTupleId());
 		assertEquals(Integer.valueOf(1), match.getId());
 		assertEquals("personal", match.getTerminology());
-		assertTrue(match.isHasValueMatch());
+		assertEquals(Integer.valueOf(1), match.getValueMatchId());
 		assertEquals("AI", match.getDefaultValue());
 
 		match = matches.get(1);
 
+		assertEquals(Integer.valueOf(1), match.getTupleId());
 		assertEquals(Integer.valueOf(2), match.getId());
 		assertEquals("identifier", match.getTerminology());
-		assertTrue(match.isHasValueMatch());
+		assertEquals(Integer.valueOf(1), match.getValueMatchId());
 		assertEquals("NULL", match.getDefaultValue());
 	}
 
 	@Test
 	public void testCreateMatchWithSides() throws SystemException {
 		List<MatchType> matches = matchBuilder
-				.createMatch(1, "personal", true, "AI")
-				.createMatchSide(null, "left_column", "INT", 10, true,
+				.createMatch(1, 1, "personal", 1, "AI")
+				.createMatchSide(null, "left_column", "INT", 10, "YES",
 						MatchBuilder.LEFT_SIDE)
 				.createMatchSide("RIGHT_TABLE", "right_column", "VARCHAR", 100,
-						true, MatchBuilder.RIGHT_SIDE).process();
+						"YES", MatchBuilder.RIGHT_SIDE).process();
 
 		assertNotNull(matches);
 		assertFalse(matches.isEmpty());
@@ -81,9 +84,10 @@ public class MatchBuilderTest {
 
 		MatchType match = matches.get(0);
 
+		assertEquals(Integer.valueOf(1), match.getTupleId());
 		assertEquals(Integer.valueOf(1), match.getId());
 		assertEquals("personal", match.getTerminology());
-		assertTrue(match.isHasValueMatch());
+		assertEquals(Integer.valueOf(1), match.getValueMatchId());
 		assertEquals("AI", match.getDefaultValue());
 
 		assertNotNull(match.getLeft());
@@ -91,30 +95,30 @@ public class MatchBuilderTest {
 		assertEquals("left_column", match.getLeft().getColumn());
 		assertEquals("INT", match.getLeft().getDatatype());
 		assertEquals(Integer.valueOf(10), match.getLeft().getSize());
-		assertTrue(match.getLeft().isIsRequired());
+		assertEquals("YES", match.getLeft().isIsRequired());
 
 		assertNotNull(match.getRight());
 		assertEquals("RIGHT_TABLE", match.getRight().getTable());
 		assertEquals("right_column", match.getRight().getColumn());
 		assertEquals("VARCHAR", match.getRight().getDatatype());
 		assertEquals(Integer.valueOf(100), match.getRight().getSize());
-		assertTrue(match.getRight().isIsRequired());
+		assertEquals("YES", match.getRight().isIsRequired());
 
 	}
 
 	@Test
 	public void testCreateMatchesWithSides() throws SystemException {
 		List<MatchType> matches = matchBuilder
-				.createMatch(1, "personal", true, "AI")
-				.createMatchSide(null, "left_column", "INT", 10, true,
+				.createMatch(1, 1, "personal", 1, "AI")
+				.createMatchSide(null, "left_column", "INT", 10, "YES",
 						MatchBuilder.LEFT_SIDE)
 				.createMatchSide("RIGHT_TABLE", "right_column", "VARCHAR", 100,
-						true, MatchBuilder.RIGHT_SIDE)
-				.createMatch(2, "identifier", true, "NULL")
-				.createMatchSide(null, "left_column", "INT", 10, true,
+						"YES", MatchBuilder.RIGHT_SIDE)
+				.createMatch(1, 2, "identifier", 1, "NULL")
+				.createMatchSide(null, "left_column", "INT", 10, "YES",
 						MatchBuilder.LEFT_SIDE)
 				.createMatchSide("RIGHT_TABLE", "right_column", "VARCHAR", 100,
-						true, MatchBuilder.RIGHT_SIDE).process();
+						"YES", MatchBuilder.RIGHT_SIDE).process();
 
 		assertNotNull(matches);
 		assertFalse(matches.isEmpty());
@@ -122,9 +126,10 @@ public class MatchBuilderTest {
 
 		MatchType match = matches.get(0);
 
+		assertEquals(Integer.valueOf(1), match.getTupleId());
 		assertEquals(Integer.valueOf(1), match.getId());
 		assertEquals("personal", match.getTerminology());
-		assertTrue(match.isHasValueMatch());
+		assertEquals(Integer.valueOf(1), match.getValueMatchId());
 		assertEquals("AI", match.getDefaultValue());
 
 		assertNotNull(match.getLeft());
@@ -132,20 +137,21 @@ public class MatchBuilderTest {
 		assertEquals("left_column", match.getLeft().getColumn());
 		assertEquals("INT", match.getLeft().getDatatype());
 		assertEquals(Integer.valueOf(10), match.getLeft().getSize());
-		assertTrue(match.getLeft().isIsRequired());
+		assertEquals("YES", match.getLeft().isIsRequired());
 
 		assertNotNull(match.getRight());
 		assertEquals("RIGHT_TABLE", match.getRight().getTable());
 		assertEquals("right_column", match.getRight().getColumn());
 		assertEquals("VARCHAR", match.getRight().getDatatype());
 		assertEquals(Integer.valueOf(100), match.getRight().getSize());
-		assertTrue(match.getRight().isIsRequired());
+		assertEquals("YES", match.getRight().isIsRequired());
 
 		match = matches.get(1);
 
+		assertEquals(Integer.valueOf(1), match.getTupleId());
 		assertEquals(Integer.valueOf(2), match.getId());
 		assertEquals("identifier", match.getTerminology());
-		assertTrue(match.isHasValueMatch());
+		assertEquals(Integer.valueOf(1), match.getValueMatchId());
 		assertEquals("NULL", match.getDefaultValue());
 
 		assertNotNull(match.getLeft());
@@ -153,27 +159,27 @@ public class MatchBuilderTest {
 		assertEquals("left_column", match.getLeft().getColumn());
 		assertEquals("INT", match.getLeft().getDatatype());
 		assertEquals(Integer.valueOf(10), match.getLeft().getSize());
-		assertTrue(match.getLeft().isIsRequired());
+		assertEquals("YES", match.getLeft().isIsRequired());
 
 		assertNotNull(match.getRight());
 		assertEquals("RIGHT_TABLE", match.getRight().getTable());
 		assertEquals("right_column", match.getRight().getColumn());
 		assertEquals("VARCHAR", match.getRight().getDatatype());
 		assertEquals(Integer.valueOf(100), match.getRight().getSize());
-		assertTrue(match.getRight().isIsRequired());
+		assertEquals("YES", match.getRight().isIsRequired());
 	}
 
 	@Test(expected = SystemException.class)
 	public void testCreateMatchSideWithoutMatchType() throws SystemException {
 		matchBuilder.createMatchSide(
-				"RIGHT_TABLE", "right_column", "VARCHAR", 100, true,
+				"RIGHT_TABLE", "right_column", "VARCHAR", 100, "YES",
 				MatchBuilder.RIGHT_SIDE);
 	}
 	
 	@Test(expected = SystemException.class)
 	public void testCreateMatchSideWithInvalidSide() throws SystemException {
-		matchBuilder.createMatch(1, "personal", true, "AI").createMatchSide(
-				"RIGHT_TABLE", "right_column", "VARCHAR", 100, true,
+		matchBuilder.createMatch(1, 1, "personal", true, "AI").createMatchSide(
+				"RIGHT_TABLE", "right_column", "VARCHAR", 100, "YES",
 				"invalid");
 	}
 

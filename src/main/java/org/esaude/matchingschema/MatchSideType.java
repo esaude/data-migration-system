@@ -30,7 +30,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="column" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="datatype" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="size" type="{http://www.w3.org/2001/XMLSchema}integer"/>
- *         &lt;element name="isRequired" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
+ *         &lt;element name="isRequired" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -58,7 +58,7 @@ public class MatchSideType {
     protected String datatype;
     @XmlElement(required = true)
     protected Integer size;
-    protected boolean isRequired;
+    protected String isRequired;
 
     /**
      * Gets the value of the table property.
@@ -160,7 +160,7 @@ public class MatchSideType {
      * Gets the value of the isRequired property.
      * 
      */
-    public boolean isIsRequired() {
+    public String isIsRequired() {
         return isRequired;
     }
 
@@ -168,7 +168,7 @@ public class MatchSideType {
      * Sets the value of the isRequired property.
      * 
      */
-    public void setIsRequired(boolean value) {
+    public void setIsRequired(String value) {
         this.isRequired = value;
     }
 

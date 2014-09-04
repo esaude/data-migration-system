@@ -18,19 +18,14 @@ public class DatatypeMappingReaderTest {
 
 	@Before
 	public void setUp() throws Exception {
-		reader = DatatypeMappingReader.getInstance();
+		reader = new DatatypeMappingReader();
+		reader.process();
 	}
 	
 	@After
 	public void tearDown() {
 		reader = null;
 		
-	}
-
-	@Test
-	public void testInstanceWasCreated() {
-		
-		assertNotNull(reader);
 	}
 	
 	@Test
@@ -159,6 +154,22 @@ public class DatatypeMappingReaderTest {
 		String right = "DATETIME";
 		
 		assertFalse(reader.verify(left, right));
+	}
+	
+	@Test
+	public void testVerifyDateAndDateTimeFalse() {
+		String left = "DATE";
+		String right = "DATE/TIME";
+		
+		assertFalse(reader.verify(left, right));
+	}
+	
+	@Test
+	public void testVerifyDateTimeAndDateTrue() {
+		String left = "DATE/TIME";
+		String right =  "DATE";
+		
+		assertTrue(reader.verify(left, right));
 	}
 
 }

@@ -13,30 +13,34 @@ import java.util.Date;
 public class Warning extends Event implements Codable {
 	private String codigo;
 	public final static String TYPE = "WARNING";
-	
+
 	/**
 	 * Default constructor
 	 */
 	public Warning() {
 		super();
 	}
-	
+
 	/**
 	 * Parameterized constructor
+	 * 
 	 * @param descricao
 	 * @param fase
 	 * @param timestamp
 	 * @param codigo
+	 * @param tupleId
+	 * @param partId
+	 * @param partName
 	 */
-	public Warning(String descricao, String fase, Date timestamp, String codigo) {
-		super(descricao, fase, timestamp);
+	public Warning(String descricao, String fase, Date timestamp,
+			String codigo, int tupleId, int partId, String partName) {
+		super(descricao, fase, timestamp, tupleId, partId, partName);
 		this.codigo = codigo;
 	}
 
 	public String getCodigo() {
 		return codigo;
 	}
-
 
 	public void setCodigo(String codigo) {
 		this.codigo = codigo;
@@ -46,9 +50,11 @@ public class Warning extends Event implements Codable {
 	public String getType() {
 		return Warning.TYPE;
 	}
-	
+
 	@Override
 	public String toString() {
-		return Warning.TYPE + " " + getCodigo() + " AT: " + getFase() + ": " + getDescricao();	
+		return Warning.TYPE + " " + getCodigo() + " at: " + getFase()
+				+ " TUPLE:" + getTupleId() + " " + getPartName() + ":"
+				+ getPartId() + " - " + getDescricao();
 	}
 }

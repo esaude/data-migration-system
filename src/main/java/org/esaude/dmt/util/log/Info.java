@@ -15,8 +15,18 @@ public class Info extends Event {
 		super();
 	}
 	
-	public Info(String descricao, String fase, Date timestamp) {
-		super(descricao, fase, timestamp);
+	/**
+	 * Parameterized constructor
+	 * @param descricao
+	 * @param fase
+	 * @param timestamp
+	 * @param tupleId
+	 * @param partId
+	 * @param partName
+	 */
+	public Info(String descricao, String fase, Date timestamp,
+			int tupleId, int partId, String partName) {
+		super(descricao, fase, timestamp, tupleId, partId, partName);
 	}
 
 	@Override
@@ -26,6 +36,8 @@ public class Info extends Event {
 	
 	@Override
 	public String toString() {
-		return Info.TYPE + " AT: " + getFase() + ": " + getDescricao();	
+		return Info.TYPE + " at: " + getFase()
+				+ " TUPLE:" + getTupleId() + " " + getPartName() + ":"
+				+ getPartId() + " - " + getDescricao();
 	}
 }

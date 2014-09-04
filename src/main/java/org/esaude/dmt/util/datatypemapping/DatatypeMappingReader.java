@@ -25,13 +25,14 @@ import java.util.Map;
  */
 public final class DatatypeMappingReader {
 	private boolean match;
-	private static BufferedReader br = null;
+	private BufferedReader br = null;
 	private final String csvFile = "src/main/resources/datatype_mapping.csv";
-	private Map<String, DatatypeMapping> datatypeMappings;
-	private static DatatypeMappingReader instance;
+	private Map<String, DatatypeMapping> headMappings;
+	private Map<String, DatatypeMapping> currentMappings;
 	
-	private DatatypeMappingReader() {
-		datatypeMappings  = new HashMap<String, DatatypeMapping>();
+	public DatatypeMappingReader() {
+		headMappings  = new HashMap<String, DatatypeMapping>();
+		currentMappings  = new HashMap<String, DatatypeMapping>();
 		try {
 			br = new BufferedReader(new FileReader(csvFile));
 		} catch (FileNotFoundException e) {
@@ -39,21 +40,13 @@ public final class DatatypeMappingReader {
 		}
 	}
 	
-	public static DatatypeMappingReader getInstance() {
-		if(instance == null) {
-			instance = new DatatypeMappingReader();
-			instance.process();
-		}
-		return instance;
-	}
-	
 	/**
 	 * Processes the CSV file and composes a data structure of datatype mapping
 	 * @return
 	 */
-	private void process() {
+	public DatatypeMappingReader process() {
 		final String CSV_SPLIT_BY = ";";
-		datatypeMappings = new HashMap<String, DatatypeMapping>();
+		headMappings = new HashMap<String, DatatypeMapping>();
 		//read CSV file top down
 		String line = null;
 		try {
@@ -61,21 +54,27 @@ public final class DatatypeMappingReader {
 				// use comma as separator
 				String[] datatypes = line.split(CSV_SPLIT_BY);
 				//the mapping object
-				DatatypeMapping datatypeMapping = new DatatypeMapping();
-				datatypeMapping.setHead(datatypes[0]);
+				DatatypeMapping headMapping = new DatatypeMapping();
+				headMapping.setCurrent(datatypes[0]);
 				//set all the menbers of the group
 				for(String member : datatypes) {
-					datatypeMapping.getMembers().add(member);
+					headMapping.getMembers().add(member);
 					//check if member is the head of a mapping line
-					if(datatypeMappings.containsKey(member)) {
-						datatypeMapping.getContainedMappings().add(member);
+					if(headMappings.containsKey(member)) {
+						headMapping.getContainedMappings().add(member);
 					}
+					//create member mapping and store in map
+					DatatypeMapping currentMapping = new DatatypeMapping();
+					currentMapping.setCurrent(member);
+					currentMapping.setHead(datatypes[0]);
+					currentMappings.put(currentMapping.getCurrent(), currentMapping);
 				}
-				datatypeMappings.put(datatypeMapping.getHead(), datatypeMapping);
+				headMappings.put(headMapping.getCurrent(), headMapping);
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		return this;
 	}
 	
 	/**
@@ -86,10 +85,16 @@ public final class DatatypeMappingReader {
 	 */
 	public boolean verify(String left, String right) {
 		match = false;//reset this variable because there is only one instance
-		DatatypeMapping datatypeMapping = datatypeMappings.get(left);
+		DatatypeMapping datatypeMapping = headMappings.get(left);
 		//if left datatype doesnt exist in the CSV, there is no match
 		if(datatypeMapping == null) {
-			return match;
+			//datatype is a member
+			DatatypeMapping currentMapping = currentMappings.get(left);
+			if(currentMapping == null) {
+				return false;
+			}
+			//get the head of the member
+			datatypeMapping = headMappings.get(currentMapping.getHead());
 		}
 		checkLine(datatypeMapping, right);
 		return match;
@@ -106,7 +111,7 @@ public final class DatatypeMappingReader {
 			match = true;
 		} else {
 			for(String containedMapping : datatypeMapping.getContainedMappings()) {
-				checkLine(datatypeMappings.get(containedMapping), right);
+				checkLine(headMappings.get(containedMapping), right);
 			}
 		}
 	}
