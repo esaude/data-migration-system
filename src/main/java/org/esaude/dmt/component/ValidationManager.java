@@ -214,7 +214,7 @@ public class ValidationManager {
 
 			return false;// end execution
 		}
-		// TODO: Check if default value if copatible with datatype
+		// TODO: Check if default value if compatible with datatype
 		return true;
 	}
 

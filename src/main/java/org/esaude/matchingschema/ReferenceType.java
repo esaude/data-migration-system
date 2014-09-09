@@ -9,12 +9,16 @@
 package org.esaude.matchingschema;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+
+import org.esaude.dmt.helper.ValidationStatuses;
 
 
 /**
@@ -72,6 +76,7 @@ public class ReferenceType {
     protected ReferencedValueType referencedValue;
     @XmlAttribute(name = "id", required = true)
     protected Integer id;
+    private List<ValidationStatuses> validationStatuses;
 
     /**
      * Gets the value of the referencee property.
@@ -248,5 +253,12 @@ public class ReferenceType {
     public void setId(Integer value) {
         this.id = value;
     }
+    
+    public List<ValidationStatuses> getValidationStatuses() {
+		if(validationStatuses == null) {
+			validationStatuses = new ArrayList<ValidationStatuses>();
+		}
+		return validationStatuses;
+	}
 
 }
