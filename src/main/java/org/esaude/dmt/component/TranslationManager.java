@@ -81,7 +81,7 @@ public class TranslationManager {
 			 
 			 // 7.	If there is a value match, it must insert the value that the value match points to
 			 if (match.getRight()!=null){
-				 //TODO: Call Insert algorithm
+				 //TODO: Call Insert algorithm.
 			 }
 		 
 		}
