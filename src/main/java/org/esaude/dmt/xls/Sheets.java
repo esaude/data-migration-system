@@ -29,15 +29,16 @@ public class Sheets {
 		public static final int DATATYPE_L = 3;
 		public static final int SIZE_L = 4;
 		public static final int REQUIRED_L = 5;
-		public static final int TABLE_R = 6;
-		public static final int COLUMN_R = 7;
-		public static final int DATATYPE_R = 8;
-		public static final int SIZE_R = 9;
-		public static final int REQUIRED_R = 10;
-		public static final int MATCH_ID = 11;
-		public static final int OBS = 12;
-		public static final int DEFAULT_VALUE = 13;
-		public static final int VALUE_MATCH = 14;
+		public static final int PK = 6;
+		public static final int TABLE_R = 7;
+		public static final int COLUMN_R = 8;
+		public static final int DATATYPE_R = 9;
+		public static final int SIZE_R = 10;
+		public static final int REQUIRED_R = 11;
+		public static final int MATCH_ID = 12;
+		public static final int OBS = 13;
+		public static final int DEFAULT_VALUE = 14;
+		public static final int VALUE_MATCH = 15;
 	}
 	
 	public static final class REFERENCES_L {

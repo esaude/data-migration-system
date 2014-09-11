@@ -18,6 +18,7 @@ import org.esaude.dmt.xls.XlsProcessor;
 
 /**
  * The manager that performs the validation of the matches
+ * 
  * @author Valério João
  * @since 28-08-2014
  *
@@ -43,34 +44,19 @@ public class ValidationManager {
 	}
 
 	/**
-	 * Perform the validation process
+	 * Executes the validation logic
 	 * 
 	 * @return
 	 * @throws SystemException
 	 */
 	public boolean execute() throws SystemException {
-		TupleBuilder tupleBuilde = new TupleBuilder();
+		TupleBuilder tupleBuilder = new TupleBuilder();
 		MatchBuilder matchBuilder = null;
 		// read tuple
 		for (int i = Sheets.TUPLE.ROW_START; i < processor
 				.getSize(Sheets.TUPLE.INDEX); i++) {
 			// set tuple values
-			tupleBuilde
-					.createTuple(
-							Integer.valueOf(processor.process(
-									Sheets.TUPLE.INDEX, Sheets.TUPLE.ID, i)),
-							processor.process(Sheets.TUPLE.INDEX,
-									Sheets.TUPLE.TERMINOLOGY, i),
-							processor.process(Sheets.TUPLE.INDEX,
-									Sheets.TUPLE.TABLE, i),
-							processor.process(Sheets.TUPLE.INDEX,
-									Sheets.TUPLE.DESC, i),
-							(processor.process(Sheets.TUPLE.INDEX,
-									Sheets.TUPLE.PREDECESSOR, i).equals(
-									MatchConstants.NA) ? null : Integer
-									.valueOf(processor.process(
-											Sheets.TUPLE.INDEX,
-											Sheets.TUPLE.PREDECESSOR, i))));
+			createTuple(tupleBuilder, i);
 		}
 		// process and validate tuple matches
 		for (int j = Sheets.MATCH_L_TO_R.ROW_START; j < processor
@@ -93,114 +79,175 @@ public class ValidationManager {
 
 			}
 			// check datatype compatibility
-			if (!processor.process(Sheets.MATCH_L_TO_R.INDEX,
-					Sheets.MATCH_L_TO_R.TABLE_R, j).equals(MatchConstants.NA)) {
-				// check compatibility left to right
-				if (!dmr.verify(processor.process(Sheets.MATCH_L_TO_R.INDEX,
-						Sheets.MATCH_L_TO_R.DATATYPE_L, j), processor.process(
-						Sheets.MATCH_L_TO_R.INDEX,
-						Sheets.MATCH_L_TO_R.DATATYPE_R, j))
-						&& !dmr.verify(processor.process(
-								Sheets.MATCH_L_TO_R.INDEX,
-								Sheets.MATCH_L_TO_R.DATATYPE_R, j), processor
-								.process(Sheets.MATCH_L_TO_R.INDEX,
-										Sheets.MATCH_L_TO_R.DATATYPE_L, j))) {
-					// check compatibility right to left
-					if (!dmr.verify(processor.process(
-							Sheets.MATCH_L_TO_R.INDEX,
-							Sheets.MATCH_L_TO_R.DATATYPE_R, j), processor
-							.process(Sheets.MATCH_L_TO_R.INDEX,
-									Sheets.MATCH_L_TO_R.DATATYPE_L, j))) {
-						// write error log
-						writer.writeLog(new Error(EventCode
-								.getString(EventCodeContants.ERR002),
-								ProcessPhases.VALIDATION, Calendar
-										.getInstance().getTime(),
-								EventCodeContants.ERR002,
-								Integer.valueOf(processor.process(
-										Sheets.MATCH_L_TO_R.INDEX,
-										Sheets.MATCH_L_TO_R.TUPLE_ID, j)),
-								Integer.valueOf(processor.process(
-										Sheets.MATCH_L_TO_R.INDEX,
-										Sheets.MATCH_L_TO_R.MATCH_ID, j)),
-								Sheets.MATCH_L_TO_R.NAME));
-
-						return false;// end execution
-					} else {
-						// TODO: Log warning but don't return
-					}
-
-				}
+			if (!validateDatatypeCompatibility(j)) {
+				return false;
 			}
 			// create match and add to tuple
 			matchBuilder = new MatchBuilder();
-			Integer tupleId = Integer
-					.valueOf(processor.process(Sheets.MATCH_L_TO_R.INDEX,
-							Sheets.MATCH_L_TO_R.TUPLE_ID, j));
-			Integer matchId = Integer
-					.valueOf(processor.process(Sheets.MATCH_L_TO_R.INDEX,
-							Sheets.MATCH_L_TO_R.MATCH_ID, j));
-			String terminology = processor.process(Sheets.MATCH_L_TO_R.INDEX,
-					Sheets.MATCH_L_TO_R.TERMINOLOGY, j);
-			Object valueMatch = processor.process(Sheets.MATCH_L_TO_R.INDEX,
-					Sheets.MATCH_L_TO_R.VALUE_MATCH, j);
-			Object defaultValue = processor.process(Sheets.MATCH_L_TO_R.INDEX,
-					Sheets.MATCH_L_TO_R.DEFAULT_VALUE, j);
-			// create the match using builder
-			matchBuilder.createMatch(tupleId, matchId, terminology, valueMatch,
-					defaultValue);
+			createMatch(matchBuilder, j);
 
-			// create left side of match
-			String table_l = null;
-			String column_l = processor.process(Sheets.MATCH_L_TO_R.INDEX,
-					Sheets.MATCH_L_TO_R.COLUMN_L, j);
-			String datatype_l = processor.process(Sheets.MATCH_L_TO_R.INDEX,
-					Sheets.MATCH_L_TO_R.DATATYPE_L, j);
-			Integer size_l = Integer.valueOf(processor.process(
-					Sheets.MATCH_L_TO_R.INDEX, Sheets.MATCH_L_TO_R.SIZE_L, j));
-			String required_l = processor.process(Sheets.MATCH_L_TO_R.INDEX,
-					Sheets.MATCH_L_TO_R.REQUIRED_L, j);
+			// create left and right sides of match
+			createMatchSides(matchBuilder, j);
 
-			matchBuilder.createMatchSide(table_l, column_l, datatype_l, size_l,
-					required_l, MatchBuilder.LEFT_SIDE);
-			// create right side match if there is any
-			if (!processor.process(Sheets.MATCH_L_TO_R.INDEX,
-					Sheets.MATCH_L_TO_R.TABLE_R, j).equals(MatchConstants.NA)) {
-				String table_r = processor.process(Sheets.MATCH_L_TO_R.INDEX,
-						Sheets.MATCH_L_TO_R.TABLE_R, j);
-				String column_r = processor.process(Sheets.MATCH_L_TO_R.INDEX,
-						Sheets.MATCH_L_TO_R.COLUMN_R, j);
-				String datatype_r = processor.process(
-						Sheets.MATCH_L_TO_R.INDEX,
-						Sheets.MATCH_L_TO_R.DATATYPE_R, j);
-				Integer size_r = Integer.valueOf(processor.process(
-						Sheets.MATCH_L_TO_R.INDEX, Sheets.MATCH_L_TO_R.SIZE_R,
-						j));
-				String required_r = processor.process(
-						Sheets.MATCH_L_TO_R.INDEX,
-						Sheets.MATCH_L_TO_R.REQUIRED_R, j);
-
-				matchBuilder.createMatchSide(table_r, column_r, datatype_r,
-						size_r, required_r, MatchBuilder.RIGHT_SIDE);
-			}
 			// TODO: Create left and right references
 
 			// add match to tuple
-			tupleBuilde.process().getTree(matchBuilder.getMatch().getTupleId())
-					.getHead().getMatch().add(matchBuilder.getMatch());
+			tupleBuilder.process()
+					.getTree(matchBuilder.getMatch().getTupleId()).getHead()
+					.getMatch().add(matchBuilder.getMatch());
 
 		}
-		tree = tupleBuilde.process();
-		System.out.println(tree.toString());
+		//update the tree
+		tree = tupleBuilder.process();
 		return true;
 	}
 
+	/**
+	 * Creates instances of {@link TupleType } using a builder
+	 * @param tupleBuilder
+	 * @param index
+	 * @throws SystemException
+	 */
+	private void createTuple(final TupleBuilder tupleBuilder, final int index)
+			throws SystemException {
+		tupleBuilder
+				.createTuple(
+						Integer.valueOf(processor.process(Sheets.TUPLE.INDEX,
+								Sheets.TUPLE.ID, index)),
+						processor.process(Sheets.TUPLE.INDEX,
+								Sheets.TUPLE.TERMINOLOGY, index),
+						processor.process(Sheets.TUPLE.INDEX,
+								Sheets.TUPLE.TABLE, index),
+						processor.process(Sheets.TUPLE.INDEX,
+								Sheets.TUPLE.DESC, index),
+						(processor.process(Sheets.TUPLE.INDEX,
+								Sheets.TUPLE.PREDECESSOR, index).equals(
+								MatchConstants.NA) ? null : Integer
+								.valueOf(processor.process(Sheets.TUPLE.INDEX,
+										Sheets.TUPLE.PREDECESSOR, index))));
+
+	}
+
+	/**
+	 * Creates instances of {@link MatchType } using a builder
+	 * @param matchBuilder
+	 * @param row
+	 */
+	private void createMatch(final MatchBuilder matchBuilder, final int row) {
+
+		Integer tupleId = Integer.valueOf(processor.process(
+				Sheets.MATCH_L_TO_R.INDEX, Sheets.MATCH_L_TO_R.TUPLE_ID, row));
+		Integer matchId = Integer.valueOf(processor.process(
+				Sheets.MATCH_L_TO_R.INDEX, Sheets.MATCH_L_TO_R.MATCH_ID, row));
+		String terminology = processor.process(Sheets.MATCH_L_TO_R.INDEX,
+				Sheets.MATCH_L_TO_R.TERMINOLOGY, row);
+		Object valueMatch = processor.process(Sheets.MATCH_L_TO_R.INDEX,
+				Sheets.MATCH_L_TO_R.VALUE_MATCH, row);
+		Object defaultValue = processor.process(Sheets.MATCH_L_TO_R.INDEX,
+				Sheets.MATCH_L_TO_R.DEFAULT_VALUE, row);
+		// create the match using builder
+		matchBuilder.createMatch(tupleId, matchId, terminology, valueMatch,
+				defaultValue);
+
+	}
+
+	/**
+	 * Creates instances of {@link MatchSideType } using a builder
+	 * @param matchBuilder
+	 * @param row
+	 * @throws SystemException
+	 */
+	private void createMatchSides(final MatchBuilder matchBuilder, final int row)
+			throws SystemException {
+		// create left side of match
+		String table_l = null;
+		String column_l = processor.process(Sheets.MATCH_L_TO_R.INDEX,
+				Sheets.MATCH_L_TO_R.COLUMN_L, row);
+		String datatype_l = processor.process(Sheets.MATCH_L_TO_R.INDEX,
+				Sheets.MATCH_L_TO_R.DATATYPE_L, row);
+		Integer size_l = Integer.valueOf(processor.process(
+				Sheets.MATCH_L_TO_R.INDEX, Sheets.MATCH_L_TO_R.SIZE_L, row));
+		String required_l = processor.process(Sheets.MATCH_L_TO_R.INDEX,
+				Sheets.MATCH_L_TO_R.REQUIRED_L, row);
+
+		matchBuilder.createMatchSide(table_l, column_l, datatype_l, size_l,
+				required_l, MatchBuilder.LEFT_SIDE);
+		// create right side match if there is any
+		if (!processor.process(Sheets.MATCH_L_TO_R.INDEX,
+				Sheets.MATCH_L_TO_R.TABLE_R, row).equals(MatchConstants.NA)) {
+			String table_r = processor.process(Sheets.MATCH_L_TO_R.INDEX,
+					Sheets.MATCH_L_TO_R.TABLE_R, row);
+			String column_r = processor.process(Sheets.MATCH_L_TO_R.INDEX,
+					Sheets.MATCH_L_TO_R.COLUMN_R, row);
+			String datatype_r = processor.process(Sheets.MATCH_L_TO_R.INDEX,
+					Sheets.MATCH_L_TO_R.DATATYPE_R, row);
+			Integer size_r = Integer
+					.valueOf(processor.process(Sheets.MATCH_L_TO_R.INDEX,
+							Sheets.MATCH_L_TO_R.SIZE_R, row));
+			String required_r = processor.process(Sheets.MATCH_L_TO_R.INDEX,
+					Sheets.MATCH_L_TO_R.REQUIRED_R, row);
+
+			matchBuilder.createMatchSide(table_r, column_r, datatype_r, size_r,
+					required_r, MatchBuilder.RIGHT_SIDE);
+		}
+	}
+
+	/**
+	 * Validates the datatypes compatibilities in both directions: left_to_right
+	 * and righnt_to_left
+	 * @param row
+	 * @return
+	 */
+	private boolean validateDatatypeCompatibility(int row) {
+		if (!processor.process(Sheets.MATCH_L_TO_R.INDEX,
+				Sheets.MATCH_L_TO_R.TABLE_R, row).equals(MatchConstants.NA)) {
+			// check compatibility left to right
+			if (!dmr.verify(processor.process(Sheets.MATCH_L_TO_R.INDEX,
+					Sheets.MATCH_L_TO_R.DATATYPE_L, row), processor.process(
+					Sheets.MATCH_L_TO_R.INDEX, Sheets.MATCH_L_TO_R.DATATYPE_R,
+					row))
+					&& !dmr.verify(processor.process(Sheets.MATCH_L_TO_R.INDEX,
+							Sheets.MATCH_L_TO_R.DATATYPE_R, row), processor
+							.process(Sheets.MATCH_L_TO_R.INDEX,
+									Sheets.MATCH_L_TO_R.DATATYPE_L, row))) {
+				// check compatibility right to left
+				if (!dmr.verify(processor.process(Sheets.MATCH_L_TO_R.INDEX,
+						Sheets.MATCH_L_TO_R.DATATYPE_R, row), processor.process(
+						Sheets.MATCH_L_TO_R.INDEX,
+						Sheets.MATCH_L_TO_R.DATATYPE_L, row))) {
+					// write error log
+					writer.writeLog(new Error(EventCode
+							.getString(EventCodeContants.ERR002),
+							ProcessPhases.VALIDATION, Calendar.getInstance()
+									.getTime(), EventCodeContants.ERR002,
+							Integer.valueOf(processor.process(
+									Sheets.MATCH_L_TO_R.INDEX,
+									Sheets.MATCH_L_TO_R.TUPLE_ID, row)), Integer
+									.valueOf(processor.process(
+											Sheets.MATCH_L_TO_R.INDEX,
+											Sheets.MATCH_L_TO_R.MATCH_ID, row)),
+							Sheets.MATCH_L_TO_R.NAME));
+
+					return false;// end execution
+				} else {
+					// TODO: Log warning but don't return
+				}
+
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * Checks the default values constraints based on validation logic
+	 * @param index
+	 * @return
+	 */
 	private boolean validateDefaultValue(int index) {
 		Object defaultValue = processor.process(Sheets.MATCH_L_TO_R.INDEX,
 				Sheets.MATCH_L_TO_R.DEFAULT_VALUE, index);
 		// check if match has a default value
-		if (defaultValue.equals(
-				MatchConstants.NA) || defaultValue.equals("")) {
+		if (defaultValue.equals(MatchConstants.NA) || defaultValue.equals("")) {
 			writer.writeLog(new Error(EventCode
 					.getString(EventCodeContants.ERR001),
 					ProcessPhases.VALIDATION, Calendar.getInstance().getTime(),

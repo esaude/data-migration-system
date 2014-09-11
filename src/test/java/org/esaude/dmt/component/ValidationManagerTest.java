@@ -75,9 +75,9 @@ public class ValidationManagerTest {
 		
 		matchIds = extract(tree.getTree(14).getHead().getMatch(), on(MatchType.class).getId());
 		
-		assertTrue(matchIds.contains(53));
-		assertTrue(matchIds.contains(54));
-		assertTrue(matchIds.contains(55));
-		assertTrue(matchIds.contains(56));
+		assertTrue(matchIds.contains(57));
+		assertTrue(matchIds.contains(58));
+		assertTrue(matchIds.contains(59));
+		assertTrue(matchIds.contains(60));
 	}
 }
