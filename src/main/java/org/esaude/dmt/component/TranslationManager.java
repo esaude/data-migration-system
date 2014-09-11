@@ -14,6 +14,7 @@ import org.esaude.matchingschema.TupleType;
  * INSERT data from source into target databases
  * 
  * @author Valério João
+ * @author Salimone Nhancume
  * @since 5-09-2014
  *
  */
@@ -51,24 +52,6 @@ public class TranslationManager {
 
 				read(eachTree, uuid);
 			}
-			
-			// 5.	If default value is SKIP, the tuple must be skipped.
-			 if (match.getDefaultValue()==null){
-			     //TODO: Tuple must be skipped
-				 //match.setTupleId(null);
-			 }
-			
-			 // 6.	If left side size is smaller than right side size, 
-			 //should transform the data selected in the right side, if necessary
-			 if (match.getValidationStatuses().contains(
-					 ValidationStatuses.LEFT_TO_RIGHT_SIZE_INCOMPATIBILITY)){
-				     //TODO: Call the Data Size Transform algorithm 
-			 }
-			 
-			 // 7.	If there is a value match, it must insert the value that the value match points to
-			 if (match.getRight()!=null){
-				 //TODO: Call Insert algorithm.
-			 }
 		 
 		}
 	}
@@ -117,6 +100,23 @@ public class TranslationManager {
 					&& retrivedFromSelect == null) {
 				// TODO: use default value
 			}
+			// 5.	If default value is SKIP, the tuple must be skipped.
+			 if (match.getDefaultValue()==null){
+			     //TODO: Tuple must be skipped
+				 //match.setTupleId(null);
+			 }
+			
+			 // 6.	If left side size is smaller than right side size, 
+			 //should transform the data selected in the right side, if necessary
+			 if (match.getValidationStatuses().contains(
+					 ValidationStatuses.LEFT_TO_RIGHT_SIZE_INCOMPATIBILITY)){
+				     //TODO: Call the Data Size Transform algorithm 
+			 }
+			 
+			 // 7.	If there is a value match, it must insert the value that the value match points to
+			 if (match.getRight()!=null){
+				 //TODO: Call Insert algorithm.
+			 }
 		}
 	}
 }
