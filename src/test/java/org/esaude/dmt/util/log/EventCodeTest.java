@@ -5,10 +5,8 @@
  */
 package org.esaude.dmt.util.log;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
-import org.esaude.dmt.config.schema.Config;
-import org.esaude.dmt.util.ConfigReader;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -21,11 +19,7 @@ public class EventCodeTest {
 
 	@Test
 	public void testReadConfigData() {
-	
-			
-		assertNull(EventCode.getString("key"));
-		assertEquals("code",EventCode.getString("code.test"));
-		
+		assertEquals("The mapping must have a default value", new EventCode().getString("ERR001"));
 	}
 
 }

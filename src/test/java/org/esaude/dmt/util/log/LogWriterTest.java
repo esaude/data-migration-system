@@ -38,7 +38,7 @@ private LogWriter writer;
 	
 	@Test
 	public void testWriteInfoEvent() {
-		Event info = new Info(EventCode.getString(EventCodeContants.ERR001), 
+		Event info = new Info(new EventCode().getString(EventCodeContants.ERR001), 
 				ProcessPhases.VALIDATION,
 				Calendar.getInstance().getTime(), 1, 1, "MATCH_L_TO_R");
 		
@@ -51,7 +51,7 @@ private LogWriter writer;
 	@Test
 	public void testWriteWarningEvent() {
 		Event warning = new Warning(
-				EventCode.getString(EventCodeContants.ERR001),
+				new EventCode().getString(EventCodeContants.ERR001),
 				ProcessPhases.VALIDATION, Calendar.getInstance().getTime(),
 				EventCodeContants.ERR001, 1, 1, "MATCH_L_TO_R");
 
@@ -65,7 +65,7 @@ private LogWriter writer;
 	
 	@Test
 	public void testWriteErrorEvent() {
-		Event warning = new Error(EventCode.getString(EventCodeContants.ERR001), 
+		Event warning = new Error(new EventCode().getString(EventCodeContants.ERR001), 
 				ProcessPhases.VALIDATION,
 				Calendar.getInstance().getTime(),
 				EventCodeContants.ERR001, 1, 1, "MATCH_L_TO_R");

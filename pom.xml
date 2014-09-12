@@ -41,8 +41,52 @@
 					<target>1.7</target>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<configuration>
+					<archive>
+						<manifest>
+							<addClasspath>true</addClasspath>
+							<classpathPrefix>./lib/</classpathPrefix>
+							<mainClass>org.esaude.dmt.App</mainClass>
+						</manifest>
+						<!--Resources will be placed under conf/ -->
+						<manifestEntries>
+							<class-path>./src/main/resources</class-path>
+						</manifestEntries>
+					</archive>
+					<!--exclude the properties file from the archive -->
+					<excludes>
+						<exclude>*.properties</exclude>
+						<exclude>*.xsd</exclude>
+						<exclude>*.xml</exclude>
+						<exclude>*.csv</exclude>
+						<exclude>*.xls</exclude>
+					</excludes>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>2.4</version>
+				<configuration>
+					<descriptors>
+						<descriptor>${basedir}/src/main/java/assembly/distribution.xml</descriptor>
+					</descriptors>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
+
 	</build>
+
 	<dependencies>
 		<dependency>
 			<groupId>junit</groupId>

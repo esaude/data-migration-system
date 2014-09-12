@@ -1,6 +1,9 @@
 package org.esaude.dmt.util.log;
 
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.MissingResourceException;
+import java.util.Properties;
 import java.util.ResourceBundle;
 
 /**
@@ -12,19 +15,18 @@ import java.util.ResourceBundle;
  * @since 27-08-2014
  */
 public class EventCode {
-	private static final String BUNDLE_NAME = "eventcode";
-	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle
-			.getBundle(BUNDLE_NAME);
+	private final String BUNDLE_NAME = "src/main/resources/eventcode.properties";
+	private final Properties props = new Properties();
 
-	private EventCode() {
-	}
-
-	public static String getString(String key) {
+	public EventCode() {
 		try {
-			return RESOURCE_BUNDLE.getString(key);
-		} catch (MissingResourceException e) {
+			props.load(new FileInputStream(BUNDLE_NAME));
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		return null;
+	}
+
+	public String getString(String key) {
+		return props.getProperty(key);
 	}
 }

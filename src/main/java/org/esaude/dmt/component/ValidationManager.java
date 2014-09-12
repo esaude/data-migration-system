@@ -28,12 +28,14 @@ public class ValidationManager {
 	private LogWriter writer;
 	private DatatypeMappingReader dmr;
 	private TupleTree tree;
+	private EventCode eventCode;
 
 	public ValidationManager(XlsProcessor processor, LogWriter writer,
-			DatatypeMappingReader dmr) {
+			DatatypeMappingReader dmr, EventCode eventCode) {
 		this.processor = processor;
 		this.writer = writer;
 		this.dmr = dmr;
+		this.eventCode = eventCode;
 	}
 
 	public ValidationManager() {
@@ -41,6 +43,7 @@ public class ValidationManager {
 		writer = LogWriter.getWriter();
 		dmr = new DatatypeMappingReader();
 		dmr.process();
+		eventCode = new EventCode();
 	}
 
 	/**
@@ -216,7 +219,7 @@ public class ValidationManager {
 						Sheets.MATCH_L_TO_R.INDEX,
 						Sheets.MATCH_L_TO_R.DATATYPE_L, row))) {
 					// write error log
-					writer.writeLog(new Error(EventCode
+					writer.writeLog(new Error(eventCode
 							.getString(EventCodeContants.ERR002),
 							ProcessPhases.VALIDATION, Calendar.getInstance()
 									.getTime(), EventCodeContants.ERR002,
@@ -248,7 +251,7 @@ public class ValidationManager {
 				Sheets.MATCH_L_TO_R.DEFAULT_VALUE, index);
 		// check if match has a default value
 		if (defaultValue.equals(MatchConstants.NA) || defaultValue.equals("")) {
-			writer.writeLog(new Error(EventCode
+			writer.writeLog(new Error(eventCode
 					.getString(EventCodeContants.ERR001),
 					ProcessPhases.VALIDATION, Calendar.getInstance().getTime(),
 					EventCodeContants.ERR001, Integer.valueOf(processor

@@ -27,3 +27,61 @@
 04-09-2014 10:32:21 [main] ERROR .esaude.dmt.util.log.LogWriter - ERROR ERR001 at: VALID TUPLE:10 MATCH_L_TO_R:43 - The mapping must have a default value
 04-09-2014 10:33:19 [main] ERROR .esaude.dmt.util.log.LogWriter - ERROR ERR001 at: VALID TUPLE:10 MATCH_L_TO_R:43 - The mapping must have a default value
 04-09-2014 10:34:43 [main] ERROR .esaude.dmt.util.log.LogWriter - ERROR ERR001 at: VALID TUPLE:14 MATCH_L_TO_R:54 - The mapping must have a default value
+12-09-2014 10:18:43 [main] INFO  .esaude.dmt.util.log.LogWriter - INFO at: VALID TUPLE:1 MATCH_L_TO_R:1 - The mapping must have a default value
+12-09-2014 10:18:43 [main] WARN  .esaude.dmt.util.log.LogWriter - WARNING ERR001 at: VALID TUPLE:1 MATCH_L_TO_R:1 - The mapping must have a default value
+12-09-2014 10:18:43 [main] ERROR .esaude.dmt.util.log.LogWriter - ERROR ERR001 at: VALID TUPLE:1 MATCH_L_TO_R:1 - The mapping must have a default value
+12-09-2014 10:29:31 [main] ERROR .esaude.dmt.util.log.LogWriter - ERROR ERR001 at: VALID TUPLE:1 MATCH_L_TO_R:1 - The mapping must have a default value
+12-09-2014 10:29:31 [main] WARN  .esaude.dmt.util.log.LogWriter - WARNING ERR001 at: VALID TUPLE:1 MATCH_L_TO_R:1 - The mapping must have a default value
+12-09-2014 10:29:31 [main] INFO  .esaude.dmt.util.log.LogWriter - INFO at: VALID TUPLE:1 MATCH_L_TO_R:1 - The mapping must have a default value
+12-09-2014 10:43:10 [main] ERROR .esaude.dmt.util.log.LogWriter - ERROR ERR001 at: VALID TUPLE:1 MATCH_L_TO_R:1 - The mapping must have a default value
+12-09-2014 10:43:10 [main] WARN  .esaude.dmt.util.log.LogWriter - WARNING ERR001 at: VALID TUPLE:1 MATCH_L_TO_R:1 - The mapping must have a default value
+12-09-2014 10:43:10 [main] INFO  .esaude.dmt.util.log.LogWriter - INFO at: VALID TUPLE:1 MATCH_L_TO_R:1 - The mapping must have a default value
+12-09-2014 10:46:49 [main] INFO  .esaude.dmt.util.log.LogWriter - INFO at: VALID TUPLE:1 MATCH_L_TO_R:1 - The mapping must have a default value
+12-09-2014 10:46:49 [main] WARN  .esaude.dmt.util.log.LogWriter - WARNING ERR001 at: VALID TUPLE:1 MATCH_L_TO_R:1 - The mapping must have a default value
+12-09-2014 10:46:49 [main] ERROR .esaude.dmt.util.log.LogWriter - ERROR ERR001 at: VALID TUPLE:1 MATCH_L_TO_R:1 - The mapping must have a default value
+12-09-2014 10:53:58 [main] WARN  .esaude.dmt.util.log.LogWriter - WARNING ERR001 at: VALID TUPLE:1 MATCH_L_TO_R:1 - The mapping must have a default value
+12-09-2014 10:53:58 [main] ERROR .esaude.dmt.util.log.LogWriter - ERROR ERR001 at: VALID TUPLE:1 MATCH_L_TO_R:1 - The mapping must have a default value
+12-09-2014 10:53:58 [main] INFO  .esaude.dmt.util.log.LogWriter - INFO at: VALID TUPLE:1 MATCH_L_TO_R:1 - The mapping must have a default value
+12-09-2014 11:09:28 [main] INFO  .esaude.dmt.util.log.LogWriter - INFO at: VALID TUPLE:1 MATCH_L_TO_R:1 - The mapping must have a default value
+12-09-2014 11:09:28 [main] WARN  .esaude.dmt.util.log.LogWriter - WARNING ERR001 at: VALID TUPLE:1 MATCH_L_TO_R:1 - The mapping must have a default value
+12-09-2014 11:09:28 [main] ERROR .esaude.dmt.util.log.LogWriter - ERROR ERR001 at: VALID TUPLE:1 MATCH_L_TO_R:1 - The mapping must have a default value
+12-09-2014 11:20:19 [main] ERROR .esaude.dmt.util.log.LogWriter - ERROR ERR001 at: VALID TUPLE:1 MATCH_L_TO_R:1 - The mapping must have a default value
+12-09-2014 11:20:19 [main] WARN  .esaude.dmt.util.log.LogWriter - WARNING ERR001 at: VALID TUPLE:1 MATCH_L_TO_R:1 - The mapping must have a default value
+12-09-2014 11:20:19 [main] INFO  .esaude.dmt.util.log.LogWriter - INFO at: VALID TUPLE:1 MATCH_L_TO_R:1 - The mapping must have a default value
+12-09-2014 11:35:49 [main] ERROR .esaude.dmt.util.log.LogWriter - ERROR ERR001 at: VALID TUPLE:1 MATCH_L_TO_R:1 - The mapping must have a default value
+12-09-2014 11:35:49 [main] WARN  .esaude.dmt.util.log.LogWriter - WARNING ERR001 at: VALID TUPLE:1 MATCH_L_TO_R:1 - The mapping must have a default value
+12-09-2014 11:35:49 [main] INFO  .esaude.dmt.util.log.LogWriter - INFO at: VALID TUPLE:1 MATCH_L_TO_R:1 - The mapping must have a default value
+12-09-2014 11:41:47 [main] INFO  .esaude.dmt.util.log.LogWriter - INFO at: VALID TUPLE:1 MATCH_L_TO_R:1 - The mapping must have a default value
+12-09-2014 11:41:47 [main] WARN  .esaude.dmt.util.log.LogWriter - WARNING ERR001 at: VALID TUPLE:1 MATCH_L_TO_R:1 - The mapping must have a default value
+12-09-2014 11:41:47 [main] ERROR .esaude.dmt.util.log.LogWriter - ERROR ERR001 at: VALID TUPLE:1 MATCH_L_TO_R:1 - The mapping must have a default value
+12-09-2014 11:46:31 [main] INFO  .esaude.dmt.util.log.LogWriter - INFO at: VALID TUPLE:1 MATCH_L_TO_R:1 - The mapping must have a default value
+12-09-2014 11:46:31 [main] WARN  .esaude.dmt.util.log.LogWriter - WARNING ERR001 at: VALID TUPLE:1 MATCH_L_TO_R:1 - The mapping must have a default value
+12-09-2014 11:46:31 [main] ERROR .esaude.dmt.util.log.LogWriter - ERROR ERR001 at: VALID TUPLE:1 MATCH_L_TO_R:1 - The mapping must have a default value
+12-09-2014 11:49:38 [main] INFO  .esaude.dmt.util.log.LogWriter - INFO at: VALID TUPLE:1 MATCH_L_TO_R:1 - The mapping must have a default value
+12-09-2014 11:49:38 [main] WARN  .esaude.dmt.util.log.LogWriter - WARNING ERR001 at: VALID TUPLE:1 MATCH_L_TO_R:1 - The mapping must have a default value
+12-09-2014 11:49:38 [main] ERROR .esaude.dmt.util.log.LogWriter - ERROR ERR001 at: VALID TUPLE:1 MATCH_L_TO_R:1 - The mapping must have a default value
+12-09-2014 12:15:53 [main] ERROR .esaude.dmt.util.log.LogWriter - ERROR ERR001 at: VALID TUPLE:1 MATCH_L_TO_R:1 - The mapping must have a default value
+12-09-2014 12:15:53 [main] WARN  .esaude.dmt.util.log.LogWriter - WARNING ERR001 at: VALID TUPLE:1 MATCH_L_TO_R:1 - The mapping must have a default value
+12-09-2014 12:15:53 [main] INFO  .esaude.dmt.util.log.LogWriter - INFO at: VALID TUPLE:1 MATCH_L_TO_R:1 - The mapping must have a default value
+12-09-2014 12:19:03 [main] ERROR .esaude.dmt.util.log.LogWriter - ERROR ERR001 at: VALID TUPLE:1 MATCH_L_TO_R:1 - The mapping must have a default value
+12-09-2014 12:19:03 [main] WARN  .esaude.dmt.util.log.LogWriter - WARNING ERR001 at: VALID TUPLE:1 MATCH_L_TO_R:1 - The mapping must have a default value
+12-09-2014 12:19:03 [main] INFO  .esaude.dmt.util.log.LogWriter - INFO at: VALID TUPLE:1 MATCH_L_TO_R:1 - The mapping must have a default value
+12-09-2014 12:23:45 [main] ERROR .esaude.dmt.util.log.LogWriter - ERROR ERR001 at: VALID TUPLE:1 MATCH_L_TO_R:1 - The mapping must have a default value
+12-09-2014 12:23:45 [main] WARN  .esaude.dmt.util.log.LogWriter - WARNING ERR001 at: VALID TUPLE:1 MATCH_L_TO_R:1 - The mapping must have a default value
+12-09-2014 12:23:45 [main] INFO  .esaude.dmt.util.log.LogWriter - INFO at: VALID TUPLE:1 MATCH_L_TO_R:1 - The mapping must have a default value
+12-09-2014 12:32:48 [main] INFO  .esaude.dmt.util.log.LogWriter - INFO at: VALID TUPLE:1 MATCH_L_TO_R:1 - The mapping must have a default value
+12-09-2014 12:32:48 [main] WARN  .esaude.dmt.util.log.LogWriter - WARNING ERR001 at: VALID TUPLE:1 MATCH_L_TO_R:1 - The mapping must have a default value
+12-09-2014 12:32:48 [main] ERROR .esaude.dmt.util.log.LogWriter - ERROR ERR001 at: VALID TUPLE:1 MATCH_L_TO_R:1 - The mapping must have a default value
+12-09-2014 12:39:32 [main] INFO  .esaude.dmt.util.log.LogWriter - INFO at: VALID TUPLE:1 MATCH_L_TO_R:1 - The mapping must have a default value
+12-09-2014 12:39:32 [main] WARN  .esaude.dmt.util.log.LogWriter - WARNING ERR001 at: VALID TUPLE:1 MATCH_L_TO_R:1 - The mapping must have a default value
+12-09-2014 12:39:32 [main] ERROR .esaude.dmt.util.log.LogWriter - ERROR ERR001 at: VALID TUPLE:1 MATCH_L_TO_R:1 - The mapping must have a default value
+12-09-2014 12:42:53 [main] ERROR .esaude.dmt.util.log.LogWriter - ERROR ERR001 at: VALID TUPLE:1 MATCH_L_TO_R:1 - The mapping must have a default value
+12-09-2014 12:42:53 [main] WARN  .esaude.dmt.util.log.LogWriter - WARNING ERR001 at: VALID TUPLE:1 MATCH_L_TO_R:1 - The mapping must have a default value
+12-09-2014 12:42:53 [main] INFO  .esaude.dmt.util.log.LogWriter - INFO at: VALID TUPLE:1 MATCH_L_TO_R:1 - The mapping must have a default value
+12-09-2014 13:34:55 [main] ERROR .esaude.dmt.util.log.LogWriter - ERROR ERR001 at: VALID TUPLE:1 MATCH_L_TO_R:1 - The mapping must have a default value
+12-09-2014 13:34:55 [main] INFO  .esaude.dmt.util.log.LogWriter - INFO at: VALID TUPLE:1 MATCH_L_TO_R:1 - The mapping must have a default value
+12-09-2014 13:34:55 [main] WARN  .esaude.dmt.util.log.LogWriter - WARNING ERR001 at: VALID TUPLE:1 MATCH_L_TO_R:1 - The mapping must have a default value
+12-09-2014 13:34:55 [main] ERROR .esaude.dmt.util.log.LogWriter - ERROR ERR001 at: VALID TUPLE:1 MATCH_L_TO_R:1 - The mapping must have a default value
+12-09-2014 13:38:00 [main] INFO  .esaude.dmt.util.log.LogWriter - INFO at: VALID TUPLE:1 MATCH_L_TO_R:1 - The mapping must have a default value
+12-09-2014 13:38:00 [main] WARN  .esaude.dmt.util.log.LogWriter - WARNING ERR001 at: VALID TUPLE:1 MATCH_L_TO_R:1 - The mapping must have a default value
+12-09-2014 13:38:00 [main] ERROR .esaude.dmt.util.log.LogWriter - ERROR ERR001 at: VALID TUPLE:1 MATCH_L_TO_R:1 - The mapping must have a default value
