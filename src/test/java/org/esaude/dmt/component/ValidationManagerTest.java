@@ -4,10 +4,12 @@ import static org.junit.Assert.*;
 import static ch.lambdaj.Lambda.*;
 
 import java.util.List;
+import java.util.Map;
 
 import org.esaude.dmt.helper.MatchConstants;
 import org.esaude.dmt.util.TupleTree;
 import org.esaude.matchingschema.MatchType;
+import org.esaude.matchingschema.ReferenceType;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -29,9 +31,9 @@ public class ValidationManagerTest {
 		assertEquals(7, tree.getSubTrees().size());
 		assertEquals(Integer.valueOf(13), tree.getTree(14).getParent().getHead().getId());
 		
-		assertEquals(7, tree.getHead().getMatch().size());
+		assertEquals(7, tree.getHead().getMatches().size());
 		
-		List<Integer> matchIds = extract(tree.getHead().getMatch(), on(MatchType.class).getId());
+		List<Integer> matchIds = extract(tree.getHead().getMatches(), on(MatchType.class).getId());
 		
 		assertTrue(matchIds.contains(1));
 		assertTrue(matchIds.contains(2));
@@ -41,7 +43,7 @@ public class ValidationManagerTest {
 		assertTrue(matchIds.contains(6));
 		assertTrue(matchIds.contains(7));
 		
-		MatchType firstMatch = tree.getHead().getMatch().get(0);
+		MatchType firstMatch = tree.getHead().getMatches().get(0);
 		assertEquals(Integer.valueOf(1), firstMatch.getTupleId());
 		assertEquals(MatchConstants.NA, firstMatch.getTerminology());
 		assertEquals(Integer.valueOf(1), firstMatch.getId());
@@ -53,7 +55,10 @@ public class ValidationManagerTest {
 		assertEquals(MatchConstants.YES, firstMatch.getLeft().isIsRequired());
 		assertNull(firstMatch.getRight());
 		
-		MatchType thirdMatch = tree.getHead().getMatch().get(2);
+		assertNotNull(tree.getHead().getLeftReference());
+		assertEquals(0, tree.getHead().getLeftReference().size());
+		
+		MatchType thirdMatch = tree.getHead().getMatches().get(2);
 		assertEquals(Integer.valueOf(1), thirdMatch.getTupleId());
 		assertEquals("Data de Nascimento", thirdMatch.getTerminology());
 		assertEquals(Integer.valueOf(3), thirdMatch.getId());
@@ -71,13 +76,35 @@ public class ValidationManagerTest {
 		assertEquals(MatchConstants.NO, thirdMatch.getRight().isIsRequired());
 		
 		
-		assertEquals(4, tree.getTree(14).getHead().getMatch().size());
+		assertEquals(4, tree.getTree(14).getHead().getMatches().size());
 		
-		matchIds = extract(tree.getTree(14).getHead().getMatch(), on(MatchType.class).getId());
+		matchIds = extract(tree.getTree(14).getHead().getMatches(), on(MatchType.class).getId());
 		
 		assertTrue(matchIds.contains(57));
 		assertTrue(matchIds.contains(58));
 		assertTrue(matchIds.contains(59));
 		assertTrue(matchIds.contains(60));
+		
+		//tuple 14 references
+		Map<Integer, ReferenceType> references14 = tree.getTree(14).getHead().getLeftReference();
+		
+		assertNotNull(references14);
+		assertEquals(4, references14.size());
+		assertTrue(references14.containsKey(Integer.valueOf(20)));
+		assertTrue(references14.containsKey(Integer.valueOf(21)));
+		assertTrue(references14.containsKey(Integer.valueOf(22)));
+		assertTrue(references14.containsKey(Integer.valueOf(23)));
+		
+		ReferenceType reference14id20 = references14.get(20);
+		assertEquals(Integer.valueOf(20), reference14id20.getId());
+		assertEquals("PATIENT_STATE", reference14id20.getReferencee().getTable());
+		assertEquals("patient_program_id", reference14id20.getReferencee().getColumn());
+		assertEquals("PATIENT_PROGRAM", reference14id20.getReferenced().getTable());
+		assertEquals("patient_program_id", reference14id20.getReferenced().getColumn());
+		assertEquals(MatchConstants.TOP, reference14id20.getReferencedValue().getConstantValue());
+		assertNull(reference14id20.getReferencedValue().getFkValue());
+		assertEquals(MatchConstants.INT, reference14id20.getDatatype());
+		assertEquals(Integer.valueOf(11), reference14id20.getSize());
+		
 	}
 }

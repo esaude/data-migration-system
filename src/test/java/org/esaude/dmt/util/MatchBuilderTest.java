@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import java.util.List;
 
+import org.esaude.dmt.helper.MatchConstants;
 import org.esaude.dmt.helper.SystemException;
 import org.esaude.matchingschema.MatchType;
 import org.junit.Before;
@@ -27,7 +28,7 @@ public class MatchBuilderTest {
 	@Test
 	public void testCreateMatchWithoutSides() {
 		List<MatchType> matches = matchBuilder.createMatch(1, 1, "personal", 1,
-				"AI").process();
+				MatchConstants.AI, MatchConstants.YES).process();
 
 		assertNotNull(matches);
 		assertFalse(matches.isEmpty());
@@ -40,13 +41,14 @@ public class MatchBuilderTest {
 		assertEquals("personal", match.getTerminology());
 		assertEquals(Integer.valueOf(1), match.getValueMatchId());
 		assertEquals("AI", match.getDefaultValue());
+		assertEquals("YES", match.isPk());
 	}
 
 	@Test
 	public void testCreatesMatchWithoutSides() {
 		List<MatchType> matches = matchBuilder
-				.createMatch(1, 1, "personal", 1, "AI")
-				.createMatch(1, 2, "identifier", 1, "NULL").process();
+				.createMatch(1, 1, "personal", 1, MatchConstants.AI, MatchConstants.YES)
+				.createMatch(1, 2, "identifier", 1, MatchConstants.NULL, MatchConstants.YES).process();
 
 		assertNotNull(matches);
 		assertFalse(matches.isEmpty());
@@ -59,6 +61,7 @@ public class MatchBuilderTest {
 		assertEquals("personal", match.getTerminology());
 		assertEquals(Integer.valueOf(1), match.getValueMatchId());
 		assertEquals("AI", match.getDefaultValue());
+		assertEquals("YES", match.isPk());
 
 		match = matches.get(1);
 
@@ -67,12 +70,13 @@ public class MatchBuilderTest {
 		assertEquals("identifier", match.getTerminology());
 		assertEquals(Integer.valueOf(1), match.getValueMatchId());
 		assertEquals("NULL", match.getDefaultValue());
+		assertEquals("YES", match.isPk());
 	}
 
 	@Test
 	public void testCreateMatchWithSides() throws SystemException {
 		List<MatchType> matches = matchBuilder
-				.createMatch(1, 1, "personal", 1, "AI")
+				.createMatch(1, 1, "personal", 1, MatchConstants.AI, MatchConstants.YES)
 				.createMatchSide(null, "left_column", "INT", 10, "YES",
 						MatchBuilder.LEFT_SIDE)
 				.createMatchSide("RIGHT_TABLE", "right_column", "VARCHAR", 100,
@@ -89,6 +93,7 @@ public class MatchBuilderTest {
 		assertEquals("personal", match.getTerminology());
 		assertEquals(Integer.valueOf(1), match.getValueMatchId());
 		assertEquals("AI", match.getDefaultValue());
+		assertEquals("YES", match.isPk());
 
 		assertNotNull(match.getLeft());
 		assertNull(match.getLeft().getTable());
@@ -109,12 +114,12 @@ public class MatchBuilderTest {
 	@Test
 	public void testCreateMatchesWithSides() throws SystemException {
 		List<MatchType> matches = matchBuilder
-				.createMatch(1, 1, "personal", 1, "AI")
+				.createMatch(1, 1, "personal", 1, MatchConstants.AI, MatchConstants.YES)
 				.createMatchSide(null, "left_column", "INT", 10, "YES",
 						MatchBuilder.LEFT_SIDE)
 				.createMatchSide("RIGHT_TABLE", "right_column", "VARCHAR", 100,
 						"YES", MatchBuilder.RIGHT_SIDE)
-				.createMatch(1, 2, "identifier", 1, "NULL")
+				.createMatch(1, 2, "identifier", 1, MatchConstants.NULL, MatchConstants.YES)
 				.createMatchSide(null, "left_column", "INT", 10, "YES",
 						MatchBuilder.LEFT_SIDE)
 				.createMatchSide("RIGHT_TABLE", "right_column", "VARCHAR", 100,
@@ -178,7 +183,7 @@ public class MatchBuilderTest {
 	
 	@Test(expected = SystemException.class)
 	public void testCreateMatchSideWithInvalidSide() throws SystemException {
-		matchBuilder.createMatch(1, 1, "personal", true, "AI").createMatchSide(
+		matchBuilder.createMatch(1, 1, "personal", true, MatchConstants.AI, MatchConstants.YES).createMatchSide(
 				"RIGHT_TABLE", "right_column", "VARCHAR", 100, "YES",
 				"invalid");
 	}

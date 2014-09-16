@@ -71,8 +71,11 @@ public class MatchType {
     protected List<ReferenceType> rightReference;
     @XmlAttribute(name = "id", required = true)
     @XmlElement(required = false)
-	private Object defaultValue;
+    protected Object defaultValue;
+    @XmlElement(required = true)
     protected Integer id;
+    @XmlElement(required = true)
+	private String pk;
     private List<ValidationStatuses> validationStatuses;
 
     /**
@@ -266,5 +269,29 @@ public class MatchType {
 			validationStatuses = new ArrayList<ValidationStatuses>();
 		}
 		return validationStatuses;
+	}
+
+	/**
+     * Gets the value of the pk property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+	public String isPk() {
+		return pk;
+	}
+
+	/**
+     * Sets the value of the pk property.
+     * 
+     * @param
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+	public void setPk(String pk) {
+		this.pk = pk;
 	}
 }

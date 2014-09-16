@@ -38,7 +38,10 @@ public class Error extends Event implements Codable {
 	}
 
 	public String getCodigo() {
-		return codigo;
+		if(codigo != null || !codigo.isEmpty()) {
+			return " " + codigo;
+		}
+		return "";
 	}
 
 
@@ -53,7 +56,12 @@ public class Error extends Event implements Codable {
 	
 	@Override
 	public String toString() {
-		return Error.TYPE + " " + getCodigo() + " at: " + getFase() + " TUPLE:"
-				+ getTupleId() + " " + getPartName() + ":" + getPartId() + " - " + getDescricao();
+		return Error.TYPE + 
+				getCodigo() + 
+				getFase() +
+				getTupleId() +
+				getPartName() + 
+				getPartId() + 
+				getDescricao();
 	}
 }

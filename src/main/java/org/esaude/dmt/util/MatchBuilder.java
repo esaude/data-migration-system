@@ -35,7 +35,7 @@ public class MatchBuilder {
 	 * @throws SystemException
 	 */
 	public MatchBuilder createMatch(final Integer tupleId, final Integer id, final String terminology,
-			final Object valueMatchId, final Object defaultValue) {
+			final Object valueMatchId, final Object defaultValue, final String pk) {
 
 		matchType = new MatchType();
 		matchType.setTupleId(tupleId);
@@ -43,6 +43,7 @@ public class MatchBuilder {
 		matchType.setTerminology(terminology);
 		matchType.setValueMatchId(valueMatchId);
 		matchType.setDefaultValue(defaultValue);
+		matchType.setPk(pk);
 
 		matches.add(matchType);
 

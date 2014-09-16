@@ -71,7 +71,7 @@ public class TranslationManager {
 			return;
 
 		// access matches of tuple
-		for (MatchType match : tuple.getMatch()) {
+		for (MatchType match : tuple.getMatches()) {
 			String selectQuery = null;// composed select query
 			Object retrivedFromSelect = null;// keep the SELECT result for the
 												// match

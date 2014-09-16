@@ -42,7 +42,10 @@ public abstract class Event {
 	}
 
 	public String getDescricao() {
-		return descricao;
+		if(descricao != null) {
+			return " - " + descricao;
+		}
+		return "";
 	}
 
 	public void setDescricao(String descricao) {
@@ -58,23 +61,32 @@ public abstract class Event {
 	}
 
 	public String getFase() {
-		return fase;
+		if(fase != null) {
+			return " at: " + fase;
+		}
+		return "";
 	}
 
 	public void setFase(String fase) {
 		this.fase = fase;
 	}
 
-	public int getTupleId() {
-		return tupleId;
+	public String getTupleId() {
+		if(tupleId != 0) {
+			return " Tuple: " + tupleId;
+		}
+		return "";
 	}
 
 	public void setTupleId(int tupleId) {
 		this.tupleId = tupleId;
 	}
 
-	public int getPartId() {
-		return partId;
+	public String getPartId() {
+		if(partId != 0) {
+			return " : " + partId;
+		}
+		return "";
 	}
 
 	public void setPartId(int partId) {
@@ -82,7 +94,10 @@ public abstract class Event {
 	}
 	
 	public String getPartName() {
-		return partName;
+		if(partName != null) {
+			return " " + partName;
+		}
+		return "";
 	}
 
 	public void setPartName(String partName) {

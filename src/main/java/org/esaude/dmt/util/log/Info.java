@@ -36,8 +36,9 @@ public class Info extends Event {
 	
 	@Override
 	public String toString() {
-		return Info.TYPE + " at: " + getFase()
-				+ " TUPLE:" + getTupleId() + " " + getPartName() + ":"
-				+ getPartId() + " - " + getDescricao();
+		return Info.TYPE + getFase()
+				+ getTupleId() + getPartName()
+				+ getPartId() 
+				+ getDescricao();
 	}
 }

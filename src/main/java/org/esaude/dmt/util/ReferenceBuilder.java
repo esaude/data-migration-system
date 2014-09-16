@@ -1,8 +1,6 @@
 package org.esaude.dmt.util;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.esaude.dmt.helper.SystemException;
@@ -32,17 +30,20 @@ public class ReferenceBuilder {
 	 * @param datatype
 	 * @param size
 	 * @param nameDesc
+	 * @param predecessor
 	 * @return
 	 */
 	public ReferenceBuilder createReference(final Integer id, 
 			final String datatype, 
 			final Integer size, 
-			final String nameDesc) {
+			final String nameDesc,
+			final Integer predecessor) {
 		referenceType = new ReferenceType();
 		referenceType.setId(id);
 		referenceType.setDatatype(datatype);
 		referenceType.setSize(size);
 		referenceType.setNameDesc(nameDesc);
+		referenceType.setPredecessor(predecessor);
 		
 		references.put(id, referenceType);
 		
@@ -105,8 +106,12 @@ public class ReferenceBuilder {
 		return this;
 	}
 	
-	public List<ReferenceType> process() {
-		return new ArrayList<ReferenceType>(references.values());
+	public Map<Integer, ReferenceType> processMap() {
+		return references;
+	}
+	
+	public ReferenceType processSingle() {
+		return referenceType;
 	}
 	
 }

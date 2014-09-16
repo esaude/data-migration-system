@@ -9,7 +9,9 @@
 package org.esaude.matchingschema;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -31,7 +33,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="terminology" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="table" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="desc" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="match" type="{http://esaude.org/matchingschema}matchType" maxOccurs="unbounded"/>
+ *         &lt;element name="matches" type="{http://esaude.org/matchingschema}matchType" maxOccurs="unbounded"/>
  *         &lt;element name="leftReference" type="{http://esaude.org/matchingschema}referenceType" maxOccurs="unbounded" minOccurs="0"/>
  *       &lt;/sequence>
  *       &lt;attribute name="id" use="required" type="{http://www.w3.org/2001/XMLSchema}integer" />
@@ -48,7 +50,7 @@ import javax.xml.bind.annotation.XmlType;
     "terminology",
     "table",
     "desc",
-    "match",
+    "matches",
     "leftReference"
 })
 public class TupleType {
@@ -60,8 +62,8 @@ public class TupleType {
     @XmlElement(required = true)
     protected String desc;
     @XmlElement(required = true)
-    protected List<MatchType> match;
-    protected List<ReferenceType> leftReference;
+    protected List<MatchType> matches;
+    protected Map<Integer, ReferenceType> leftReference;
     @XmlAttribute(name = "id", required = true)
     protected Integer id;
 
@@ -159,11 +161,11 @@ public class TupleType {
      * 
      * 
      */
-    public List<MatchType> getMatch() {
-        if (match == null) {
-            match = new ArrayList<MatchType>();
+    public List<MatchType> getMatches() {
+        if (matches == null) {
+            matches = new ArrayList<MatchType>();
         }
-        return this.match;
+        return this.matches;
     }
 
     /**
@@ -175,7 +177,10 @@ public class TupleType {
      * 
      * 
      */
-    public List<ReferenceType> getLeftReference() {
+    public Map<Integer, ReferenceType> getLeftReference() {
+    	if(leftReference == null) {
+    		leftReference = new HashMap<Integer, ReferenceType>();
+    	}
         return this.leftReference;
     }
     
@@ -188,7 +193,7 @@ public class TupleType {
      * 
      * 
      */
-    public void getLeftReference(List<ReferenceType> leftReference) {
+    public void setLeftReference(Map<Integer, ReferenceType> leftReference) {
         this.leftReference = leftReference;
     }
 

@@ -7,13 +7,13 @@
 	
 	<appender name="FA" class="org.apache.log4j.RollingFileAppender">
 			<param name="Threshold" value="info" />
-		<param name="File" value="data-migration-system.log" />
+		<param name="File" value="log.log" />
 		<param name="Append" value="true" />
 		<param name="MaxFileSize" value="100KB" />
 		<param name="MaxBackupIndex" value="0" />
 		<layout class="org.apache.log4j.PatternLayout">
 			<param name="ConversionPattern"
-				value="%d{dd-MM-yyyy HH:mm:ss} [%t] %-5p %30.30c - %m%n" />
+				value="%d{dd-MM-yyyy HH:mm:ss} - %m%n" />
 		</layout>
 	</appender>
 
@@ -22,7 +22,7 @@
 		<param name="Target" value="System.err" />
 		<layout class="org.apache.log4j.PatternLayout">
 			<param name="ConversionPattern"
-				value="%d{dd-MM-yyyy HH:mm:ss} [%t] %-5p %30.30c - %m%n" />
+				value="%d{dd-MM-yyyy HH:mm:ss} - %m%n" />
 		</layout>
 	</appender>
 
