@@ -44,7 +44,7 @@ private LogWriter writer;
 		
 		String log = writer.writeLog(info);
 		
-		assertEquals("INFO at: VALID TUPLE:1 MATCH_L_TO_R:1 - The mapping must have a default value", log);
+		assertEquals("INFO at: VALID Tuple: 1 MATCH_L_TO_R : 1 - The mapping must have a default value", log);
 		
 	}
 	
@@ -58,7 +58,7 @@ private LogWriter writer;
 		String log = writer.writeLog(warning);
 
 		assertEquals(
-				"WARNING ERR001 at: VALID TUPLE:1 MATCH_L_TO_R:1 - The mapping must have a default value",
+				"WARNING ERR001 at: VALID Tuple: 1 MATCH_L_TO_R : 1 - The mapping must have a default value",
 				log);
 
 	}
@@ -73,7 +73,7 @@ private LogWriter writer;
 		String log = writer.writeLog(warning);
 		
 		assertEquals(
-				"ERROR ERR001 at: VALID TUPLE:1 MATCH_L_TO_R:1 - The mapping must have a default value",
+				"ERROR ERR001 at: VALID Tuple: 1 MATCH_L_TO_R : 1 - The mapping must have a default value",
 				log);
 		
 	}

@@ -135,3 +135,45 @@
 16-09-2014 08:07:03 - INFO - 14 tuples affected
 16-09-2014 08:07:03 - INFO - 60 matches affected
 16-09-2014 08:07:03 - INFO - 0 warning(s)
+16-09-2014 09:44:52 - INFO at: VALID - started...
+16-09-2014 09:44:52 - INFO - .......................................................................
+16-09-2014 09:44:53 - INFO at: VALID - completed with success
+16-09-2014 09:44:53 - INFO - .......................................................................
+16-09-2014 09:44:53 - INFO - 14 tuples affected
+16-09-2014 09:44:53 - INFO - 60 matches affected
+16-09-2014 09:44:53 - INFO - 0 warning(s)
+16-09-2014 09:44:53 - ERROR ERR001 at: VALID Tuple: 1 MATCH_L_TO_R : 1 - The mapping must have a default value
+16-09-2014 09:44:53 - WARNING ERR001 at: VALID Tuple: 1 MATCH_L_TO_R : 1 - The mapping must have a default value
+16-09-2014 09:44:53 - INFO at: VALID Tuple: 1 MATCH_L_TO_R : 1 - The mapping must have a default value
+16-09-2014 09:45:14 - INFO at: VALID Tuple: 1 MATCH_L_TO_R : 1 - The mapping must have a default value
+16-09-2014 09:45:14 - WARNING ERR001 at: VALID Tuple: 1 MATCH_L_TO_R : 1 - The mapping must have a default value
+16-09-2014 09:45:14 - ERROR ERR001 at: VALID Tuple: 1 MATCH_L_TO_R : 1 - The mapping must have a default value
+16-09-2014 09:45:41 - INFO at: VALID Tuple: 1 MATCH_L_TO_R : 1 - The mapping must have a default value
+16-09-2014 09:46:52 - INFO at: VALID Tuple: 1 MATCH_L_TO_R : 1 - The mapping must have a default value
+16-09-2014 09:46:52 - WARNING ERR001 at: VALID Tuple: 1 MATCH_L_TO_R : 1 - The mapping must have a default value
+16-09-2014 09:46:52 - ERROR ERR001 at: VALID Tuple: 1 MATCH_L_TO_R : 1 - The mapping must have a default value
+16-09-2014 09:47:18 - WARNING ERR001 at: VALID Tuple: 1 MATCH_L_TO_R : 1 - The mapping must have a default value
+16-09-2014 09:47:52 - INFO at: VALID Tuple: 1 MATCH_L_TO_R : 1 - The mapping must have a default value
+16-09-2014 09:47:52 - WARNING ERR001 at: VALID Tuple: 1 MATCH_L_TO_R : 1 - The mapping must have a default value
+16-09-2014 09:47:52 - ERROR ERR001 at: VALID Tuple: 1 MATCH_L_TO_R : 1 - The mapping must have a default value
+16-09-2014 09:48:07 - ERROR ERR001 at: VALID Tuple: 1 MATCH_L_TO_R : 1 - The mapping must have a default value
+16-09-2014 09:48:28 - INFO at: VALID Tuple: 1 MATCH_L_TO_R : 1 - The mapping must have a default value
+16-09-2014 09:48:28 - WARNING ERR001 at: VALID Tuple: 1 MATCH_L_TO_R : 1 - The mapping must have a default value
+16-09-2014 09:48:28 - ERROR ERR001 at: VALID Tuple: 1 MATCH_L_TO_R : 1 - The mapping must have a default value
+16-09-2014 09:48:40 - INFO at: VALID - started...
+16-09-2014 09:48:40 - INFO - .......................................................................
+16-09-2014 09:48:40 - INFO at: VALID - completed with success
+16-09-2014 09:48:40 - INFO - .......................................................................
+16-09-2014 09:48:40 - INFO - 14 tuples affected
+16-09-2014 09:48:40 - INFO - 60 matches affected
+16-09-2014 09:48:40 - INFO - 0 warning(s)
+16-09-2014 09:50:31 - INFO at: VALID - started...
+16-09-2014 09:50:31 - INFO - .......................................................................
+16-09-2014 09:50:31 - INFO at: VALID - completed with success
+16-09-2014 09:50:31 - INFO - .......................................................................
+16-09-2014 09:50:31 - INFO - 14 tuples affected
+16-09-2014 09:50:31 - INFO - 60 matches affected
+16-09-2014 09:50:31 - INFO - 0 warning(s)
+16-09-2014 09:50:31 - INFO at: VALID Tuple: 1 MATCH_L_TO_R : 1 - The mapping must have a default value
+16-09-2014 09:50:31 - WARNING ERR001 at: VALID Tuple: 1 MATCH_L_TO_R : 1 - The mapping must have a default value
+16-09-2014 09:50:31 - ERROR ERR001 at: VALID Tuple: 1 MATCH_L_TO_R : 1 - The mapping must have a default value
