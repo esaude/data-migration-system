@@ -52,7 +52,6 @@ public class TranslationManager {
 
 				read(eachTree, uuid);
 			}
-		 
 		}
 	}
 

@@ -7,6 +7,7 @@ public interface MatchConstants {
 	public static final String NO = "NO";
 	public static final String AI = "AI";
 	public static final String TOP = "TOP";
+	public static final String ALL = "ALL";
 	public static final String AI_SKIP_TRUE = "AI/SKIP/TRUE";
 	public static final String AI_SKIP_FALSE = "AI/SKIP/FALSE";
 	public static final String SKIP = "SKIP";

@@ -9,7 +9,9 @@
 package org.esaude.matchingschema;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -35,7 +37,7 @@ import org.esaude.dmt.helper.ValidationStatuses;
  *         &lt;element name="left" type="{http://esaude.org/matchingschema}matchSideType"/>
  *         &lt;element name="right" type="{http://esaude.org/matchingschema}matchSideType"/>
  *         &lt;element name="valueMatchId" type="{http://www.w3.org/2001/XMLSchema}anyType"/>
- *         &lt;element name="rightReference" type="{http://esaude.org/matchingschema}referenceType" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="references" type="{http://esaude.org/matchingschema}referenceType" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element name="hasValueMatch" type="{http://www.w3.org/2001/XMLSchema}anyType"/>
  *       &lt;/sequence>
  *       &lt;attribute name="id" use="required" type="{http://www.w3.org/2001/XMLSchema}integer" />
@@ -54,9 +56,9 @@ import org.esaude.dmt.helper.ValidationStatuses;
     "left",
     "right",
     "valueMatchId",
-    "rightReference"
+    "references"
 })
-public class MatchType {
+public class MatchType implements ReferencedPart {
 
 	@XmlElement(required = true)
 	private Integer tupleId;
@@ -68,7 +70,7 @@ public class MatchType {
     protected MatchSideType right;
     @XmlElement(defaultValue = "false")
     protected Object valueMatchId;
-    protected List<ReferenceType> rightReference;
+    protected Map<Integer, ReferenceType> references;
     @XmlAttribute(name = "id", required = true)
     @XmlElement(required = false)
     protected Object defaultValue;
@@ -175,8 +177,11 @@ public class MatchType {
      * 
      * 
      */
-    public List<ReferenceType> getRightReference() {
-        return this.rightReference;
+    public Map<Integer, ReferenceType> getReferences() {
+    	if(references == null) {
+    		references = new HashMap<Integer, ReferenceType>();
+    	}
+        return this.references;
     }
     
     /**
@@ -188,8 +193,8 @@ public class MatchType {
      * 
      * 
      */
-    public void getRightReference(List<ReferenceType> rightReference) {
-        this.rightReference =  rightReference;
+    public void setReferences(Map<Integer,ReferenceType> references) {
+        this.references =  references;
     }
 
     /**

@@ -41,12 +41,14 @@ public class Sheets {
 		public static final int VALUE_MATCH = 15;
 	}
 	
-	public static final class REFERENCES_L {
-		public static final String NAME = "REFERENCES_L"; 
-		public static final int INDEX = 2;
+	public static final class REFERENCES {
+		public static final String NAME_L = "REFERENCES_L"; 
+		public static final int INDEX_L = 2;
+		public static final String NAME_R = "REFERENCES_R"; 
+		public static final int INDEX_R = 3;
 		public static final int ROW_START = 1;
 		public static final int ID = 0;
-		public static final int TUPLE_ID = 1;
+		public static final int TUPLE_MATCH_ID = 1;
 		public static final int REFERENCE_TABLE = 2;
 		public static final int REFERENCE_COLUMN = 3;
 		public static final int REFERENCED_TABLE = 4;
@@ -56,23 +58,6 @@ public class Sheets {
 		public static final int REFERENCED_VALUE = 8;
 		public static final int SEQUENCE = 9;
 		public static final int NAME_DESC = 10;	
-	}
-	
-	public static final class REFERENCES_R {
-		public static final String NAME = "REFERENCES_R"; 
-		public static final int INDEX = 3;
-		public static final int ROW_START = 1;
-		public static final int ID = 0;
-		public static final int MATCH_ID = 1;
-		public static final int REFERENCE_TABLE = 2;
-		public static final int REFERENCE_COLUMN = 3;
-		public static final int REFERENCED_TABLE = 4;
-		public static final int REFERENCED_COLUMN = 5;
-		public static final int DATATYPE = 6;
-		public static final int SIZE = 7;
-		public static final int REFERENCED_VALUE = 8;
-		public static final int SEQUENCE = 9;
-		public static final int NAME_DESC = 10;
 	}
 	
 	public static final class VALUE_MATCH {

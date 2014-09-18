@@ -73,7 +73,7 @@ public abstract class Event {
 
 	public String getTupleId() {
 		if(tupleId != 0) {
-			return " Tuple: " + tupleId;
+			return " Tuple/Match: " + tupleId;
 		}
 		return "";
 	}

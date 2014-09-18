@@ -34,7 +34,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="table" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="desc" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="matches" type="{http://esaude.org/matchingschema}matchType" maxOccurs="unbounded"/>
- *         &lt;element name="leftReference" type="{http://esaude.org/matchingschema}referenceType" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="references" type="{http://esaude.org/matchingschema}referenceType" maxOccurs="unbounded" minOccurs="0"/>
  *       &lt;/sequence>
  *       &lt;attribute name="id" use="required" type="{http://www.w3.org/2001/XMLSchema}integer" />
  *     &lt;/restriction>
@@ -51,9 +51,9 @@ import javax.xml.bind.annotation.XmlType;
     "table",
     "desc",
     "matches",
-    "leftReference"
+    "references"
 })
-public class TupleType {
+public class TupleType implements ReferencedPart {
 
     @XmlElement(required = true)
     protected String terminology;
@@ -63,7 +63,7 @@ public class TupleType {
     protected String desc;
     @XmlElement(required = true)
     protected List<MatchType> matches;
-    protected Map<Integer, ReferenceType> leftReference;
+    protected Map<Integer, ReferenceType> references;
     @XmlAttribute(name = "id", required = true)
     protected Integer id;
 
@@ -177,11 +177,11 @@ public class TupleType {
      * 
      * 
      */
-    public Map<Integer, ReferenceType> getLeftReference() {
-    	if(leftReference == null) {
-    		leftReference = new HashMap<Integer, ReferenceType>();
+    public Map<Integer, ReferenceType> getReferences() {
+    	if(references == null) {
+    		references = new HashMap<Integer, ReferenceType>();
     	}
-        return this.leftReference;
+        return this.references;
     }
     
     /**
@@ -193,8 +193,8 @@ public class TupleType {
      * 
      * 
      */
-    public void setLeftReference(Map<Integer, ReferenceType> leftReference) {
-        this.leftReference = leftReference;
+    public void setReferences(Map<Integer, ReferenceType> references) {
+        this.references = references;
     }
 
     /**

@@ -110,7 +110,7 @@ public class ReferenceBuilder {
 		return references;
 	}
 	
-	public ReferenceType processSingle() {
+	public ReferenceType getReference() {
 		return referenceType;
 	}
 	
