@@ -70,7 +70,7 @@ public class MatchType implements ReferencedPart {
     protected MatchSideType right;
     @XmlElement(defaultValue = "false")
     protected Object valueMatchId;
-    protected Map<Integer, ReferenceType> references;
+    protected Map<Integer, ReferenceType> references;//R-References
     @XmlAttribute(name = "id", required = true)
     @XmlElement(required = false)
     protected Object defaultValue;

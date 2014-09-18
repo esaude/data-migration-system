@@ -63,7 +63,7 @@ public class TupleType implements ReferencedPart {
     protected String desc;
     @XmlElement(required = true)
     protected List<MatchType> matches;
-    protected Map<Integer, ReferenceType> references;
+    protected Map<Integer, ReferenceType> references;//L-References
     @XmlAttribute(name = "id", required = true)
     protected Integer id;
 

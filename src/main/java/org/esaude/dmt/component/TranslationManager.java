@@ -1,12 +1,15 @@
 package org.esaude.dmt.component;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.ibatis.jdbc.SQL;
 import org.esaude.dmt.helper.MatchConstants;
 import org.esaude.dmt.helper.SystemException;
 import org.esaude.dmt.helper.ValidationStatuses;
 import org.esaude.dmt.util.TupleTree;
 import org.esaude.matchingschema.MatchType;
+import org.esaude.matchingschema.ReferenceType;
 import org.esaude.matchingschema.TupleType;
 
 /**
@@ -39,9 +42,12 @@ public class TranslationManager {
 	private void read(final TupleTree t, final String parentUUID) {
 		// how many tuples?
 		// select from source using the reference of the target side PK´s r_reference
-		List<String> currs = null;// the result of the select above. How many
+		String selectQuery = this.selectAllToInsert(t.getHead());
+		System.out.println(selectQuery);
+		
+		List<String> all = new ArrayList<String>();// the result of the select above. How many
 									// inserts to do?
-		for (String curr : currs) {
+		for (String curr : all) {
 			// Get the primary key of parent reference. Select from target DB,
 			// using the UUID if not null
 			// Build insert statement based on translation logic
@@ -118,4 +124,21 @@ public class TranslationManager {
 			 }
 		}
 	}
+	
+	private String selectAllToInsert(final TupleType tuple) {
+		  return new SQL() {{
+			  MatchType pkMatch = null;
+			for(MatchType match : tuple.getMatches()) {
+				if(match.isPk().equals(MatchConstants.YES)) {
+					pkMatch = match;
+					break;
+				}
+			}
+			for(ReferenceType reference : pkMatch.getReferences().values()) {
+				SELECT(reference.getReferenced().getColumn());
+				FROM(reference.getReferenced().getTable());
+				break;
+			}
+		  }}.toString();
+		}
 }
