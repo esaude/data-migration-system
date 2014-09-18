@@ -15,16 +15,16 @@
 	xmlns:xsd="http://www.w3.org/2001/XMLSchema"
 	targetNamespace="http://schema.config.dmt.esaude.org">
 	
-	<xsd:element name="config" type="configType" />
-	
-	<xsd:complexType name="configType">
-		<xsd:sequence>
-			<xsd:element name="matching_input" type="fileType" minOccurs="1" />
-			<xsd:element name="targetDs" type="datasourceType" minOccurs="1" />
-			<xsd:element name="sourceDs" type="datasourceType" minOccurs="1" maxOccurs="unbounded" />
-			<xsd:element name="log_output" type="fileType" minOccurs="1" />
-		</xsd:sequence>
-	</xsd:complexType>
+	<xsd:element name="config">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="matching_input" type="fileType" minOccurs="1" />
+				<xsd:element name="targetDs" type="datasourceType" minOccurs="1" />
+				<xsd:element name="sourceDs" type="datasourceType" minOccurs="1" />
+				<xsd:element name="log_output" type="fileType" />
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
 	
 	<xsd:complexType name="fileType">
 		<xsd:sequence>

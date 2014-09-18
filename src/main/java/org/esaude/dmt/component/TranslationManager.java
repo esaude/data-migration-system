@@ -126,19 +126,21 @@ public class TranslationManager {
 	}
 	
 	private String selectAllToInsert(final TupleType tuple) {
-		  return new SQL() {{
-			  MatchType pkMatch = null;
-			for(MatchType match : tuple.getMatches()) {
-				if(match.isPk().equals(MatchConstants.YES)) {
-					pkMatch = match;
+		return new SQL() {
+			{
+				MatchType pkMatch = null;
+				for (MatchType match : tuple.getMatches()) {
+					if (match.isPk().equals(MatchConstants.YES)) {
+						pkMatch = match;
+						break;
+					}
+				}
+				for (ReferenceType reference : pkMatch.getReferences().values()) {
+					SELECT(reference.getReferenced().getColumn());
+					FROM(reference.getReferenced().getTable());
 					break;
 				}
 			}
-			for(ReferenceType reference : pkMatch.getReferences().values()) {
-				SELECT(reference.getReferenced().getColumn());
-				FROM(reference.getReferenced().getTable());
-				break;
-			}
-		  }}.toString();
-		}
+		}.toString();
+	}
 }
