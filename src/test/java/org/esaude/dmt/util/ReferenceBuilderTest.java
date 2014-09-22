@@ -105,8 +105,7 @@ public class ReferenceBuilderTest {
 		assertEquals("right_column", referenceType.getReferenced().getColumn());
 		
 		assertNotNull(referenceType.getReferencedValue());
-		assertEquals("TOP", referenceType.getReferencedValue().getConstantValue());
-		assertNull(referenceType.getReferencedValue().getFkValue());
+		assertEquals("TOP", referenceType.getReferencedValue().toString());
 	}
 	
 	@Test
@@ -144,8 +143,7 @@ public class ReferenceBuilderTest {
 		assertEquals("right_column", referenceType.getReferenced().getColumn());
 		
 		assertNotNull(referenceType.getReferencedValue());
-		assertEquals("TOP", referenceType.getReferencedValue().getConstantValue());
-		assertNull(referenceType.getReferencedValue().getFkValue());
+		assertEquals("TOP", referenceType.getReferencedValue().toString());
 		
 		referenceType = references.get(2);
 		
@@ -164,8 +162,7 @@ public class ReferenceBuilderTest {
 		assertEquals("right_column", referenceType.getReferenced().getColumn());
 		
 		assertNotNull(referenceType.getReferencedValue());
-		assertEquals(Long.valueOf(200), referenceType.getReferencedValue().getFkValue());
-		assertNull(referenceType.getReferencedValue().getConstantValue());
+		assertEquals("200", referenceType.getReferencedValue().toString());
 	}
 	
 	@Test(expected = SystemException.class)
@@ -190,14 +187,4 @@ public class ReferenceBuilderTest {
 				.createReferenceSide("LEFT_TABLE", "left_column",
 				"invalid").processMap();
 	}
-	
-	@Test(expected = SystemException.class)
-	public void testCreateReferenceValueWithInvalidValueType()
-			throws SystemException {
-		referenceBuilder.createReference(1,
-				"INT", 10, "reference without side and value one", 0)
-				.createReferencedValue(10)
-				.processMap();
-	}
-
 }

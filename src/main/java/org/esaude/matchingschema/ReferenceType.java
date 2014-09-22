@@ -37,7 +37,7 @@ import org.esaude.dmt.helper.ValidationStatuses;
  *         &lt;element name="datatype" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="size" type="{http://www.w3.org/2001/XMLSchema}integer"/>
  *         &lt;element name="predecessor" type="{http://www.w3.org/2001/XMLSchema}integer"/>
- *         &lt;element name="referencedValue" type="{http://esaude.org/matchingschema}referencedValueType"/>
+ *         &lt;element name="referencedValue" type="{http://www.w3.org/2001/XMLSchema}anyType"/>
  *       &lt;/sequence>
  *       &lt;attribute name="id" use="required" type="{http://www.w3.org/2001/XMLSchema}integer" />
  *     &lt;/restriction>
@@ -73,7 +73,7 @@ public class ReferenceType {
     @XmlElement(required = true)
     protected Integer predecessor;
     @XmlElement(required = true)
-    protected ReferencedValueType referencedValue;
+    protected Object referencedValue;
     @XmlAttribute(name = "id", required = true)
     protected Integer id;
     private List<ValidationStatuses> validationStatuses;
@@ -211,10 +211,10 @@ public class ReferenceType {
      * 
      * @return
      *     possible object is
-     *     {@link ReferencedValueType }
+     *     {@link Object }
      *     
      */
-    public ReferencedValueType getReferencedValue() {
+    public Object getReferencedValue() {
         return referencedValue;
     }
 
@@ -223,10 +223,10 @@ public class ReferenceType {
      * 
      * @param value
      *     allowed object is
-     *     {@link ReferencedValueType }
+     *     {@link Object }
      *     
      */
-    public void setReferencedValue(ReferencedValueType value) {
+    public void setReferencedValue(Object value) {
         this.referencedValue = value;
     }
     

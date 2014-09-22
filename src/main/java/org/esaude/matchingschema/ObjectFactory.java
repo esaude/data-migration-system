@@ -50,14 +50,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link ReferencedValueType }
-     * 
-     */
-    public ReferencedValueType createReferencedValueType() {
-        return new ReferencedValueType();
-    }
-
-    /**
      * Create an instance of {@link ReferenceType }
      * 
      */

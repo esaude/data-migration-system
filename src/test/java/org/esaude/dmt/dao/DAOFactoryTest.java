@@ -2,8 +2,8 @@ package org.esaude.dmt.dao;
 
 import static org.junit.Assert.*;
 
+import org.esaude.dmt.helper.DAOTypes;
 import org.esaude.dmt.helper.SystemException;
-import org.esaude.dmt.util.DAOTypes;
 import org.junit.Before;
 import org.junit.Test;
 

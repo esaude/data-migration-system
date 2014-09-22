@@ -4,9 +4,9 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 
 import org.esaude.dmt.config.schema.DatasourceType;
+import org.esaude.dmt.helper.DAOTypes;
 import org.esaude.dmt.helper.SystemException;
 import org.esaude.dmt.util.ConfigReader;
-import org.esaude.dmt.util.DAOTypes;
 
 /**
  * This class is a factory that generates instances of {@link DatabaseUtil }

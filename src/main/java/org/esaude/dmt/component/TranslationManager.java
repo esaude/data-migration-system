@@ -2,6 +2,7 @@ package org.esaude.dmt.component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import org.apache.ibatis.jdbc.SQL;
 import org.esaude.dmt.helper.MatchConstants;
@@ -34,31 +35,64 @@ public class TranslationManager {
 	}
 
 	public boolean execute() throws SystemException {
-		read(tree, null);
+		read(tree, null, null);
 
 		return true;
 	}
 
-	private void read(final TupleTree t, final String parentUUID) {
+	private void read(final TupleTree t, final String parentUUID,
+			final String parentCurr) {
 		// how many tuples?
-		// select from source using the reference of the target side PK´s r_reference
-		String selectQuery = this.selectAllToInsert(t.getHead());
-		System.out.println(selectQuery);
-		
-		List<String> all = new ArrayList<String>();// the result of the select above. How many
-									// inserts to do?
+		// select from source using the reference of the target side PK´s
+		// r_reference
+		String selectQuery = this.selectCurrs(t.getHead(), parentCurr);
+		//System.out.println(selectQuery);
+		System.out
+				.println("---------------------------------------------------------");
+
+		List<String> all = new ArrayList<String>();// the result of the select
+													// above. How many
+		// inserts to do?
+		all.add("UEOQEU11/02/2006");// TODO: Must be removed
 		for (String curr : all) {
 			// Get the primary key of parent reference. Select from target DB,
-			// using the UUID if not null
+			if(parentUUID != null) {
+				// the select should be constructed based on L-References of one
+				// of the PKs match of the tuple
+				MatchType pkMatch = null;
+				// find one of the PK match
+				for (MatchType match : t.getParent().getHead().getMatches()) {
+					if (match.isPk().equals(MatchConstants.YES)) {
+						pkMatch = match;
+						break;
+					}
+				}
+				String query = selectParentId(t.getParent().getHead().getTable(), pkMatch.getLeft().getColumn()
+						, parentUUID);
+				
+				System.out.println(query);
+			}
+			
+			// using q UUID if not null
 			// Build insert statement based on translation logic
 			// keep the UUID of current insert
-			String uuid = null;
+			
+			String uuid = UUID.randomUUID().toString();
 			// queue insert statement
 			for (TupleTree eachTree : t.getSubTrees()) {
 
-				read(eachTree, uuid);
+				read(eachTree, uuid, curr);
 			}
 		}
+	}
+
+	private String selectParentId(final String table, final String column, final String parentUUID) {
+		return new SQL() {{
+		    SELECT(table + "." + column);
+		    FROM(table);
+		    WHERE(table + ".uuid = " + parentUUID);
+		    
+		  }}.toString();
 	}
 
 	/**
@@ -105,40 +139,74 @@ public class TranslationManager {
 					&& retrivedFromSelect == null) {
 				// TODO: use default value
 			}
-			// 5.	If default value is SKIP, the tuple must be skipped.
-			 if (match.getDefaultValue()==null){
-			     //TODO: Tuple must be skipped
-				 //match.setTupleId(null);
-			 }
-			
-			 // 6.	If left side size is smaller than right side size, 
-			 //should transform the data selected in the right side, if necessary
-			 if (match.getValidationStatuses().contains(
-					 ValidationStatuses.LEFT_TO_RIGHT_SIZE_INCOMPATIBILITY)){
-				     //TODO: Call the Data Size Transform algorithm 
-			 }
-			 
-			 // 7.	If there is a value match, it must insert the value that the value match points to
-			 if (match.getRight()!=null){
-				 //TODO: Call Insert algorithm.
-			 }
+			// 5. If default value is SKIP, the tuple must be skipped.
+			if (match.getDefaultValue() == null) {
+				// TODO: Tuple must be skipped
+				// match.setTupleId(null);
+			}
+
+			// 6. If left side size is smaller than right side size,
+			// should transform the data selected in the right side, if
+			// necessary
+			if (match.getValidationStatuses().contains(
+					ValidationStatuses.LEFT_TO_RIGHT_SIZE_INCOMPATIBILITY)) {
+				// TODO: Call the Data Size Transform algorithm
+			}
+
+			// 7. If there is a value match, it must insert the value that the
+			// value match points to
+			if (match.getRight() != null) {
+				// TODO: Call Insert algorithm.
+			}
 		}
 	}
-	
-	private String selectAllToInsert(final TupleType tuple) {
+
+	/**
+	 * This method generates and returns and SQL query that should be executed
+	 * in the source database to indicate the number of tuples that should be
+	 * inserted into the target database
+	 * 
+	 * @param tuple
+	 * @return
+	 */
+	private String selectCurrs(final TupleType tuple, final String curr) {
 		return new SQL() {
 			{
+				// the select should be constructed based on L-References of one
+				// of the PKs match of the tuple
 				MatchType pkMatch = null;
+				// find one of the PK match
 				for (MatchType match : tuple.getMatches()) {
 					if (match.isPk().equals(MatchConstants.YES)) {
 						pkMatch = match;
 						break;
 					}
 				}
+				// construct the select query using the L-References of the PK
+				// match of the tuple
 				for (ReferenceType reference : pkMatch.getReferences().values()) {
-					SELECT(reference.getReferenced().getColumn());
-					FROM(reference.getReferenced().getTable());
-					break;
+
+					String referencedTable = reference.getReferenced().getTable();
+					String referencedColumn = reference.getReferenced().getColumn();
+					String referencedValue = reference.getReferencedValue().toString();
+					// check whether the reference is direct or indirect
+					if (reference.getPredecessor().equals(Integer.valueOf(0))) {
+						// the reference should be used in the result set
+						SELECT(referencedTable + "." + referencedColumn);
+						FROM(referencedTable);
+						if (!referencedValue.equals(MatchConstants.ALL)) {
+							WHERE(referencedTable + "." + referencedColumn + " = " + curr);
+						}
+					} else {
+						String referenceeTable = reference.getReferencee().getTable();
+						String referenceeColumn = reference.getReferencee().getColumn();
+						INNER_JOIN(referencedTable);
+						WHERE(referenceeTable + "." + referenceeColumn + " = " + referencedTable + "." + referencedColumn);
+						// in case the referenced value is not EQUALS
+						if (!referencedValue.equals(MatchConstants.EQUALS)) {
+							WHERE(referenceeTable + "." + referenceeColumn + " = " + referencedValue);
+						}
+					}
 				}
 			}
 		}.toString();

@@ -6,7 +6,6 @@ import java.util.Map;
 import org.esaude.dmt.helper.SystemException;
 import org.esaude.matchingschema.ReferenceSideType;
 import org.esaude.matchingschema.ReferenceType;
-import org.esaude.matchingschema.ReferencedValueType;
 
 /**
  * A builder that creates the {@link ReferenceType } instances
@@ -92,17 +91,7 @@ public class ReferenceBuilder {
 		if(referenceType == null) {
 			throw new SystemException("Cannot create ReferenceValueType without create ReferenceType first");
 		}
-		ReferencedValueType referenceValue = new ReferencedValueType();
-		if(value instanceof String) {
-			referenceValue.setConstantValue((String) value);
-		}
-		else if(value instanceof Long) {
-			referenceValue.setFkValue((Long) value);
-		}  else {
-			throw new SystemException("Invalid referenced value parameter value");
-		}
-		referenceType.setReferencedValue(referenceValue);
-		
+		referenceType.setReferencedValue(value);
 		return this;
 	}
 	

@@ -1,4 +1,4 @@
-package org.esaude.dmt.util;
+package org.esaude.dmt.helper;
 
 /**
  * This enum indicates whether the DAO belongs to a source or target database

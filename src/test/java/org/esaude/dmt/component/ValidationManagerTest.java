@@ -64,8 +64,7 @@ public class ValidationManagerTest {
 		assertEquals("nid", reference1OfMatch1.getReferenced().getColumn());
 		assertEquals("TEXT", reference1OfMatch1.getDatatype());
 		assertEquals(Integer.valueOf(50), reference1OfMatch1.getSize());
-		assertEquals(MatchConstants.ALL, reference1OfMatch1.getReferencedValue().getConstantValue());
-		assertNull(reference1OfMatch1.getReferencedValue().getFkValue());
+		assertEquals(MatchConstants.ALL, reference1OfMatch1.getReferencedValue().toString());
 		
 		
 		assertNotNull(tree.getHead().getReferences());
@@ -114,8 +113,7 @@ public class ValidationManagerTest {
 		assertEquals("patient_program_id", reference14id20.getReferencee().getColumn());
 		assertEquals("PATIENT_PROGRAM", reference14id20.getReferenced().getTable());
 		assertEquals("patient_program_id", reference14id20.getReferenced().getColumn());
-		assertEquals(MatchConstants.TOP, reference14id20.getReferencedValue().getConstantValue());
-		assertNull(reference14id20.getReferencedValue().getFkValue());
+		assertEquals(MatchConstants.TOP, reference14id20.getReferencedValue().toString());
 		assertEquals(MatchConstants.INT, reference14id20.getDatatype());
 		assertEquals(Integer.valueOf(11), reference14id20.getSize());
 		
