@@ -21,9 +21,9 @@ public class App
     {
     	ValidationManager vm = new ValidationManager();
     	vm.execute();
-//    	
-//    	TranslationManager tm = new TranslationManager(vm.getTree());
-//    	tm.execute();
+    	
+    	TranslationManager tm = new TranslationManager(vm.getTree());
+    	tm.execute();
     }
 
 

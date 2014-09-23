@@ -57,18 +57,16 @@ public class TranslationManager {
 		for (String curr : all) {
 			// Get the primary key of parent reference. Select from target DB,
 			if(parentUUID != null) {
-				// find the PK match of parent tuple
+				// find the PK match of parent tuple using q UUID if not null
 				MatchType pkMatch = findPkMatch(t.getParent().getHead());
 				String query = selectParentId(t.getParent().getHead().getTable(), pkMatch.getLeft().getColumn(), parentUUID);
 				
-				System.out.println(query);
+				//System.out.println(query);
 			}
-			
-			// using q UUID if not null
-			// Build insert statement based on translation logic
 			// keep the UUID of current insert
-			
 			String uuid = UUID.randomUUID().toString();
+			// Build insert statement based on translation logic
+			insertMatch(t.getHead(), uuid, curr);
 			// queue insert statement
 			for (TupleTree eachTree : t.getSubTrees()) {
 
@@ -77,6 +75,13 @@ public class TranslationManager {
 		}
 	}
 
+	/**
+	 * This method builds and returns a query to retrieve the PK value of a parent tuple
+	 * @param table
+	 * @param column
+	 * @param parentUUID
+	 * @return
+	 */
 	private String selectParentId(final String table, final String column, final String parentUUID) {
 		return new SQL() {{
 		    SELECT(table + "." + column);
@@ -87,16 +92,12 @@ public class TranslationManager {
 	}
 
 	/**
-	 * This method reads the tuple tree recursively
 	 * 
 	 * @param tuple
-	 * @param parentUddi
-	 *            the UDDI of the parent tuple already inserted. Used to access
-	 *            the FK value
+	 * @param uuid
 	 * @param curr
-	 *            the value used to select the HEAD tuple
 	 */
-	private void read(TupleType tuple, String parentUddi, Object curr) {
+	private void insertMatch(TupleType tuple, String uuid, String curr) {
 		if (tuple == null)
 			return;
 
@@ -110,45 +111,47 @@ public class TranslationManager {
 			if (match.getRight() == null) {
 				// TODO: use default value
 			} else {
-				// TODO: generate select statement
+				// generate select statement
+				selectQuery = selectMatch(match, curr);
+				System.out.println(selectQuery);
 				// TODO: execute select statement
 			}
-			// 3. If there is no compatibility left to right but right to left,
-			// it should insert the value selected in the right transformed if
-			// necessary.
-			if (match.getValidationStatuses().contains(
-					ValidationStatuses.RIGHT_TO_LEFT_DATATYPE_COMPATIBILITY)) {
-				// TODO: call data transformation algorithm
-			}
-			// 4. If left side is required but right side is not, it must insert
-			// default value
-			// in case the right side select doesn’t find the value
-			if (match.getLeft().isIsRequired().equals(MatchConstants.YES)
-					&& match.getRight() != null
-					&& match.getRight().isIsRequired()
-							.equals(MatchConstants.NO)
-					&& retrivedFromSelect == null) {
-				// TODO: use default value
-			}
-			// 5. If default value is SKIP, the tuple must be skipped.
-			if (match.getDefaultValue() == null) {
-				// TODO: Tuple must be skipped
-				// match.setTupleId(null);
-			}
-
-			// 6. If left side size is smaller than right side size,
-			// should transform the data selected in the right side, if
-			// necessary
-			if (match.getValidationStatuses().contains(
-					ValidationStatuses.LEFT_TO_RIGHT_SIZE_INCOMPATIBILITY)) {
-				// TODO: Call the Data Size Transform algorithm
-			}
-
-			// 7. If there is a value match, it must insert the value that the
-			// value match points to
-			if (match.getRight() != null) {
-				// TODO: Call Insert algorithm.
-			}
+//			// 3. If there is no compatibility left to right but right to left,
+//			// it should insert the value selected in the right transformed if
+//			// necessary.
+//			if (match.getValidationStatuses().contains(
+//					ValidationStatuses.RIGHT_TO_LEFT_DATATYPE_COMPATIBILITY)) {
+//				// TODO: call data transformation algorithm
+//			}
+//			// 4. If left side is required but right side is not, it must insert
+//			// default value
+//			// in case the right side select doesn’t find the value
+//			if (match.getLeft().isIsRequired().equals(MatchConstants.YES)
+//					&& match.getRight() != null
+//					&& match.getRight().isIsRequired()
+//							.equals(MatchConstants.NO)
+//					&& retrivedFromSelect == null) {
+//				// TODO: use default value
+//			}
+//			// 5. If default value is SKIP, the tuple must be skipped.
+//			if (match.getDefaultValue() == null) {
+//				// TODO: Tuple must be skipped
+//				// match.setTupleId(null);
+//			}
+//
+//			// 6. If left side size is smaller than right side size,
+//			// should transform the data selected in the right side, if
+//			// necessary
+//			if (match.getValidationStatuses().contains(
+//					ValidationStatuses.LEFT_TO_RIGHT_SIZE_INCOMPATIBILITY)) {
+//				// TODO: Call the Data Size Transform algorithm
+//			}
+//
+//			// 7. If there is a value match, it must insert the value that the
+//			// value match points to
+//			if (match.getRight() != null) {
+//				// TODO: Call Insert algorithm.
+//			}
 		}
 	}
 
@@ -175,13 +178,17 @@ public class TranslationManager {
 					String referencedTable = reference.getReferenced().getTable();
 					String referencedColumn = reference.getReferenced().getColumn();
 					String referencedValue = reference.getReferencedValue().toString();
+					//set the right referenced value
+					if(referencedValue.equals(MatchConstants.CURR)) {
+						referencedValue = curr;
+					}
 					// check whether the reference is direct or indirect
 					if (reference.getPredecessor().equals(Integer.valueOf(0)) && isFirstDirectReference) {
 						// the reference should be used in the result set
 						SELECT(referencedTable + "." + referencedColumn);
 						FROM(referencedTable);
 						if (!referencedValue.equals(MatchConstants.ALL)) {
-							WHERE(referencedTable + "." + referencedColumn + " = " + curr);
+							WHERE(referencedTable + "." + referencedColumn + " = " + referencedValue);
 						}
 						isFirstDirectReference = false;
 					} else {
@@ -194,6 +201,52 @@ public class TranslationManager {
 							WHERE(referenceeTable + "." + referenceeColumn + " = " + referencedValue);
 						}
 					}
+				}
+			}
+		}.toString();
+	}
+	
+	/**
+	 * This method generates and returns and SQL query that should be executed
+	 * in the source database to retrieve the data that should be used as a value
+	 * for the match while building the insert query
+	 * @param match
+	 * @param curr
+	 * @return
+	 */
+	private String selectMatch(final MatchType match, final String curr) {
+		return new SQL() {
+			{
+				SELECT(match.getRight().getTable() + "." + match.getRight().getColumn());
+				FROM(match.getRight().getTable());
+				//is the first direct, in case there are many direct references
+				//build WHERE clause
+				for (ReferenceType reference : match.getReferences().values()) {
+					String referencedTable = reference.getReferenced().getTable();
+					String referencedColumn = reference.getReferenced().getColumn();
+					String referencedValue = reference.getReferencedValue().toString();
+					String referenceeTable = null;
+					String referenceeColumn = null;
+					//set the right referenced value
+					if(referencedValue.equals(MatchConstants.CURR)) {
+						referencedValue = curr;
+					}
+					// in case the referencee exist
+					if (reference.getReferencee() != null) {
+						referenceeTable = reference.getReferencee().getTable();
+						referenceeColumn = reference.getReferencee()
+								.getColumn();
+
+						INNER_JOIN(referencedTable);
+						WHERE(referenceeTable + "." + referenceeColumn + " = " + referencedTable + "." + referencedColumn);
+						// in case the referenced value is not EQUALS
+						if (!referencedValue.equals(MatchConstants.EQUALS)) {
+							WHERE(referencedTable + "." + referencedColumn + " = " + referencedValue);
+						}
+					} else {
+						WHERE(referencedTable + "." + referencedColumn + " = " + referencedValue);
+					}
+
 				}
 			}
 		}.toString();
