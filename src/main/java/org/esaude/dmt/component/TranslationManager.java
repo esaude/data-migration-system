@@ -57,18 +57,9 @@ public class TranslationManager {
 		for (String curr : all) {
 			// Get the primary key of parent reference. Select from target DB,
 			if(parentUUID != null) {
-				// the select should be constructed based on L-References of one
-				// of the PKs match of the tuple
-				MatchType pkMatch = null;
-				// find one of the PK match
-				for (MatchType match : t.getParent().getHead().getMatches()) {
-					if (match.isPk().equals(MatchConstants.YES)) {
-						pkMatch = match;
-						break;
-					}
-				}
-				String query = selectParentId(t.getParent().getHead().getTable(), pkMatch.getLeft().getColumn()
-						, parentUUID);
+				// find the PK match of parent tuple
+				MatchType pkMatch = findPkMatch(t.getParent().getHead());
+				String query = selectParentId(t.getParent().getHead().getTable(), pkMatch.getLeft().getColumn(), parentUUID);
 				
 				System.out.println(query);
 			}
@@ -174,14 +165,9 @@ public class TranslationManager {
 			{
 				// the select should be constructed based on L-References of one
 				// of the PKs match of the tuple
-				MatchType pkMatch = null;
-				// find one of the PK match
-				for (MatchType match : tuple.getMatches()) {
-					if (match.isPk().equals(MatchConstants.YES)) {
-						pkMatch = match;
-						break;
-					}
-				}
+				MatchType pkMatch = findPkMatch(tuple);
+				boolean isFirstDirectReference = true;//used to flag whether or not the reference 
+				//is the first direct, in case there are many direct references
 				// construct the select query using the L-References of the PK
 				// match of the tuple
 				for (ReferenceType reference : pkMatch.getReferences().values()) {
@@ -190,13 +176,14 @@ public class TranslationManager {
 					String referencedColumn = reference.getReferenced().getColumn();
 					String referencedValue = reference.getReferencedValue().toString();
 					// check whether the reference is direct or indirect
-					if (reference.getPredecessor().equals(Integer.valueOf(0))) {
+					if (reference.getPredecessor().equals(Integer.valueOf(0)) && isFirstDirectReference) {
 						// the reference should be used in the result set
 						SELECT(referencedTable + "." + referencedColumn);
 						FROM(referencedTable);
 						if (!referencedValue.equals(MatchConstants.ALL)) {
 							WHERE(referencedTable + "." + referencedColumn + " = " + curr);
 						}
+						isFirstDirectReference = false;
 					} else {
 						String referenceeTable = reference.getReferencee().getTable();
 						String referenceeColumn = reference.getReferencee().getColumn();
@@ -211,4 +198,22 @@ public class TranslationManager {
 			}
 		}.toString();
 	}
+	
+	/**
+	 * This method finds and returns the PK match of the tuple
+	 * @param tuple
+	 * @return
+	 */
+	private MatchType findPkMatch(TupleType tuple) {
+		MatchType pkMatch = null;
+		// find one of the PK match
+		for (MatchType match : tuple.getMatches()) {
+			if (match.isPk().equals(MatchConstants.YES)) {
+				pkMatch = match;
+				break;
+			}
+		}
+		return pkMatch;
+	}
+	
 }

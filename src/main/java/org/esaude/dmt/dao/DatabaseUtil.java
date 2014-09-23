@@ -30,7 +30,9 @@ public class DatabaseUtil {
     private ResultSet resultSet;
     
     /**
-     * First Constructor
+     * Parameterized constructor
+     * @param connetcion the database connection
+     * @throws Exception
      */
     public DatabaseUtil(Connection connetcion) throws Exception {
         try {
@@ -43,8 +45,8 @@ public class DatabaseUtil {
     }
 
     /**
-     *  This method is to execute a query in the database to persist data
-     * data in rows & columns
+     *  This method is to execute a query in the database to retrieve data
+     * in rows & columns
      * @param query
      * @return
      */
@@ -335,7 +337,7 @@ public class DatabaseUtil {
     }
 
     /**
-     * This method agregates the result set in a java { @link List }
+     * This method aggregates the result set in a java { @link List }
      */
     private List<List<Object>> constructRows() throws SQLException {
         metaData = resultSet.getMetaData(); //get the query result

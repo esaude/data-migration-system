@@ -328,3 +328,28 @@
 22-09-2014 12:43:04 - INFO - 14 tuples affected
 22-09-2014 12:43:04 - INFO - 60 matches affected
 22-09-2014 12:43:04 - INFO - 3 warning(s)
+22-09-2014 14:23:52 - INFO at: VALID - started...
+22-09-2014 14:23:52 - INFO - .......................................................................
+22-09-2014 14:23:53 - WARNING WAR001 at: VALID Tuple/Match: 1 MATCH_L_TO_R : 3 - The datatypes of the two sides are only compatible from right to left. The data will be tranformed if necessary
+22-09-2014 14:23:53 - WARNING WAR001 at: VALID Tuple/Match: 14 MATCH_L_TO_R : 58 - The datatypes of the two sides are only compatible from right to left. The data will be tranformed if necessary
+22-09-2014 14:23:53 - WARNING WAR001 at: VALID Tuple/Match: 14 MATCH_L_TO_R : 59 - The datatypes of the two sides are only compatible from right to left. The data will be tranformed if necessary
+22-09-2014 14:23:53 - INFO - .......................................................................
+22-09-2014 14:23:53 - INFO at: VALID - completed with warnings
+22-09-2014 14:23:53 - INFO - .......................................................................
+22-09-2014 14:23:53 - INFO - 14 tuples affected
+22-09-2014 14:23:53 - INFO - 60 matches affected
+22-09-2014 14:23:53 - INFO - 3 warning(s)
+22-09-2014 14:23:55 - ERROR ERR001 at: VALID Tuple/Match: 1 MATCH_L_TO_R : 1 - The mapping must have a default value
+22-09-2014 14:23:55 - WARNING ERR001 at: VALID Tuple/Match: 1 MATCH_L_TO_R : 1 - The mapping must have a default value
+22-09-2014 14:23:55 - INFO at: VALID Tuple/Match: 1 MATCH_L_TO_R : 1 - The mapping must have a default value
+22-09-2014 14:48:25 - INFO at: VALID - started...
+22-09-2014 14:48:25 - INFO - .......................................................................
+22-09-2014 14:48:25 - WARNING WAR001 at: VALID Tuple/Match: 1 MATCH_L_TO_R : 3 - The datatypes of the two sides are only compatible from right to left. The data will be tranformed if necessary
+22-09-2014 14:48:25 - WARNING WAR001 at: VALID Tuple/Match: 14 MATCH_L_TO_R : 58 - The datatypes of the two sides are only compatible from right to left. The data will be tranformed if necessary
+22-09-2014 14:48:25 - WARNING WAR001 at: VALID Tuple/Match: 14 MATCH_L_TO_R : 59 - The datatypes of the two sides are only compatible from right to left. The data will be tranformed if necessary
+22-09-2014 14:48:25 - INFO - .......................................................................
+22-09-2014 14:48:25 - INFO at: VALID - completed with warnings
+22-09-2014 14:48:25 - INFO - .......................................................................
+22-09-2014 14:48:25 - INFO - 14 tuples affected
+22-09-2014 14:48:25 - INFO - 60 matches affected
+22-09-2014 14:48:25 - INFO - 3 warning(s)
