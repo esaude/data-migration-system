@@ -16,349 +16,384 @@ import java.util.List;
 
 /**
  * This class is used to manipulate SQL-based databases using SQL native queries
+ * 
  * @author Valerio Joao
- * @since May 22, 2008
- * Modified on August 23, 2008
+ * @since May 22, 2008 Modified on August 23, 2008
  */
 public class DatabaseUtil {
 
-    private List<List<Object>> rows;
-    private String[] columnNames = null;
-    private ResultSetMetaData metaData;
-    private Connection connection;
-    private Statement statement;
-    private ResultSet resultSet;
-    
-    /**
-     * Parameterized constructor
-     * @param connetcion the database connection
-     * @throws Exception
-     */
-    public DatabaseUtil(Connection connetcion) throws Exception {
-        try {
-            if (connection != null) {
-                statement = connection.createStatement();
-            }
-        } catch (SQLException ex) {
-            System.err.println(ex);
-        }
-    }
+	private List<List<Object>> rows;
+	private String[] columnNames = null;
+	private ResultSetMetaData metaData;
+	private Connection connection;
+	private Statement statement;
+	private ResultSet resultSet;
 
-    /**
-     *  This method is to execute a query in the database to retrieve data
-     * in rows & columns
-     * @param query
-     * @return
-     */
-    public List<List<Object>> executeQuery(String query) {
-        //test if connection and statement were properly created
-        if (connection == null || statement == null) {
-            try {
-                throw new Exception("There is no database to execute the query.");
-            } catch (Exception ex) {
-            System.err.println(ex);
-        }
-        }
-        try {
-            resultSet = statement.executeQuery(query);//execute a given select query
-             return constructRows();
-        } catch (SQLException ex) {
-            System.err.println(ex);
-        }
-        return null;
-    }
+	/**
+	 * Parameterized constructor
+	 * 
+	 * @param connection
+	 *            the database connection
+	 * @throws Exception
+	 */
+	public DatabaseUtil(Connection connection) throws Exception {
+		this.connection = connection;
+		try {
+			if (connection != null) {
+				statement = connection.createStatement();
+			}
+		} catch (SQLException ex) {
+			System.err.println(ex);
+		}
+	}
 
-    /**
-     * This method close the connection
-     * @throws Exception
-     */
-    public void close() throws Exception {
-        //check if tools were created
-        if (resultSet != null) {
-            resultSet.close();
-        }
-        if (statement != null) {
-            statement.close();
-        }
-        connection.close();
-    }
+	/**
+	 * This method is to execute a query in the database to retrieve data in
+	 * rows & columns
+	 * 
+	 * @param query
+	 * @return
+	 */
+	public List<List<Object>> executeQuery(String query) {
+		// test if connection and statement were properly created
+		if (connection == null || statement == null) {
+			try {
+				throw new Exception(
+						"There is no database to execute the query.");
+			} catch (Exception ex) {
+				System.err.println(ex);
+			}
+		}
+		try {
+			resultSet = statement.executeQuery(query);// execute a given select
+														// query
+			return constructRows();
+		} catch (SQLException ex) {
+			System.err.println(ex);
+		}
+		return null;
+	}
 
-    /**
-     * This method returns the name of retrieved table columns in a certain position
-     * @param column
-     * @return
-     */
-    public String getColumnName(int column) {
-        if (columnNames[column] != null) {
-            return columnNames[column];
-        } else {
-            return "";
-        }
-    }
+	/**
+	 * This method close the connection
+	 * 
+	 * @throws Exception
+	 */
+	public void close() throws Exception {
+		// check if tools were created
+		if (resultSet != null) {
+			resultSet.close();
+		}
+		if (statement != null) {
+			statement.close();
+		}
+		connection.close();
+	}
 
-    /**
-     * This method map the database specific datatype into java
-     * language datatype
-     * @param column
-     * @return
-     */
-    public Class getColumnClass(int column) {
-        int type;
-        try {
-            type = metaData.getColumnType(column + 1);
-        } catch (SQLException e) {
-            return getColumnClass(column);
-        }
+	/**
+	 * This method returns the name of retrieved table columns in a certain
+	 * position
+	 * 
+	 * @param column
+	 * @return
+	 */
+	public String getColumnName(int column) {
+		if (columnNames[column] != null) {
+			return columnNames[column];
+		} else {
+			return "";
+		}
+	}
 
-        switch (type) {
-            case Types.CHAR:
-            case Types.VARCHAR:
-            case Types.LONGVARCHAR:
-                return String.class;
+	/**
+	 * This method map the database specific datatype into java language
+	 * datatype
+	 * 
+	 * @param column
+	 * @return
+	 */
+	public Class getColumnClass(int column) {
+		int type;
+		try {
+			type = metaData.getColumnType(column + 1);
+		} catch (SQLException e) {
+			return getColumnClass(column);
+		}
 
-            case Types.BIT:
-                return Boolean.class;
+		switch (type) {
+		case Types.CHAR:
+		case Types.VARCHAR:
+		case Types.LONGVARCHAR:
+			return String.class;
 
-            case Types.TINYINT:
-            case Types.SMALLINT:
-            case Types.INTEGER:
-                return Integer.class;
+		case Types.BIT:
+			return Boolean.class;
 
-            case Types.BIGINT:
-                return Long.class;
+		case Types.TINYINT:
+		case Types.SMALLINT:
+		case Types.INTEGER:
+			return Integer.class;
 
-            case Types.FLOAT:
-            case Types.DOUBLE:
-                return Double.class;
+		case Types.BIGINT:
+			return Long.class;
 
-            case Types.DATE:
-                return java.sql.Date.class;
+		case Types.FLOAT:
+		case Types.DOUBLE:
+			return Double.class;
 
-            default:
-                return Object.class;
-        }
-    }
+		case Types.DATE:
+			return java.sql.Date.class;
 
-    /**
-     * This method returns the total number of columns
-     * @return
-     */
-    public int getColumnCount() {
-        return columnNames.length;
-    }
+		default:
+			return Object.class;
+		}
+	}
 
-    /**
-     * This method returns the total number of rows
-     * @return
-     */
-    public int getRowCount() {
-        return rows.size();
-    }
+	/**
+	 * This method returns the total number of columns
+	 * 
+	 * @return
+	 */
+	public int getColumnCount() {
+		return columnNames.length;
+	}
 
-    /**
-     * This method returns a value in specified position
-     * @param aRow
-     * @param aColumn
-     * @return
-     */
-    public Object getValueAt(int aRow, int aColumn) {
-        List<Object> newRow = null;
+	/**
+	 * This method returns the total number of rows
+	 * 
+	 * @return
+	 */
+	public int getRowCount() {
+		return rows.size();
+	}
 
-        try {
-            newRow = rows.get(aRow);
-        } catch (ArrayIndexOutOfBoundsException ex) {
-            System.err.println(ex.getMessage());
-        }
-        return newRow.get(aColumn);
-    }
+	/**
+	 * This method returns a value in specified position
+	 * 
+	 * @param aRow
+	 * @param aColumn
+	 * @return
+	 */
+	public Object getValueAt(int aRow, int aColumn) {
+		List<Object> newRow = null;
 
-    /**
-     * This method returns all data retrieved from the select statement executed
-     * @return
-     */
-    public List<List<Object>> getRows() {
-        return rows;
-    }
+		try {
+			newRow = rows.get(aRow);
+		} catch (ArrayIndexOutOfBoundsException ex) {
+			System.err.println(ex.getMessage());
+		}
+		return newRow.get(aColumn);
+	}
 
-    /**
-     * This method maps java datatype into database specific datatype
-     * @param column
-     * @param value
-     * @return
-     */
-    public String dbRepresentation(int column, Object value) {
-        int type;
+	/**
+	 * This method returns all data retrieved from the select statement executed
+	 * 
+	 * @return
+	 */
+	public List<List<Object>> getRows() {
+		return rows;
+	}
 
-        if (value == null) {
-            return "null";
-        }
+	/**
+	 * This method maps java datatype into database specific datatype
+	 * 
+	 * @param column
+	 * @param value
+	 * @return
+	 */
+	public String dbRepresentation(int column, Object value) {
+		int type;
 
-        try {
-            type = metaData.getColumnType(column + 1);
-        } catch (SQLException e) {
-            return value.toString();
-        }
+		if (value == null) {
+			return "null";
+		}
 
-        switch (type) {
-            case Types.INTEGER:
-            case Types.DOUBLE:
-            case Types.FLOAT:
-                return value.toString();
-            case Types.BIT:
-                return ((Boolean) value).booleanValue() ? "1" : "0";
-            case Types.DATE:
-                return value.toString(); // This will need some conversion.
-            default:
-                return "\"" + value.toString() + "\"";
-        }
-    }
+		try {
+			type = metaData.getColumnType(column + 1);
+		} catch (SQLException e) {
+			return value.toString();
+		}
 
-    /**
-     * This method execute query and return the PKs
-     * of affected records
-     * @param query
-     * @return result
-     */
-    public List<List<Object>> executeUpdate(String query) {
-        int result = 0;//number of affected rows
-        try {
-            result = statement.executeUpdate(query, Statement.RETURN_GENERATED_KEYS);
-            if(result != 0) {
-                resultSet = statement.getGeneratedKeys();
-                return constructRows();
-            }
-        } catch (SQLException ex) {
-            System.err.println(ex);
-        }
-        return null;
-    }
+		switch (type) {
+		case Types.INTEGER:
+		case Types.DOUBLE:
+		case Types.FLOAT:
+			return value.toString();
+		case Types.BIT:
+			return ((Boolean) value).booleanValue() ? "1" : "0";
+		case Types.DATE:
+			return value.toString(); // This will need some conversion.
+		default:
+			return "\"" + value.toString() + "\"";
+		}
+	}
 
-    /**
-     * This method execute prepared statement that can affect multiple columns
-     * @param query
-     * @param parameters
-     * @throws java.sql.SQLException
-     */
-    public int executePreparedStatement(String query, List<Object> parameters) throws SQLException {
-        //declare the prepared statement
-        PreparedStatement ps = null;
-        try {
-            ps = connection.prepareStatement(query);//start the statement
-            Object parameter;//to hold parameter values
-            //traverse the parameters
-            for (int i = 0; i < parameters.size(); i++) {
-                parameter = parameters.get(i);//retrieve parameter from collection
-                //check parameter type
-                if (parameter instanceof String) {
-                    ps.setString(i + 1, (String) parameter);
-                } else if (parameter instanceof Integer) {
-                    ps.setInt(i + 1, (Integer) parameter);
-                } else if (parameter instanceof Date) {
-                    ps.setDate(i + 1, (Date) parameter);
-                } else if (parameter instanceof Boolean) {
-                    ps.setBoolean(i + 1, (Boolean) parameter);
-                } else if (parameter instanceof Long) {
-                    ps.setLong(i + 1, (Long) parameter);
-                } else if (parameter instanceof Double) {
-                    ps.setDouble(i + 1, (Double) parameter);
-                } else if (parameter instanceof Float) {
-                    ps.setFloat(i + 1, (Float) parameter);
-                } else if (parameter instanceof byte[]) {
-                    ps.setBytes(i + 1, (byte[]) parameter);
-                } else {
-                    ps.setObject(i + 1, parameter);
-                }
-            }
-            //execute the query
-            return ps.executeUpdate();
-        } catch (SQLException ex) {
-            System.err.println(ex);
-        } finally {
-            if (ps != null) {
-                ps.close();
-            }
-        }
-        return 0;
-    }
+	/**
+	 * This method execute query and return the PKs of affected records
+	 * 
+	 * @param query
+	 * @return result
+	 */
+	public List<List<Object>> executeUpdate(String query) {
+		int result = 0;// number of affected rows
+		try {
+			result = statement.executeUpdate(query,
+					Statement.RETURN_GENERATED_KEYS);
+			if (result != 0) {
+				resultSet = statement.getGeneratedKeys();
+				return constructRows();
+			}
+		} catch (SQLException ex) {
+			System.err.println(ex);
+		}
+		return null;
+	}
 
-    /**
-     * This method execute prepared statement to that can affect single column
-     * using id filtering
-     * @param query
-     * @param value
-     * @param target
-     * @return
-     * @throws java.sql.SQLException
-     */
-    public int executePreparedUpdate(String query, Object value, Object target) throws SQLException {
-        //declare the prepared statement
-        PreparedStatement ps = null;
-        try {
-            ps = connection.prepareStatement(query);//start the statement
-            //check parameter type
-            if (value instanceof String) {
-                ps.setString(1, (String) value);
-                ps.setLong(2, (Long) target);
-            } else if (value instanceof Integer) {
-                ps.setInt(1, (Integer) value);
-                ps.setLong(2, (Long) target);
-            } else if (value instanceof Date) {
-                ps.setDate(1, (Date) value);
-                ps.setLong(2, (Long) target);
-            } else if (value instanceof Boolean) {
-                ps.setBoolean(1, (Boolean) value);
-                ps.setLong(2, (Long) target);
-            } else if (value instanceof Long) {
-                ps.setLong(1, (Long) value);
-                ps.setLong(2, (Long) target);
-            } else if (value instanceof Double) {
-                ps.setDouble(1, (Double) value);
-                ps.setLong(2, (Long) target);
-            } else if (value instanceof Float) {
-                ps.setFloat(1, (Float) value);
-                ps.setLong(2, (Long) target);
-            } else if (value instanceof byte[]) {
-                ps.setBytes(1, (byte[]) value);
-                ps.setLong(2, (Long) target);
-            } else {
-                ps.setObject(1, value);
-                ps.setLong(2, (Long) target);
-            }
-            //execute the query
-            return ps.executeUpdate();
-        } catch (SQLException ex) {
-            System.err.println("prepared method: " + ex.getMessage());
-        } finally {
-            if (ps != null) {
-                ps.close();
-            }
-        }
-        return 0;
-    }
+	/**
+	 * This method execute prepared statement that can affect multiple columns
+	 * 
+	 * @param query
+	 * @param parameters
+	 * @throws java.sql.SQLException
+	 */
+	public int executePreparedStatement(String query, List<Object> parameters)
+			throws SQLException {
+		// declare the prepared statement
+		PreparedStatement ps = null;
+		try {
+			ps = connection.prepareStatement(query);// start the statement
+			Object parameter;// to hold parameter values
+			// traverse the parameters
+			for (int i = 0; i < parameters.size(); i++) {
+				parameter = parameters.get(i);// retrieve parameter from
+												// collection
+				// check parameter type
+				if (parameter instanceof String) {
+					ps.setString(i + 1, (String) parameter);
+				} else if (parameter instanceof Integer) {
+					ps.setInt(i + 1, (Integer) parameter);
+				} else if (parameter instanceof Date) {
+					ps.setDate(i + 1, (Date) parameter);
+				} else if (parameter instanceof Boolean) {
+					ps.setBoolean(i + 1, (Boolean) parameter);
+				} else if (parameter instanceof Long) {
+					ps.setLong(i + 1, (Long) parameter);
+				} else if (parameter instanceof Double) {
+					ps.setDouble(i + 1, (Double) parameter);
+				} else if (parameter instanceof Float) {
+					ps.setFloat(i + 1, (Float) parameter);
+				} else if (parameter instanceof byte[]) {
+					ps.setBytes(i + 1, (byte[]) parameter);
+				} else {
+					ps.setObject(i + 1, parameter);
+				}
+			}
+			// execute the query
+			return ps.executeUpdate();
+		} catch (SQLException ex) {
+			System.err.println(ex);
+		} finally {
+			if (ps != null) {
+				ps.close();
+			}
+		}
+		return 0;
+	}
 
-    /**
-     * This method aggregates the result set in a java { @link List }
-     */
-    private List<List<Object>> constructRows() throws SQLException {
-        metaData = resultSet.getMetaData(); //get the query result
-        //assign the number of columns retrieved
-        int numberOfColumns = metaData.getColumnCount();
-        //array to hold the name of retrieved columns
-        columnNames = new String[numberOfColumns];
-        // Get the column names and cache them.
-        for (int i = 0; i < numberOfColumns; i++) {
-            columnNames[i] = metaData.getColumnLabel(i + 1);
-        }
-        //store each row
-        rows = new ArrayList<List<Object>>();
-        while (resultSet.next()) {
-            List<Object> columns = new ArrayList<Object>();
-            //traverse data and dispose them in columns & rows
-            for (int column = 1; column <= getColumnCount(); column++) {
-                columns.add(resultSet.getObject(column));
-            }
-            rows.add(columns); //store each row
-        }
-        return rows;
-    }
+	/**
+	 * This method execute prepared statement to that can affect single column
+	 * using id filtering
+	 * 
+	 * @param query
+	 * @param value
+	 * @param target
+	 * @return
+	 * @throws java.sql.SQLException
+	 */
+	public int executePreparedUpdate(String query, Object value, Object target)
+			throws SQLException {
+		// declare the prepared statement
+		PreparedStatement ps = null;
+		try {
+			ps = connection.prepareStatement(query);// start the statement
+			// check parameter type
+			if (value instanceof String) {
+				ps.setString(1, (String) value);
+				ps.setLong(2, (Long) target);
+			} else if (value instanceof Integer) {
+				ps.setInt(1, (Integer) value);
+				ps.setLong(2, (Long) target);
+			} else if (value instanceof Date) {
+				ps.setDate(1, (Date) value);
+				ps.setLong(2, (Long) target);
+			} else if (value instanceof Boolean) {
+				ps.setBoolean(1, (Boolean) value);
+				ps.setLong(2, (Long) target);
+			} else if (value instanceof Long) {
+				ps.setLong(1, (Long) value);
+				ps.setLong(2, (Long) target);
+			} else if (value instanceof Double) {
+				ps.setDouble(1, (Double) value);
+				ps.setLong(2, (Long) target);
+			} else if (value instanceof Float) {
+				ps.setFloat(1, (Float) value);
+				ps.setLong(2, (Long) target);
+			} else if (value instanceof byte[]) {
+				ps.setBytes(1, (byte[]) value);
+				ps.setLong(2, (Long) target);
+			} else {
+				ps.setObject(1, value);
+				ps.setLong(2, (Long) target);
+			}
+			// execute the query
+			return ps.executeUpdate();
+		} catch (SQLException ex) {
+			System.err.println("prepared method: " + ex.getMessage());
+		} finally {
+			if (ps != null) {
+				ps.close();
+			}
+		}
+		return 0;
+	}
+	
+	/**
+	 * This method takes a value and returns its string representation in the database
+	 * @param value
+	 * @return
+	 */
+	public String castValue(Object value) {
+		String valueStr = value.toString();
+		
+		if(!valueStr.matches("^[-+]?\\d+(\\.\\d+)?$")) {
+			return "\'" + valueStr + "\'";
+		}
+		return valueStr;
+	}
+
+	/**
+	 * This method aggregates the result set in a java { @link List }
+	 */
+	private List<List<Object>> constructRows() throws SQLException {
+		metaData = resultSet.getMetaData(); // get the query result
+		// assign the number of columns retrieved
+		int numberOfColumns = metaData.getColumnCount();
+		// array to hold the name of retrieved columns
+		columnNames = new String[numberOfColumns];
+		// Get the column names and cache them.
+		for (int i = 0; i < numberOfColumns; i++) {
+			columnNames[i] = metaData.getColumnLabel(i + 1);
+		}
+		// store each row
+		rows = new ArrayList<List<Object>>();
+		while (resultSet.next()) {
+			List<Object> columns = new ArrayList<Object>();
+			// traverse data and dispose them in columns & rows
+			for (int column = 1; column <= getColumnCount(); column++) {
+				columns.add(resultSet.getObject(column));
+			}
+			rows.add(columns); // store each row
+		}
+		return rows;
+	}
 }

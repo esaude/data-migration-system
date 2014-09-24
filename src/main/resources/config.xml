@@ -27,7 +27,7 @@
 		<username></username>
 		<password></password>
 		<database_name>Sistema Hdd_be.mdb</database_name>
-		<database_location>jdbc:odbc:DRIVER={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=C:/Program Files/Sistema hdd/dados/</database_location>
+		<database_location>jdbc:odbc:DRIVER={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=C:/Sistema Hdd_be/</database_location>
 	</sourceDs>
 	
 </config>
