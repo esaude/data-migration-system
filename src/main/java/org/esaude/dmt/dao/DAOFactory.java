@@ -2,6 +2,7 @@ package org.esaude.dmt.dao;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.SQLException;
 
 import org.esaude.dmt.config.schema.DatasourceType;
 import org.esaude.dmt.helper.DAOTypes;
@@ -19,6 +20,7 @@ public final class DAOFactory {
 	private DatabaseUtil sourceDAO;
 	private DatabaseUtil targetDAO;
 	private static DAOFactory instance;
+	private Connection connection;
 
 	private DAOFactory() {
 		cr = ConfigReader.getInstance();
@@ -80,6 +82,13 @@ public final class DAOFactory {
 			// create DAO if not exists
 			if (targetDAO == null) {
 				targetDAO = createDAOs(ds);
+				//only for target datasource
+				try {
+					connection.setAutoCommit(false);
+					connection.setTransactionIsolation(Connection.TRANSACTION_READ_UNCOMMITTED);//allow to access uncommitted data
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}//disable auto-commit
 			}
 			// set the database driver class
 			try {
@@ -99,7 +108,7 @@ public final class DAOFactory {
 	 * @return
 	 * @throws SystemException
 	 */
-	private static DatabaseUtil createDAOs(final DatasourceType ds)
+	private DatabaseUtil createDAOs(final DatasourceType ds)
 			throws SystemException {
 		// create connections using config.xml
 		if (ds == null) {
@@ -107,7 +116,7 @@ public final class DAOFactory {
 					"The datasource info doesn't exist in config.xml");
 		}
 		try {
-			Connection connection = DriverManager.getConnection(
+			connection = DriverManager.getConnection(
 					ds.getDatabaseLocation() + ds.getDatabaseName(),
 					ds.getUsername(), ds.getPassword());
 

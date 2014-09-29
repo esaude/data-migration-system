@@ -9,6 +9,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.sql.Savepoint;
 import java.sql.Statement;
 import java.sql.Types;
 import java.util.ArrayList;
@@ -17,7 +18,7 @@ import java.util.List;
 /**
  * This class is used to manipulate SQL-based databases using SQL native queries
  * 
- * @author Valerio Joao
+ * @author Valério João
  * @since May 22, 2008 Modified on August 23, 2008
  */
 public class DatabaseUtil {
@@ -28,6 +29,7 @@ public class DatabaseUtil {
 	private Connection connection;
 	private Statement statement;
 	private ResultSet resultSet;
+	private Savepoint savePoint;
 
 	/**
 	 * Parameterized constructor
@@ -40,10 +42,32 @@ public class DatabaseUtil {
 		this.connection = connection;
 		try {
 			if (connection != null) {
-				statement = connection.createStatement();
+				statement = this.connection.createStatement();
 			}
 		} catch (SQLException ex) {
 			System.err.println(ex);
+		}
+	}
+	
+	/**
+	 * Allows to commit the transaction from outside
+	 */
+	public void commit() {
+		try {
+			connection.commit();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Allows to save the point to rollback from outside
+	 */
+	public void setSavePoint() {
+		try {
+			savePoint = connection.setSavepoint();
+		} catch (SQLException e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -61,7 +85,12 @@ public class DatabaseUtil {
 				throw new Exception(
 						"There is no database to execute the query.");
 			} catch (Exception ex) {
-				System.err.println(ex);
+				try {
+					connection.rollback(savePoint);
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+				ex.printStackTrace();
 			}
 		}
 		try {
@@ -69,7 +98,7 @@ public class DatabaseUtil {
 														// query
 			return constructRows();
 		} catch (SQLException ex) {
-			System.err.println(ex);
+			ex.printStackTrace();
 		}
 		return null;
 	}
@@ -244,7 +273,12 @@ public class DatabaseUtil {
 				return constructRows();
 			}
 		} catch (SQLException ex) {
-			System.err.println(ex);
+			try {
+				connection.rollback(savePoint);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			ex.printStackTrace();
 		}
 		return null;
 	}
@@ -291,7 +325,12 @@ public class DatabaseUtil {
 			// execute the query
 			return ps.executeUpdate();
 		} catch (SQLException ex) {
-			System.err.println(ex);
+			try {
+				connection.rollback(savePoint);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			ex.printStackTrace();
 		} finally {
 			if (ps != null) {
 				ps.close();
@@ -348,7 +387,12 @@ public class DatabaseUtil {
 			// execute the query
 			return ps.executeUpdate();
 		} catch (SQLException ex) {
-			System.err.println("prepared method: " + ex.getMessage());
+			try {
+				connection.rollback(savePoint);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			ex.printStackTrace();
 		} finally {
 			if (ps != null) {
 				ps.close();

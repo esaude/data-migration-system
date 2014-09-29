@@ -1,7 +1,5 @@
 package org.esaude.dmt.component;
 
-import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 import java.util.UUID;
 
@@ -11,7 +9,6 @@ import org.esaude.dmt.dao.DatabaseUtil;
 import org.esaude.dmt.helper.DAOTypes;
 import org.esaude.dmt.helper.MatchConstants;
 import org.esaude.dmt.helper.SystemException;
-import org.esaude.dmt.helper.ValidationStatuses;
 import org.esaude.dmt.util.TupleTree;
 import org.esaude.matchingschema.MatchType;
 import org.esaude.matchingschema.ReferenceType;
@@ -71,7 +68,6 @@ public class TranslationManager {
 		String selectCurrsQuery = this.selectCurrs(t.getHead(), parentCurr);
 		List<List<Object>> currResults = sourceDAO
 				.executeQuery(selectCurrsQuery);
-		// System.out.println(selectQuery);
 		System.out
 				.println("---------------------------------------------------------");
 
