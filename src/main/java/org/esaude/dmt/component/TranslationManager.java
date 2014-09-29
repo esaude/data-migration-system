@@ -1,6 +1,7 @@
 package org.esaude.dmt.component;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.UUID;
 
@@ -29,6 +30,11 @@ public class TranslationManager {
 	private TupleTree tree;
 	private DatabaseUtil sourceDAO;
 	private DatabaseUtil targetDAO;
+	private boolean skip;// this variable indicates whether or not a tuple must
+							// return an insert query or an empty string.
+
+	// This is an attribute just because the a local field must be final in SQL
+	// class
 
 	/**
 	 * Parameterized constructor
@@ -51,29 +57,38 @@ public class TranslationManager {
 		return true;
 	}
 
+	/**
+	 * This method traverses the tree of tuples recursively and performs the translation
+	 * @param t
+	 * @param parentUUID
+	 * @param parentCurr
+	 */
 	private void read(final TupleTree t, final String parentUUID,
 			final String parentCurr) {
 		// how many tuples?
 		// select from source using the reference of the target side PK´s
 		// r_reference
 		String selectCurrsQuery = this.selectCurrs(t.getHead(), parentCurr);
-		List<List<Object>> currResults = sourceDAO.executeQuery(selectCurrsQuery);
+		List<List<Object>> currResults = sourceDAO
+				.executeQuery(selectCurrsQuery);
 		// System.out.println(selectQuery);
 		System.out
 				.println("---------------------------------------------------------");
 
 		for (List<Object> currRow : currResults) {
 			String curr = currRow.get(0).toString();
-			Object top = null;//the PK value of parent tuple
+			Object top = null;// the PK value of parent tuple
 			// Get the primary key of parent reference. Select from target DB,
 			if (parentUUID != null) {
 				// find the PK match of parent tuple using q UUID if not null
 				MatchType pkMatch = findPkMatch(t.getParent().getHead());
-				String selectParentIdQuery = selectParentId(t.getParent().getHead()
-						.getTable(), pkMatch.getLeft().getColumn(), parentUUID);
-				//execute query
-//				List<List<Object>> parentIdResults = targetDAO.executeQuery(selectParentIdQuery);
-//				top = parentIdResults.get(0).get(0);//get the single element
+				String selectParentIdQuery = selectParentId(t.getParent()
+						.getHead().getTable(), pkMatch.getLeft().getColumn(),
+						parentUUID);
+				// execute query
+				// List<List<Object>> parentIdResults =
+				// targetDAO.executeQuery(selectParentIdQuery);
+				// top = parentIdResults.get(0).get(0);//get the single element
 				// System.out.println(query);
 				top = 100;
 			}
@@ -111,6 +126,7 @@ public class TranslationManager {
 	}
 
 	/**
+	 * This method generates insert query based on translation logic
 	 * 
 	 * @param tuple
 	 * @param uuid
@@ -118,19 +134,19 @@ public class TranslationManager {
 	 * @param top
 	 * @return
 	 */
-	private String insertTuple(final TupleType tuple, final String uuid,
-			final String curr, final Object top) {
-		return new SQL() {
+	private synchronized String insertTuple(final TupleType tuple,
+			final String uuid, final String curr, final Object top) {
+		skip = false;// reset skip to false
+		String query = new SQL() {
 			{
 				INSERT_INTO(tuple.getTable());
 				// access matches of tuple
 				for (MatchType match : tuple.getMatches()) {
 					// if match default value is auto increment, skip it
-					if (match.getDefaultValue()
-							.equals(MatchConstants.AI)) {
+					if (match.getDefaultValue().equals(MatchConstants.AI)) {
 						continue;
 					}
-					String selectQuery = null;// composed select query
+					String selectQuery = null;// keep the composed select query
 
 					// 1. If a match doesn’t have the right side, it should
 					// insert the default value
@@ -138,48 +154,112 @@ public class TranslationManager {
 						// 8. TOP – Should use the PK value of the parent tuple
 						if (match.getDefaultValue().equals(MatchConstants.TOP)) {
 							VALUES(match.getLeft().getColumn(),
-									sourceDAO.castValue(top));
+									sourceDAO.cast(top));
 						} else {
 							// use default value
 							VALUES(match.getLeft().getColumn(),
-									sourceDAO.castValue(match.getDefaultValue()));
+									sourceDAO.cast(match.getDefaultValue()));
 						}
 					} else {
 						selectQuery = selectMatch(match, curr);// generate
 																// select query
 						final List<List<Object>> results = sourceDAO
-								.executeQuery(selectQuery);// execute select statement
-						final Object value = results.get(0).get(0);//gets the only one result
-						
-						System.out.println(selectQuery);
+								.executeQuery(selectQuery);// execute select
+															// statement
+						final Object value = results.get(0).get(0);// gets the
+																	// only one
+																	// result
 
+//						System.out.println(selectQuery);
+
+						// in case the default value is AI_SKIP_TRUE or
+						// AI_SKIP_FALSE
+						if (match.getDefaultValue().equals(
+								MatchConstants.AI_SKIP_TRUE)
+								|| match.getDefaultValue().equals(
+										MatchConstants.AI_SKIP_FALSE)) {
+							boolean boolValue = Boolean.valueOf(value
+									.toString());
+							// 12.AI/SKIP/TRUE – Should skip the entire tuple if
+							// the value selected in the right side of the match
+							// is TRUE. Must use auto increment otherwise
+							if (match.getDefaultValue().equals(
+									MatchConstants.AI_SKIP_TRUE)
+									&& boolValue) {
+								skip = true;// indicate that all the tuple must
+											// be skipped
+								break;
+							}
+							// 13. AI/SKIP/FALSE – Should skip the entire tuple
+							// if the value selected in the right side of the
+							// match is FALSE. Must use auto increment
+							// otherwise.
+							else if (match.getDefaultValue().equals(
+									MatchConstants.AI_SKIP_FALSE)
+									&& !boolValue) {
+								skip = true;// indicate that all the tuple must
+											// be skipped
+								break;
+							} else {
+								continue;
+							}
+						}
 						// 5. If default value of a match is SKIP, the entire
 						// tuple must be skipped if the match select doesn’t
 						// find any value.
 						// generate select statement
-						if (match.getDefaultValue().equals(MatchConstants.SKIP)
+						else if (match.getDefaultValue().equals(
+								MatchConstants.SKIP)
 								&& value == null) {
-							continue;
+							skip = true;// indicate that all the tuple must be
+										// skipped
+							break;
 						}
-						// 4. If left side of a match is required but right side
-						// is not, it must insert default value in case the
-						// right side select doesn’t find any value
-						else if (match.getLeft().isIsRequired()
-								.equals(MatchConstants.YES)
-								&& match.getRight().isIsRequired()
-										.equals(MatchConstants.NO)
+						// 4. If right side of the match is not required, it
+						// must insert default value in case the right side
+						// select doesn’t find any value
+						else if (match.getRight().isIsRequired()
+								.equals(MatchConstants.NO)
 								&& value == null) {
 							// use default value
 							VALUES(match.getLeft().getColumn(),
-									sourceDAO.castValue(match.getDefaultValue()));
+									sourceDAO.cast(match.getDefaultValue()));
 						} else {
 							VALUES(match.getLeft().getColumn(),
-									sourceDAO.castValue(value));
+									sourceDAO.cast(value));
 						}
 					}
 				}
+				//foreign  key columns
+				if(!skip) {
+					for(ReferenceType reference : tuple.getReferences().values()) {
+						//check if reference is direct
+						if(reference.getReferencee().getTable().equalsIgnoreCase(tuple.getTable())) {
+							String referencedValue = reference.getReferencedValue().toString();
+							// 8. TOP – Should use the PK value of the parent tuple
+							if (referencedValue.equalsIgnoreCase(MatchConstants.TOP)) {
+								VALUES(reference.getReferencee().getColumn(),
+										sourceDAO.cast(top));
+							} else {
+								// use default value
+								VALUES(reference.getReferencee().getColumn(),
+										sourceDAO.cast(referencedValue));
+							}
+						}
+					}
+					//metadata
+					VALUES("creator", sourceDAO.cast(1));
+					VALUES("date_created", "NOW()");
+					VALUES("voided", sourceDAO.cast(0));
+					VALUES("uuid", sourceDAO.cast(uuid));
+				}
+				
 			}
 		}.toString();
+		// check whether or not the query was skipped
+		if (skip)
+			return "";
+		return query;
 	}
 
 	/**
@@ -221,7 +301,7 @@ public class TranslationManager {
 						FROM(referencedTable);
 						if (!referencedValue.equals(MatchConstants.ALL)) {
 							WHERE(referencedTable + "." + referencedColumn
-									+ " = " + sourceDAO.castValue(referencedValue));
+									+ " = " + sourceDAO.cast(referencedValue));
 						}
 						isFirstDirectReference = false;
 					} else {
@@ -235,7 +315,7 @@ public class TranslationManager {
 						// in case the referenced value is not EQUALS
 						if (!referencedValue.equals(MatchConstants.EQUALS)) {
 							WHERE(referenceeTable + "." + referenceeColumn
-									+ " = " + sourceDAO.castValue(referencedValue));
+									+ " = " + sourceDAO.cast(referencedValue));
 						}
 					}
 				}
@@ -285,13 +365,12 @@ public class TranslationManager {
 						// in case the referenced value is not EQUALS
 						if (!referencedValue.equals(MatchConstants.EQUALS)) {
 							WHERE(referencedTable + "." + referencedColumn
-									+ " = " + sourceDAO.castValue(referencedValue));
+									+ " = " + sourceDAO.cast(referencedValue));
 						}
 					} else {
 						WHERE(referencedTable + "." + referencedColumn + " = "
-								+ sourceDAO.castValue(referencedValue));
+								+ sourceDAO.cast(referencedValue));
 					}
-
 				}
 			}
 		}.toString();
@@ -314,5 +393,4 @@ public class TranslationManager {
 		}
 		return pkMatch;
 	}
-
 }

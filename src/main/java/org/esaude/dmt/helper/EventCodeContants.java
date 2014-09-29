@@ -9,6 +9,7 @@ package org.esaude.dmt.helper;
 public interface EventCodeContants {
 	//WARNING
 	public static final String WAR001 = "WAR001";
+	public static final String WAR002 = "WAR002";
 	//ERROR
 	public static final String ERR001 = "ERR001";
 	public static final String ERR002 = "ERR002";
@@ -21,6 +22,9 @@ public interface EventCodeContants {
 	public static final String ERR009 = "ERR009";
 	public static final String ERR010 = "ERR010";
 	public static final String ERR011 = "ERR011";
+	public static final String ERR012 = "ERR012";
+	public static final String ERR013 = "ERR013";
+	public static final String ERR014 = "ERR014";
 	//INFO
 	public static final String INF001 = "INF001";
 	public static final String INF002 = "INF002";

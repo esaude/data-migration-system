@@ -362,7 +362,7 @@ public class DatabaseUtil {
 	 * @param value
 	 * @return
 	 */
-	public String castValue(Object value) {
+	public String cast(Object value) {
 		String valueStr = value.toString();
 		
 		if(!valueStr.matches("^[-+]?\\d+(\\.\\d+)?$")) {

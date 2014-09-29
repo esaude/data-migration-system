@@ -103,16 +103,22 @@ public class ValidationManager {
 
 			// create left and right sides of match
 			createMatchSides(matchBuilder, j);
+			
+			//validate default value
+			if(!validateDefaultValueOfMatch(matchBuilder.getMatch())) return false;
 
 			// check if match has right side
 			if (matchBuilder.getMatch().getRight() == null) {
 				if (!validateDefaultValueWithoutRightSideOfMatch(matchBuilder.getMatch()))
 					return false;
 			}
-			// check if left side is required and right is not
 			else {
+				// check if left side is required and right is not
 				if (!validateDefaultValueWithRightSideOfMatch(matchBuilder.getMatch()))
 					return false;
+				
+				//check size compatibility
+				validateSizeOfMatch(matchBuilder.getMatch());
 
 			}
 			// check datatype compatibility
@@ -191,6 +197,20 @@ public class ValidationManager {
 		logEndOfProcess();
 
 		return true;
+	}
+
+	private void validateSizeOfMatch(MatchType match) {
+		if(match.getLeft().getSize().intValue() < match.getRight().getSize().intValue() ) {
+			// write warning log
+			writer.writeLog(new Warning(eventCode
+					.getString(EventCodeContants.WAR002),
+					ProcessPhases.VALIDATION, Calendar.getInstance()
+							.getTime(), EventCodeContants.WAR002, match
+							.getTupleId(), match.getId(),
+					Sheets.MATCH_L_TO_R.NAME));
+			warningCount++;
+		}
+		
 	}
 
 	/**
@@ -520,6 +540,49 @@ public class ValidationManager {
 	}
 	
 	/**
+	 * This method is used to validate default value of the match
+	 * @param match
+	 * @return
+	 */
+	private boolean validateDefaultValueOfMatch(final MatchType match) {
+		Object defaultValue = match.getDefaultValue();
+		// 19. If in a Match-L-to-R the left side is required, then its default value cannot be NULL
+		if (match.getLeft().isIsRequired().equals(MatchConstants.YES) && defaultValue.equals(MatchConstants.NULL)) {
+			writer.writeLog(new Error(eventCode
+					.getString(EventCodeContants.ERR012),
+					ProcessPhases.VALIDATION, Calendar.getInstance()
+							.getTime(), EventCodeContants.ERR012, match
+							.getTupleId(), match.getId(),
+					Sheets.MATCH_L_TO_R.NAME));
+
+			return false;// end execution
+		}
+		//18. If the default value of a Match-L-to-R is TOP, the match must not have a right side, an error must be thrown otherwise
+		if(defaultValue.equals(MatchConstants.TOP) && match.getRight() != null) {
+			writer.writeLog(new Error(eventCode
+					.getString(EventCodeContants.ERR013),
+					ProcessPhases.VALIDATION, Calendar.getInstance()
+							.getTime(), EventCodeContants.ERR013, match
+							.getTupleId(), match.getId(),
+					Sheets.MATCH_L_TO_R.NAME));
+
+			return false;// end execution
+		}
+		//17. If the default value of a Match-L-to-R is SKIP, the match must have a right side, an error must be thrown otherwise
+		if(defaultValue.equals(MatchConstants.SKIP) && match.getRight() == null) {
+			writer.writeLog(new Error(eventCode
+					.getString(EventCodeContants.ERR014),
+					ProcessPhases.VALIDATION, Calendar.getInstance()
+							.getTime(), EventCodeContants.ERR014, match
+							.getTupleId(), match.getId(),
+					Sheets.MATCH_L_TO_R.NAME));
+
+			return false;// end execution
+		}
+		return true;
+	}
+	
+	/**
 	 * This method is used to validate default values only for cases in which the right side doesn't exist
 	 * @param match
 	 * @return
@@ -559,8 +622,7 @@ public class ValidationManager {
 	private boolean validateDefaultValueWithRightSideOfMatch(final MatchType match) {
 		Object defaultValue = match.getDefaultValue();
 		// check if match has a default value
-		if (match.getLeft().isIsRequired().equals(MatchConstants.YES)
-				&& match.getRight().isIsRequired().equals(MatchConstants.NO)) {
+		if (match.getRight().isIsRequired().equals(MatchConstants.NO)) {
 			if (defaultValue.equals(MatchConstants.NA)) {
 				writer.writeLog(new Error(eventCode
 						.getString(EventCodeContants.ERR001),
