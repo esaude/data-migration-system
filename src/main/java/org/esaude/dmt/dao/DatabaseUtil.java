@@ -45,7 +45,7 @@ public class DatabaseUtil {
 				statement = this.connection.createStatement();
 			}
 		} catch (SQLException ex) {
-			System.err.println(ex);
+			ex.printStackTrace();
 		}
 	}
 	

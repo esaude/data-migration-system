@@ -20,8 +20,7 @@ public class App
     public static void main( String[] args ) throws SystemException
     {
     	ValidationManager vm = new ValidationManager();
-    	vm.execute();
-    	
+    	if(!vm.execute()) return;
     	TranslationManager tm = new TranslationManager(vm.getTree());
     	tm.execute();
     }

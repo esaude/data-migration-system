@@ -25,6 +25,7 @@ public interface EventCodeContants {
 	public static final String ERR012 = "ERR012";
 	public static final String ERR013 = "ERR013";
 	public static final String ERR014 = "ERR014";
+	public static final String ERR015 = "ERR015";
 	//INFO
 	public static final String INF001 = "INF001";
 	public static final String INF002 = "INF002";

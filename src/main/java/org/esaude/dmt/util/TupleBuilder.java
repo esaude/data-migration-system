@@ -48,4 +48,8 @@ public class TupleBuilder {
 	public TupleTree process() {
 		return tree;
 	}
+	
+	public TupleType getTuple() {
+		return tupleType;
+	}
 }
