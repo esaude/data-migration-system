@@ -202,6 +202,10 @@ public class ValidationManager {
 		return true;
 	}
 
+	/**
+	 * Validates the datatype size compatibility between the two sides
+	 * @param match
+	 */
 	private void validateSizeOfMatch(MatchType match) {
 		if (match.getLeft().getSize().intValue() < match.getRight().getSize()
 				.intValue()) {

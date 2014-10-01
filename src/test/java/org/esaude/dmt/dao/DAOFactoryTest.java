@@ -7,6 +7,7 @@ import java.util.List;
 import org.esaude.dmt.helper.DAOTypes;
 import org.esaude.dmt.helper.SystemException;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -15,6 +16,7 @@ import org.junit.Test;
  * @since 18-09-2014
  *
  */
+@Ignore
 public class DAOFactoryTest {
 	private DAOFactory df;
 
@@ -32,20 +34,14 @@ public class DAOFactoryTest {
 	@Test
 	public void testExecuteSelectQuery() throws SystemException {
 		DatabaseUtil sourceDAO = df.getDAO(DAOTypes.SOURCE);
-		List<List<Object>> results = sourceDAO.executeQuery("SELECT * FROM T_PACIENTE");
+		DatabaseUtil targetDAO = df.getDAO(DAOTypes.TARGET);
+		List<List<Object>> sourceResults = sourceDAO.executeQuery("SELECT * FROM T_PACIENTE");
 		
-		assertEquals(80, results.size());
-	}
-	
-	@Test
-	public void testExecuteSelectQueryS() throws SystemException {
+		assertEquals(80, sourceResults.size());
 		
-		String query = "SELECT T_ADULTO.telefone FROM T_ADULTO, T_PACIENTE WHERE (T_ADULTO.nid = T_PACIENTE.nid AND T_PACIENTE.nid = '01vvvv1307/012/47')";
-		DatabaseUtil sourceDAO = df.getDAO(DAOTypes.SOURCE);
-		List<List<Object>> results = sourceDAO
-				.executeQuery(query);
-
-		assertEquals(1, results.size());
+		List<List<Object>> targetResults = targetDAO.executeQuery("SELECT * FROM PERSON");
+		
+		assertEquals(316, targetResults.size());
 	}
 
 	@Test

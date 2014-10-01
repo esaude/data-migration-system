@@ -67,7 +67,7 @@ public final class DAOFactory {
 			ds = cr.getConfig().getSourceDs();
 			// create DAO if not exists
 			if (sourceDAO == null) {
-				sourceDAO = createDAOs(ds);
+				sourceDAO = createDAOs(ds, type);
 			}
 			// set the database driver class
 			try {
@@ -78,17 +78,9 @@ public final class DAOFactory {
 			return sourceDAO;
 		} else if (type == DAOTypes.TARGET) {
 			ds = cr.getConfig().getTargetDs();
-			targetDAO = createDAOs(ds);
 			// create DAO if not exists
 			if (targetDAO == null) {
-				targetDAO = createDAOs(ds);
-				//only for target datasource
-				try {
-					connection.setAutoCommit(false);
-					connection.setTransactionIsolation(Connection.TRANSACTION_READ_UNCOMMITTED);//allow to access uncommitted data
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}//disable auto-commit
+				targetDAO = createDAOs(ds, type);
 			}
 			// set the database driver class
 			try {
@@ -101,6 +93,27 @@ public final class DAOFactory {
 			throw new SystemException("The type of datasource is invalid");
 		}
 	}
+	
+	/**
+	 * Destroy all DAO resources
+	 * @param type
+	 */
+	public void destroy(DAOTypes type) throws SystemException {
+		try {
+			if (type == DAOTypes.SOURCE) {
+				sourceDAO.close();
+				sourceDAO = null;
+
+			} else if (type == DAOTypes.TARGET) {
+				targetDAO.close();
+				targetDAO = null;
+			} else {
+				throw new SystemException("The type of datasource is invalid");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
 	/**
 	 * This method creates a DAO based on the type of DS
@@ -108,7 +121,7 @@ public final class DAOFactory {
 	 * @return
 	 * @throws SystemException
 	 */
-	private DatabaseUtil createDAOs(final DatasourceType ds)
+	private DatabaseUtil createDAOs(final DatasourceType ds, DAOTypes type)
 			throws SystemException {
 		// create connections using config.xml
 		if (ds == null) {
@@ -119,6 +132,21 @@ public final class DAOFactory {
 			connection = DriverManager.getConnection(
 					ds.getDatabaseLocation() + ds.getDatabaseName(),
 					ds.getUsername(), ds.getPassword());
+			// only for target DS
+			if (type == DAOTypes.TARGET) {
+				// only for target datasource
+				try {
+					connection.setAutoCommit(false);// disable auto-commit
+					connection
+							.setTransactionIsolation(Connection.TRANSACTION_READ_UNCOMMITTED);// allow
+																								// to
+																								// access
+																								// uncommitted
+																								// data
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
 
 			if (connection != null) {
 				return new DatabaseUtil(connection);

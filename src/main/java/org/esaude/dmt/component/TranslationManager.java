@@ -48,8 +48,13 @@ public class TranslationManager {
 		}
 	}
 
+	/**
+	 * This method starts the process of translation
+	 * @return
+	 * @throws SystemException
+	 */
 	public boolean execute() throws SystemException {
-		read(tree, null, null);
+		read(tree, null, null, null);
 
 		return true;
 	}
@@ -59,9 +64,11 @@ public class TranslationManager {
 	 * @param t
 	 * @param parentUUID
 	 * @param parentCurr
+	 * @param top
+	 * @throws SystemException 
 	 */
 	private void read(final TupleTree t, final String parentUUID,
-			final String parentCurr) {
+			final String parentCurr , final Object parentTop) throws SystemException {
 		// how many tuples?
 		// select from source using the reference of the target side PK´s
 		// r_reference
@@ -72,53 +79,41 @@ public class TranslationManager {
 				.println("---------------------------------------------------------");
 
 		for (List<Object> currRow : currResults) {
-			String curr = currRow.get(0).toString();
-			Object top = null;// the PK value of parent tuple
-			// Get the primary key of parent reference. Select from target DB,
-			if (parentUUID != null) {
-				// find the PK match of parent tuple using q UUID if not null
-				MatchType pkMatch = findPkMatch(t.getParent().getHead());
-				String selectParentIdQuery = selectParentId(t.getParent()
-						.getHead().getTable(), pkMatch.getLeft().getColumn(),
-						parentUUID);
-				// execute query
-				// List<List<Object>> parentIdResults =
-				// targetDAO.executeQuery(selectParentIdQuery);
-				// top = parentIdResults.get(0).get(0);//get the single element
-				// System.out.println(query);
-				top = 100;
+			//init a transaction from root
+			if(t.getParent() == null) {
+				targetDAO.setSavePoint();//rollback till this point
 			}
+			String curr = currRow.get(0).toString();
 			// keep the UUID of current insert
 			String uuid = UUID.randomUUID().toString();
 			// Build insert statement based on translation logic
-			String insertTupleQuery = insertTuple(t.getHead(), uuid, curr, top);
+			String insertTupleQuery = insertTuple(t.getHead(), uuid, curr, parentTop);
+			//TODO remove print
 			System.out.println(insertTupleQuery);
-			// queue insert statement
+			//execute insert query and retrieve inserted PKs
+			Object top = null;
+			if(!insertTupleQuery.isEmpty()) {
+				List<List<Object>> tops = targetDAO.executeUpdate(insertTupleQuery);
+				top = tops.get(0).get(0);
+			}
+			// do the same for children
 			for (TupleTree eachTree : t.getSubTrees()) {
-				read(eachTree, uuid, curr);
+				read(eachTree, uuid, curr, top);
+			}
+			// commit a transaction from root
+			if(t.getParent() == null) {
+				targetDAO.commit();
 			}
 		}
-	}
-
-	/**
-	 * This method builds and returns a query to retrieve the PK value of a
-	 * parent tuple
-	 * 
-	 * @param table
-	 * @param column
-	 * @param parentUUID
-	 * @return
-	 */
-	private String selectParentId(final String table, final String column,
-			final String parentUUID) {
-		return new SQL() {
-			{
-				SELECT(table + "." + column);
-				FROM(table);
-				WHERE(table + ".uuid = " + parentUUID);
-
+		//close DAOs
+		if(t.getParent() == null) {
+			try {
+				targetDAO.close();
+				sourceDAO.close();
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
-		}.toString();
+		}
 	}
 
 	/**
@@ -129,9 +124,10 @@ public class TranslationManager {
 	 * @param curr
 	 * @param top
 	 * @return
+	 * @throws SystemException 
 	 */
 	private synchronized String insertTuple(final TupleType tuple,
-			final String uuid, final String curr, final Object top) {
+			final String uuid, final String curr, final Object top) throws SystemException {
 		skip = false;// reset skip to false
 		String query = new SQL() {
 			{
@@ -165,8 +161,6 @@ public class TranslationManager {
 						final Object value = results.get(0).get(0);// gets the
 																	// only one
 																	// result
-
-//						System.out.println(selectQuery);
 
 						// in case the default value is AI_SKIP_TRUE or
 						// AI_SKIP_FALSE
@@ -247,7 +241,10 @@ public class TranslationManager {
 					VALUES("creator", sourceDAO.cast(1));
 					VALUES("date_created", "NOW()");
 					VALUES("voided", sourceDAO.cast(0));
-					VALUES("uuid", sourceDAO.cast(uuid));
+					//avoid PATIENT table
+					if(!tuple.getTable().equalsIgnoreCase("PATIENT")) {
+						VALUES("uuid", sourceDAO.cast(uuid));
+					}
 				}
 				
 			}

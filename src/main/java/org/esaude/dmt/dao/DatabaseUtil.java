@@ -15,6 +15,9 @@ import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.esaude.dmt.helper.MatchConstants;
+import org.esaude.dmt.helper.SystemException;
+
 /**
  * This class is used to manipulate SQL-based databases using SQL native queries
  * 
@@ -41,7 +44,7 @@ public class DatabaseUtil {
 	public DatabaseUtil(Connection connection) throws Exception {
 		this.connection = connection;
 		try {
-			if (connection != null) {
+			if (this.connection != null) {
 				statement = this.connection.createStatement();
 			}
 		} catch (SQLException ex) {
@@ -78,18 +81,13 @@ public class DatabaseUtil {
 	 * @param query
 	 * @return
 	 */
-	public List<List<Object>> executeQuery(String query) {
+	public List<List<Object>> executeQuery(String query) throws SystemException {
 		// test if connection and statement were properly created
 		if (connection == null || statement == null) {
 			try {
 				throw new Exception(
 						"There is no database to execute the query.");
 			} catch (Exception ex) {
-				try {
-					connection.rollback(savePoint);
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
 				ex.printStackTrace();
 			}
 		}
@@ -98,9 +96,14 @@ public class DatabaseUtil {
 														// query
 			return constructRows();
 		} catch (SQLException ex) {
+			try {
+				connection.rollback(savePoint);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 			ex.printStackTrace();
+			throw new SystemException("Unable do execute SQL query");
 		}
-		return null;
 	}
 
 	/**
@@ -263,7 +266,7 @@ public class DatabaseUtil {
 	 * @param query
 	 * @return result
 	 */
-	public List<List<Object>> executeUpdate(String query) {
+	public List<List<Object>> executeUpdate(String query) throws SystemException {
 		int result = 0;// number of affected rows
 		try {
 			result = statement.executeUpdate(query,
@@ -279,19 +282,21 @@ public class DatabaseUtil {
 				e.printStackTrace();
 			}
 			ex.printStackTrace();
+			throw new SystemException("Unable do execute SQL query");
 		}
 		return null;
 	}
 
 	/**
 	 * This method execute prepared statement that can affect multiple columns
-	 * 
 	 * @param query
 	 * @param parameters
-	 * @throws java.sql.SQLException
+	 * @return
+	 * @throws SQLException
+	 * @throws SystemException
 	 */
 	public int executePreparedStatement(String query, List<Object> parameters)
-			throws SQLException {
+			throws SQLException, SystemException {
 		// declare the prepared statement
 		PreparedStatement ps = null;
 		try {
@@ -331,26 +336,26 @@ public class DatabaseUtil {
 				e.printStackTrace();
 			}
 			ex.printStackTrace();
+			throw new SystemException("Unable do execute SQL query");
 		} finally {
 			if (ps != null) {
 				ps.close();
 			}
 		}
-		return 0;
 	}
 
 	/**
 	 * This method execute prepared statement to that can affect single column
 	 * using id filtering
-	 * 
 	 * @param query
 	 * @param value
 	 * @param target
 	 * @return
-	 * @throws java.sql.SQLException
+	 * @throws SQLException
+	 * @throws SystemException
 	 */
 	public int executePreparedUpdate(String query, Object value, Object target)
-			throws SQLException {
+			throws SQLException, SystemException {
 		// declare the prepared statement
 		PreparedStatement ps = null;
 		try {
@@ -393,12 +398,12 @@ public class DatabaseUtil {
 				e.printStackTrace();
 			}
 			ex.printStackTrace();
+			throw new SystemException("Unable do execute SQL query");
 		} finally {
 			if (ps != null) {
 				ps.close();
 			}
 		}
-		return 0;
 	}
 	
 	/**
@@ -410,6 +415,9 @@ public class DatabaseUtil {
 		String valueStr = value.toString();
 		
 		if(!valueStr.matches("^[-+]?\\d+(\\.\\d+)?$")) {
+			if(valueStr.equalsIgnoreCase(MatchConstants.NULL)) {
+				return valueStr;
+			}
 			return "\'" + valueStr + "\'";
 		}
 		return valueStr;
