@@ -74,9 +74,9 @@ public class ValidationManagerTest {
 		assertEquals(Integer.valueOf(1), match3.getTupleId());
 		assertEquals("Data de Nascimento", match3.getTerminology());
 		assertEquals(Integer.valueOf(3), match3.getId());
-		assertEquals(MatchConstants.NA, match3.getDefaultValue());
+		assertEquals(MatchConstants.NULL, match3.getDefaultValue());
 		assertEquals(MatchConstants.NA, match3.getValueMatchId());
-		assertEquals("birth_date", match3.getLeft().getColumn());
+		assertEquals("birthdate", match3.getLeft().getColumn());
 		assertEquals("DATE", match3.getLeft().getDatatype());
 		assertEquals(Integer.valueOf(3), match3.getLeft().getSize());
 		assertEquals(MatchConstants.NO, match3.getLeft().isIsRequired());
@@ -102,20 +102,20 @@ public class ValidationManagerTest {
 		
 		assertNotNull(references14);
 		assertEquals(4, references14.size());
-		assertTrue(references14.containsKey(Integer.valueOf(20)));
-		assertTrue(references14.containsKey(Integer.valueOf(21)));
 		assertTrue(references14.containsKey(Integer.valueOf(22)));
 		assertTrue(references14.containsKey(Integer.valueOf(23)));
+		assertTrue(references14.containsKey(Integer.valueOf(24)));
+		assertTrue(references14.containsKey(Integer.valueOf(25)));
 		
-		ReferenceType reference14id20 = references14.get(20);
-		assertEquals(Integer.valueOf(20), reference14id20.getId());
-		assertEquals("PATIENT_STATE", reference14id20.getReferencee().getTable());
-		assertEquals("patient_program_id", reference14id20.getReferencee().getColumn());
-		assertEquals("PATIENT_PROGRAM", reference14id20.getReferenced().getTable());
-		assertEquals("patient_program_id", reference14id20.getReferenced().getColumn());
-		assertEquals(MatchConstants.TOP, reference14id20.getReferencedValue().toString());
-		assertEquals(MatchConstants.INT, reference14id20.getDatatype());
-		assertEquals(Integer.valueOf(11), reference14id20.getSize());
+		ReferenceType reference14id22 = references14.get(22);
+		assertEquals(Integer.valueOf(22), reference14id22.getId());
+		assertEquals("PATIENT_STATE", reference14id22.getReferencee().getTable());
+		assertEquals("patient_program_id", reference14id22.getReferencee().getColumn());
+		assertEquals("PATIENT_PROGRAM", reference14id22.getReferenced().getTable());
+		assertEquals("patient_program_id", reference14id22.getReferenced().getColumn());
+		assertEquals(MatchConstants.TOP, reference14id22.getReferencedValue().toString());
+		assertEquals(MatchConstants.INT, reference14id22.getDatatype());
+		assertEquals(Integer.valueOf(11), reference14id22.getSize());
 		
 	}
 }
