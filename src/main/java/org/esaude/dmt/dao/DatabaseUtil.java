@@ -64,6 +64,18 @@ public class DatabaseUtil {
 	}
 	
 	/**
+	 * Allows to rollback the transaction from outside
+	 */
+	public void rollback() {
+		try {
+			connection.rollback();
+			System.out.println("rolling back...");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/**
 	 * Allows to save the point to rollback from outside
 	 */
 	public void setSavePoint() {
@@ -96,11 +108,6 @@ public class DatabaseUtil {
 														// query
 			return constructRows();
 		} catch (SQLException ex) {
-			try {
-				connection.rollback(savePoint);
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
 			ex.printStackTrace();
 			throw new SystemException("Unable do execute SQL query");
 		}
@@ -212,7 +219,7 @@ public class DatabaseUtil {
 		try {
 			newRow = rows.get(aRow);
 		} catch (ArrayIndexOutOfBoundsException ex) {
-			System.err.println(ex.getMessage());
+			ex.printStackTrace();
 		}
 		return newRow.get(aColumn);
 	}
@@ -276,11 +283,6 @@ public class DatabaseUtil {
 				return constructRows();
 			}
 		} catch (SQLException ex) {
-			try {
-				connection.rollback(savePoint);
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
 			ex.printStackTrace();
 			throw new SystemException("Unable do execute SQL query");
 		}
@@ -330,11 +332,6 @@ public class DatabaseUtil {
 			// execute the query
 			return ps.executeUpdate();
 		} catch (SQLException ex) {
-			try {
-				connection.rollback(savePoint);
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
 			ex.printStackTrace();
 			throw new SystemException("Unable do execute SQL query");
 		} finally {
@@ -392,11 +389,6 @@ public class DatabaseUtil {
 			// execute the query
 			return ps.executeUpdate();
 		} catch (SQLException ex) {
-			try {
-				connection.rollback(savePoint);
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
 			ex.printStackTrace();
 			throw new SystemException("Unable do execute SQL query");
 		} finally {

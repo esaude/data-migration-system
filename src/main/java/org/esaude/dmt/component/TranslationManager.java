@@ -54,7 +54,14 @@ public class TranslationManager {
 	 * @throws SystemException
 	 */
 	public boolean execute() throws SystemException {
+		try {
 		read(tree, null, null, null);
+		} catch (SystemException ex) {
+			ex.printStackTrace();
+			targetDAO.rollback();
+			throw new SystemException(
+					"An error occured durring translation/execution phase");
+		}
 
 		return true;
 	}
@@ -68,7 +75,8 @@ public class TranslationManager {
 	 * @throws SystemException 
 	 */
 	private void read(final TupleTree t, final String parentUUID,
-			final String parentCurr , final Object parentTop) throws SystemException {
+			final String parentCurr, final Object parentTop)
+			throws SystemException {
 		// how many tuples?
 		// select from source using the reference of the target side PK´s
 		// r_reference
@@ -78,22 +86,24 @@ public class TranslationManager {
 		System.out
 				.println("---------------------------------------------------------");
 
-		for (List<Object> currRow : currResults) {
-			//init a transaction from root
-			if(t.getParent() == null) {
-				targetDAO.setSavePoint();//rollback till this point
+		for (List<Object> currResult : currResults) {
+			// init a transaction from root
+			if (t.getParent() == null) {
+				targetDAO.setSavePoint();// rollback till this point
 			}
-			String curr = currRow.get(0).toString();
+			String curr = currResult.get(0).toString();
 			// keep the UUID of current insert
 			String uuid = UUID.randomUUID().toString();
-			// Build insert statement based on translation logic
-			String insertTupleQuery = insertTuple(t.getHead(), uuid, curr, parentTop);
-			//TODO remove print
+			// build insert statement based on translation logic
+			String insertTupleQuery = insertTuple(t.getHead(), uuid, curr,
+					parentTop);
+			// TODO remove print
 			System.out.println(insertTupleQuery);
-			//execute insert query and retrieve inserted PKs
+			// execute insert query and retrieve inserted PKs
 			Object top = null;
-			if(!insertTupleQuery.isEmpty()) {
-				List<List<Object>> tops = targetDAO.executeUpdate(insertTupleQuery);
+			if (!insertTupleQuery.isEmpty()) {
+				List<List<Object>> tops = targetDAO
+						.executeUpdate(insertTupleQuery);
 				top = tops.get(0).get(0);
 			}
 			// do the same for children
@@ -101,12 +111,12 @@ public class TranslationManager {
 				read(eachTree, uuid, curr, top);
 			}
 			// commit a transaction from root
-			if(t.getParent() == null) {
-				targetDAO.commit();
+			if (t.getParent() == null) {
+				// targetDAO.commit();
 			}
 		}
-		//close DAOs
-		if(t.getParent() == null) {
+		// close DAOs
+		if (t.getParent() == null) {
 			try {
 				targetDAO.close();
 				sourceDAO.close();
@@ -220,14 +230,19 @@ public class TranslationManager {
 						}
 					}
 				}
-				//foreign  key columns
-				if(!skip) {
-					for(ReferenceType reference : tuple.getReferences().values()) {
-						//check if reference is direct
-						if(reference.getReferencee().getTable().equalsIgnoreCase(tuple.getTable())) {
-							String referencedValue = reference.getReferencedValue().toString();
-							// 8. TOP – Should use the PK value of the parent tuple
-							if (referencedValue.equalsIgnoreCase(MatchConstants.TOP)) {
+				// foreign key columns
+				if (!skip) {
+					for (ReferenceType reference : tuple.getReferences()
+							.values()) {
+						// check if reference is direct
+						if (reference.getReferencee().getTable()
+								.equalsIgnoreCase(tuple.getTable())) {
+							String referencedValue = reference
+									.getReferencedValue().toString();
+							// 8. TOP – Should use the PK value of the parent
+							// tuple
+							if (referencedValue
+									.equalsIgnoreCase(MatchConstants.TOP)) {
 								VALUES(reference.getReferencee().getColumn(),
 										sourceDAO.cast(top));
 							} else {
@@ -237,16 +252,15 @@ public class TranslationManager {
 							}
 						}
 					}
-					//metadata
+					// metadata
 					VALUES("creator", sourceDAO.cast(1));
 					VALUES("date_created", "NOW()");
 					VALUES("voided", sourceDAO.cast(0));
-					//avoid PATIENT table
-					if(!tuple.getTable().equalsIgnoreCase("PATIENT")) {
+					// avoid PATIENT table
+					if (!tuple.getTable().equalsIgnoreCase("PATIENT")) {
 						VALUES("uuid", sourceDAO.cast(uuid));
 					}
 				}
-				
 			}
 		}.toString();
 		// check whether or not the query was skipped
