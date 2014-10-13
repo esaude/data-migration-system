@@ -36,3 +36,37 @@ The project is *mavenized* (maven project). Some dependencies to consider:
 -         Lambaj - used for flexible manipulation of Javacollections
 -         JUnit - For unit and integration tests
 
+### Mac OS X Setup
+
+You may need to make one or more of the following changes to get the system up and running on OS X.
+
+#### 1. Configure Java version
+
+The code in this repository requires Java 7 to compile, so if you're running multiple versions of Java, you'll need to use something like [jenv](http://www.jenv.be/) to ensure that Maven uses the correct Java installation to compile the code.
+
+#### 2. Configure file encoding
+
+The files in this repository use the `ISO-8859-1` file encoding. This could cause errors that look like:
+
+````
+[ERROR] Codable.java:[5,14] error: unmappable character for encoding UTF8
+`````
+
+If you see such errors, you may need to tell Maven to use the correct encoding by adding `<encoding>ISO-8859-1</encoding>` to the compiler plugin configuration in `pom.xml` as follows:
+
+````
+<plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-compiler-plugin</artifactId>
+    <configuration>
+        <source>1.7</source>
+        <target>1.7</target>
+        <encoding>ISO-8859-1</encoding>
+    </configuration>
+</plugin>
+````
+
+#### 3. Correct Windows-specific file locations
+
+In `src/main/resources/config.xml`, there are references to `C:/EMR_Architecture/OpenMRS_SESP_Matching_Table_210820141022.xls`. You'll need to change these to valid locations on your local filesystem in order to run the tests.
+
