@@ -1,5 +1,6 @@
 package org.esaude.dmt.component;
 
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
@@ -204,6 +205,7 @@ public class ValidationManager {
 
 	/**
 	 * Validates the datatype size compatibility between the two sides
+	 * 
 	 * @param match
 	 */
 	private void validateSizeOfMatch(MatchType match) {
@@ -686,6 +688,19 @@ public class ValidationManager {
 					EventCodeContants.ERR005, match.getTupleId(),
 					match.getId(), Sheets.MATCH_L_TO_R.NAME));
 			return false;
+		}
+		// 20. If in a Match-L-to-R the default value is NOW, then its right
+		// side datatype must be DATE or DATETIME compatible.
+		if (defaultValue.equals(MatchConstants.NOW)) {
+			if(!Arrays.asList(MatchConstants.DATETIME, MatchConstants.DATE).contains(match.getLeft().getDatatype())) {
+				writer.writeLog(new Error(eventCode
+						.getString(EventCodeContants.ERR016),
+						ProcessPhases.VALIDATION, Calendar.getInstance().getTime(),
+						EventCodeContants.ERR016, match.getTupleId(),
+						match.getId(), Sheets.MATCH_L_TO_R.NAME));
+
+				return false;// end execution
+			}
 		}
 		return true;
 	}

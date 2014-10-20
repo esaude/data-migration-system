@@ -7,6 +7,9 @@ import java.util.HashMap;
 import org.esaude.matchingschema.TupleType;
 
 public class TupleTree {
+	//to be set during translation phase
+	private Object top;
+	private Object curr;
 
 	private TupleType head;
 
@@ -105,6 +108,22 @@ public class TupleTree {
 			s += "\n" + child.printTree(increment + indent);
 		}
 		return s;
+	}
+
+	public Object getTop() {
+		return top;
+	}
+
+	public void setTop(Object top) {
+		this.top = top;
+	}
+
+	public Object getCurr() {
+		return curr;
+	}
+
+	public void setCurr(Object curr) {
+		this.curr = curr;
 	}
 }
 

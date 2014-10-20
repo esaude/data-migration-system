@@ -108,6 +108,7 @@ public class DatabaseUtil {
 														// query
 			return constructRows();
 		} catch (SQLException ex) {
+			System.out.println(query);
 			ex.printStackTrace();
 			throw new SystemException("Unable do execute SQL query");
 		}
@@ -403,7 +404,10 @@ public class DatabaseUtil {
 	 * @param value
 	 * @return
 	 */
-	public String cast(Object value) {
+	public String cast(Object value) throws SystemException {
+		if(value == null) {
+			throw new SystemException("Invalid database value to cast");
+		}
 		String valueStr = value.toString();
 		
 		if(!valueStr.matches("^[-+]?\\d+(\\.\\d+)?$")) {
