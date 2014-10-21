@@ -19,6 +19,7 @@ public interface MatchConstants {
 	public static final String SKIP = "SKIP";
 	public static final String NULL = "NULL";
 	public static final String NOW = "NOW";
+	public static final String UNMATCHED = "UNMATCHED";
 	//Database datatypes
 	public static final String INT = "INT";
 	public static final String BOOL = "BOOL";

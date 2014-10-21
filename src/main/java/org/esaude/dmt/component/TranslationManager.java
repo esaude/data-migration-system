@@ -253,12 +253,20 @@ public class TranslationManager {
 												+ match.getId());
 							}
 							String valueMatch = valueMatchGroup.get(value
-									.toString());
+									.toString().toLowerCase());
 							// log an error if value match doesn't exist
 							if (valueMatch == null) {
-								throw new SystemException(
-										"An error ocurred during translation phase while processing value match in match with id: "
-												+ match.getId());
+								// get the value of UNMATCHED match in case the value is not in the group
+								valueMatch = valueMatchGroup
+										.get(MatchConstants.UNMATCHED.toLowerCase());
+								if (valueMatch == null) {
+									System.out.println(value
+									.toString().toLowerCase());
+									System.out.println(valueMatchGroup.keySet());
+									throw new SystemException(
+											"An error ocurred during translation phase while processing value match in match with id: "
+													+ match.getId());
+								}
 							}
 							VALUES(match.getLeft().getColumn(),
 									sourceDAO.cast(valueMatch));

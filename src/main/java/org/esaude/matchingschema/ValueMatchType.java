@@ -30,7 +30,7 @@ public class ValueMatchType {
 				valueMatches.put(groupId, valueMapGroup);
 			}
 			valueMapGroup.put(pr.process(Sheets.VALUE_MATCH.INDEX,
-					Sheets.VALUE_MATCH.PK_R, i), pr.process(
+					Sheets.VALUE_MATCH.PK_R, i).toLowerCase(), pr.process(
 					Sheets.VALUE_MATCH.INDEX, Sheets.VALUE_MATCH.PK_L, i));
 			lastGroupId = groupId;
 		}
