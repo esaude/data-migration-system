@@ -50,13 +50,5 @@ public class XlsProcessorTest {
 		assertNotNull(found);
 		assertEquals("Personal Data", found);
 	}
-	
-	@Test
-	public void testGetSize() {
-		int size = processor.getSize(Sheets.TUPLE.INDEX);
-		
-		assertEquals(15, size);
-		
-	}
 
 }

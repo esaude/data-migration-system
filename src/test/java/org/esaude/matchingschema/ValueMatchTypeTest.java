@@ -18,11 +18,6 @@ public class ValueMatchTypeTest {
 	@Before
 	public void setUp() throws Exception {
 	}
-
-	@Test
-	public void testCorrectMapsSize() {
-		assertEquals(1, ValueMatchType.valueMatches.size());
-	}
 	
 	@Test
 	public void testCorrectGroupOneSize() {
@@ -35,9 +30,9 @@ public class ValueMatchTypeTest {
 	public void testCorrectGroupOneElements() {
 		Map<String, String> groupOne = ValueMatchType.valueMatches.get(1);
 		
-		assertEquals("1446", groupOne.get("Nível Primário"));
+		assertEquals("1446", groupOne.get("Nível Primário".toLowerCase()));
 		
-		assertEquals("1448", groupOne.get("Nível Superior"));
+		assertEquals("1448", groupOne.get("Nível Superior".toLowerCase()));
 	}
 
 }

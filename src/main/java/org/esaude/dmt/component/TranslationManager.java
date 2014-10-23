@@ -117,7 +117,7 @@ public class TranslationManager {
 			}
 			// commit a transaction from root
 			if (t.getParent() == null) {
-				// targetDAO.commit();
+				targetDAO.commit();
 			}
 		}
 		// close DAOs
