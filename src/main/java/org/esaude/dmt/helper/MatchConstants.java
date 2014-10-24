@@ -9,10 +9,13 @@ public interface MatchConstants {
 	public static final String TOP = "TOP";
 	public static final String TOP2 = "TOP2";
 	public static final String TOP3 = "TOP3";
+	public static final String TOP4 = "TOP4";
+	public static final String TOP5 = "TOP5";
 	public static final String ALL = "ALL";
 	public static final String CURR = "CURR";
 	public static final String CURR2 = "CURR2";
 	public static final String CURR3 = "CURR3";
+	public static final String CURR4 = "CURR4";
 	public static final String EQUALS = "EQUALS";
 	public static final String AI_SKIP_TRUE = "AI/SKIP/TRUE";
 	public static final String AI_SKIP_FALSE = "AI/SKIP/FALSE";

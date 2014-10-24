@@ -118,6 +118,7 @@ public class TranslationManager {
 			// commit a transaction from root
 			if (t.getParent() == null) {
 				targetDAO.commit();
+				System.out.println();
 			}
 		}
 		// close DAOs
@@ -164,14 +165,27 @@ public class TranslationManager {
 						if (match.getDefaultValue().equals(MatchConstants.TOP)) {
 							VALUES(match.getLeft().getColumn(),
 									targetDAO.cast(tree.getParent().getTop()));
-						}
-						else if (match.getDefaultValue().equals(MatchConstants.TOP2)) {
+						} else if (match.getDefaultValue().equals(
+								MatchConstants.TOP2)) {
 							VALUES(match.getLeft().getColumn(),
-									targetDAO.cast(tree.getParent().getParent().getTop()));
-						}
-						else if (match.getDefaultValue().equals(MatchConstants.TOP3)) {
+									targetDAO.cast(tree.getParent().getParent()
+											.getTop()));
+						} else if (match.getDefaultValue().equals(
+								MatchConstants.TOP3)) {
 							VALUES(match.getLeft().getColumn(),
-									targetDAO.cast(tree.getParent().getParent().getParent().getTop()));
+									targetDAO.cast(tree.getParent().getParent()
+											.getParent().getTop()));
+						} else if (match.getDefaultValue().equals(
+								MatchConstants.TOP4)) {
+							VALUES(match.getLeft().getColumn(),
+									targetDAO.cast(tree.getParent().getParent()
+											.getParent().getParent().getTop()));
+						} else if (match.getDefaultValue().equals(
+								MatchConstants.TOP5)) {
+							VALUES(match.getLeft().getColumn(),
+									targetDAO.cast(tree.getParent().getParent()
+											.getParent().getParent()
+											.getParent().getTop()));
 						} else {
 							// use default value
 							VALUES(match.getLeft().getColumn(),
@@ -290,19 +304,33 @@ public class TranslationManager {
 							if (referencedValue
 									.equalsIgnoreCase(MatchConstants.TOP)) {
 								VALUES(reference.getReferencee().getColumn(),
-										targetDAO.cast(tree.getParent().getTop()));
-							} 
-							else if (referencedValue
+										targetDAO.cast(tree.getParent()
+												.getTop()));
+							} else if (referencedValue
 									.equalsIgnoreCase(MatchConstants.TOP2)) {
 								VALUES(reference.getReferencee().getColumn(),
-										targetDAO.cast(tree.getParent().getParent().getTop()));
-							}
-							else if (referencedValue
+										targetDAO.cast(tree.getParent()
+												.getParent().getTop()));
+							} else if (referencedValue
 									.equalsIgnoreCase(MatchConstants.TOP3)) {
 								VALUES(reference.getReferencee().getColumn(),
-										targetDAO.cast(tree.getParent().getParent().getParent().getTop()));
-							} 
-							else {
+										targetDAO.cast(tree.getParent()
+												.getParent().getParent()
+												.getTop()));
+							} else if (referencedValue
+									.equalsIgnoreCase(MatchConstants.TOP4)) {
+								VALUES(reference.getReferencee().getColumn(),
+										targetDAO.cast(tree.getParent()
+												.getParent().getParent()
+												.getParent().getTop()));
+							} else if (referencedValue
+									.equalsIgnoreCase(MatchConstants.TOP5)) {
+								VALUES(reference.getReferencee().getColumn(),
+										targetDAO.cast(tree.getParent()
+												.getParent().getParent()
+												.getParent().getParent()
+												.getTop()));
+							} else {
 								// use default value
 								VALUES(reference.getReferencee().getColumn(),
 										targetDAO.cast(referencedValue));
