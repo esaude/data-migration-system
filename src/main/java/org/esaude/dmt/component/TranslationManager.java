@@ -52,12 +52,13 @@ public class TranslationManager {
 
 	/**
 	 * This method starts the process of translation
+	 * 
 	 * @return
 	 * @throws SystemException
 	 */
 	public boolean execute() throws SystemException {
 		try {
-		read(tree, null);
+			read(tree, null);
 		} catch (SystemException ex) {
 			ex.printStackTrace();
 			targetDAO.rollback();
@@ -69,7 +70,9 @@ public class TranslationManager {
 	}
 
 	/**
-	 * This method traverses the tree of tuples recursively and performs the translation
+	 * This method traverses the tree of tuples recursively and performs the
+	 * translation
+	 * 
 	 * @param t
 	 * @param parentUUID
 	 * @param parentCurr
@@ -82,14 +85,13 @@ public class TranslationManager {
 		// select from source using the reference of the target side PK´s
 		// r_reference
 		String selectCurrsQuery = this.selectCurrs(t);
-		List<List<Object>> currs = sourceDAO
-				.executeQuery(selectCurrsQuery);
-		
+		List<List<Object>> currs = sourceDAO.executeQuery(selectCurrsQuery);
+
 		System.out
 				.println("---------------------------------------------------------");
 
-		
-		for (int currIndex = 0;/* the index of CURRS */ currIndex < currs.size(); currIndex++) {
+		for (int currIndex = 0; /* the index of CURRS */currIndex < currs
+				.size(); currIndex++) {
 			// init a transaction from root
 			if (t.getParent() == null) {
 				targetDAO.setSavePoint();// rollback till this point
@@ -102,15 +104,14 @@ public class TranslationManager {
 			// build insert statement based on translation logic
 			String insertTupleQuery = insertTuple(t, uuid, currIndex);
 			// TODO remove print
-			System.out.println(insertTupleQuery);		
+			System.out.println(insertTupleQuery);
 			// continue if query was skipped
 			if (insertTupleQuery.isEmpty()) {
 				continue;
 			}
-			List<List<Object>> tops = targetDAO
-					.executeUpdate(insertTupleQuery);
+			List<List<Object>> tops = targetDAO.executeUpdate(insertTupleQuery);
 			top = tops.get(0).get(0);
-			t.setTop(top);//set top value to tuple	
+			t.setTop(top);// set top value to tuple
 			// do the same for children
 			for (TupleTree eachTree : t.getSubTrees()) {
 				read(eachTree, uuid);
@@ -118,7 +119,6 @@ public class TranslationManager {
 			// commit a transaction from root
 			if (t.getParent() == null) {
 				targetDAO.commit();
-				System.out.println();
 			}
 		}
 		// close DAOs
@@ -134,6 +134,7 @@ public class TranslationManager {
 
 	/**
 	 * This method generates insert query based on translation logic
+	 * 
 	 * @param tuple
 	 * @param uuid
 	 * @param curr
@@ -148,7 +149,7 @@ public class TranslationManager {
 		String query = new SQL() {
 			{
 				TupleType tuple = tree.getHead();
-				
+
 				INSERT_INTO(tuple.getTable());
 				// access matches of tuple
 				for (MatchType match : tuple.getMatches()) {
@@ -162,30 +163,25 @@ public class TranslationManager {
 					// insert the default value
 					if (match.getRight() == null) {
 						// 8. TOP – Should use the PK value of the parent tuple
-						if (match.getDefaultValue().equals(MatchConstants.TOP)) {
+						String defaultValue = match.getDefaultValue()
+								.toString();
+						if (defaultValue.startsWith(MatchConstants.TOP)) {
+							// compute the type of top
+							int topType = (defaultValue.length() == 3) ? 1
+									: Integer
+											.valueOf(defaultValue.substring(3));
+
+							TupleTree parentTree = tree;// parent tree is equal
+														// to current tree for
+														// now
+							for (int i = 0; i < topType; i++) {
+								parentTree = parentTree.getParent();// back to
+																	// the
+																	// desired
+																	// parent
+							}
 							VALUES(match.getLeft().getColumn(),
-									targetDAO.cast(tree.getParent().getTop()));
-						} else if (match.getDefaultValue().equals(
-								MatchConstants.TOP2)) {
-							VALUES(match.getLeft().getColumn(),
-									targetDAO.cast(tree.getParent().getParent()
-											.getTop()));
-						} else if (match.getDefaultValue().equals(
-								MatchConstants.TOP3)) {
-							VALUES(match.getLeft().getColumn(),
-									targetDAO.cast(tree.getParent().getParent()
-											.getParent().getTop()));
-						} else if (match.getDefaultValue().equals(
-								MatchConstants.TOP4)) {
-							VALUES(match.getLeft().getColumn(),
-									targetDAO.cast(tree.getParent().getParent()
-											.getParent().getParent().getTop()));
-						} else if (match.getDefaultValue().equals(
-								MatchConstants.TOP5)) {
-							VALUES(match.getLeft().getColumn(),
-									targetDAO.cast(tree.getParent().getParent()
-											.getParent().getParent()
-											.getParent().getTop()));
+									targetDAO.cast(parentTree.getTop()));
 						} else {
 							// use default value
 							VALUES(match.getLeft().getColumn(),
@@ -197,9 +193,13 @@ public class TranslationManager {
 						final List<List<Object>> results = sourceDAO
 								.executeQuery(selectQuery);// execute select
 															// statement
-						//in case the database return more than one result, use the one at curr index
+						// in case the database return more than one result, use
+						// the one at curr index
 						int rowIndex = (results.size() > 1) ? currIndex : 0;
-						final Object value = results.get(rowIndex).get(0);// gets the database result
+						final Object value = results.get(rowIndex).get(0);// gets
+																			// the
+																			// database
+																			// result
 						// in case the default value is AI_SKIP_TRUE or
 						// AI_SKIP_FALSE
 						if (match.getDefaultValue().equals(
@@ -244,7 +244,9 @@ public class TranslationManager {
 							break;
 						}
 						// 14. NOW – Should use the current system datetime
-						else if (match.getDefaultValue().equals(MatchConstants.NOW) && value == null) {
+						else if (match.getDefaultValue().equals(
+								MatchConstants.NOW)
+								&& value == null) {
 							VALUES(match.getLeft().getColumn(), "NOW()");
 						}
 						// 4. If right side of the match is not required, it
@@ -257,10 +259,14 @@ public class TranslationManager {
 							VALUES(match.getLeft().getColumn(),
 									sourceDAO.cast(match.getDefaultValue()));
 						}
-						// 7. If there is a value match in a match, it must insert the value that the value match points to
-						else if (!match.getValueMatchId().equals(MatchConstants.NA)) {
-							Map<String, String> valueMatchGroup = ValueMatchType.valueMatches.get(Integer.valueOf(match.getValueMatchId().toString()));
-							//log an error if value match group doesn't exist
+						// 7. If there is a value match in a match, it must
+						// insert the value that the value match points to
+						else if (!match.getValueMatchId().equals(
+								MatchConstants.NA)) {
+							Map<String, String> valueMatchGroup = ValueMatchType.valueMatches
+									.get(Integer.valueOf(match
+											.getValueMatchId().toString()));
+							// log an error if value match group doesn't exist
 							if (valueMatchGroup == null) {
 								throw new SystemException(
 										"An error ocurred during translation phase while processing value match group in match with id: "
@@ -270,13 +276,16 @@ public class TranslationManager {
 									.toString().toLowerCase());
 							// log an error if value match doesn't exist
 							if (valueMatch == null) {
-								// get the value of UNMATCHED match in case the value is not in the group
+								// get the value of UNMATCHED match in case the
+								// value is not in the group
 								valueMatch = valueMatchGroup
-										.get(MatchConstants.UNMATCHED.toLowerCase());
+										.get(MatchConstants.UNMATCHED
+												.toLowerCase());
 								if (valueMatch == null) {
-									System.out.println(value
-									.toString().toLowerCase());
-									System.out.println(valueMatchGroup.keySet());
+									System.out.println(value.toString()
+											.toLowerCase());
+									System.out
+											.println(valueMatchGroup.keySet());
 									throw new SystemException(
 											"An error ocurred during translation phase while processing value match in match with id: "
 													+ match.getId());
@@ -301,35 +310,24 @@ public class TranslationManager {
 									.getReferencedValue().toString();
 							// 8. TOP – Should use the PK value of the parent
 							// tuple
-							if (referencedValue
-									.equalsIgnoreCase(MatchConstants.TOP)) {
+							if (referencedValue.startsWith(MatchConstants.TOP)) {
+								// compute the type of top
+								int topType = (referencedValue.length() == 3) ? 1
+										: Integer.valueOf(referencedValue
+												.substring(3));
+
+								TupleTree parentTree = tree;// parent tree is
+															// equal to current
+															// tree for now
+								for (int i = 0; i < topType; i++) {
+									parentTree = parentTree.getParent();// back
+																		// to
+																		// the
+																		// desired
+																		// parent
+								}
 								VALUES(reference.getReferencee().getColumn(),
-										targetDAO.cast(tree.getParent()
-												.getTop()));
-							} else if (referencedValue
-									.equalsIgnoreCase(MatchConstants.TOP2)) {
-								VALUES(reference.getReferencee().getColumn(),
-										targetDAO.cast(tree.getParent()
-												.getParent().getTop()));
-							} else if (referencedValue
-									.equalsIgnoreCase(MatchConstants.TOP3)) {
-								VALUES(reference.getReferencee().getColumn(),
-										targetDAO.cast(tree.getParent()
-												.getParent().getParent()
-												.getTop()));
-							} else if (referencedValue
-									.equalsIgnoreCase(MatchConstants.TOP4)) {
-								VALUES(reference.getReferencee().getColumn(),
-										targetDAO.cast(tree.getParent()
-												.getParent().getParent()
-												.getParent().getTop()));
-							} else if (referencedValue
-									.equalsIgnoreCase(MatchConstants.TOP5)) {
-								VALUES(reference.getReferencee().getColumn(),
-										targetDAO.cast(tree.getParent()
-												.getParent().getParent()
-												.getParent().getParent()
-												.getTop()));
+										targetDAO.cast(parentTree.getTop()));
 							} else {
 								// use default value
 								VALUES(reference.getReferencee().getColumn(),
@@ -340,11 +338,11 @@ public class TranslationManager {
 					// metadata
 					VALUES("creator", sourceDAO.cast(1));
 					VALUES("date_created", "NOW()");
-					VALUES("voided", sourceDAO.cast(0));
+					if (!tuple.getTable().equalsIgnoreCase("PROVIDER"))
+						VALUES("voided", sourceDAO.cast(0));
 					// avoid PATIENT table
-					if (!tuple.getTable().equalsIgnoreCase("PATIENT")) {
+					if (!tuple.getTable().equalsIgnoreCase("PATIENT"))
 						VALUES("uuid", sourceDAO.cast(uuid));
-					}
 				}
 			}
 		}.toString();
@@ -355,8 +353,9 @@ public class TranslationManager {
 	}
 
 	/**
-	 * This method generates and returns SQL query that should be executed
-	 * in the source database to retrieve CURRS of tuple
+	 * This method generates and returns SQL query that should be executed in
+	 * the source database to retrieve CURRS of tuple
+	 * 
 	 * @param tree
 	 * @return
 	 * @throws SystemException
@@ -384,19 +383,19 @@ public class TranslationManager {
 					// set the right referenced value
 					if (referencedValue.equals(MatchConstants.CURR)) {
 						referencedValue = tree.getParent().getCurr();
-					}
-					else if (referencedValue.equals(MatchConstants.CURR2)) {
-						referencedValue = tree.getParent().getParent().getCurr();
-					}
-					else if (referencedValue.equals(MatchConstants.CURR3)) {
-						referencedValue = tree.getParent().getParent().getParent().getCurr();
+					} else if (referencedValue.equals(MatchConstants.CURR2)) {
+						referencedValue = tree.getParent().getParent()
+								.getCurr();
+					} else if (referencedValue.equals(MatchConstants.CURR3)) {
+						referencedValue = tree.getParent().getParent()
+								.getParent().getCurr();
 					}
 					// check whether the reference is direct or indirect
 					if (reference.getPredecessor().equals(Integer.valueOf(0))
 							&& isFirstDirectReference) {
-						//start from reference value if exists
+						// start from reference value if exists
 						if (reference.getReferencee() != null) {
-							//the referencee should be used in the result set
+							// the referencee should be used in the result set
 							SELECT(reference.getReferencee().getTable() + "."
 									+ reference.getReferencee().getColumn());
 							FROM(reference.getReferencee().getTable());
@@ -406,11 +405,11 @@ public class TranslationManager {
 							FROM(referencedTable);
 						}
 						if (referencedValue.equals(MatchConstants.ALL)) {
-							break;//no more references must be processed
+							break;// no more references must be processed
 						}
-						WHERE(referencedTable + "." + referencedColumn
-								+ " = " + sourceDAO.cast(referencedValue));
-						
+						WHERE(referencedTable + "." + referencedColumn + " = "
+								+ sourceDAO.cast(referencedValue));
+
 						isFirstDirectReference = false;
 					} else {
 						String referenceeTable = reference.getReferencee()
@@ -432,15 +431,16 @@ public class TranslationManager {
 	}
 
 	/**
-	 * This method generates and returns SQL query to be executed
-	 * in the source database to retrieve the data to be used as a
-	 * the value of the match, while building the insert query
+	 * This method generates and returns SQL query to be executed in the source
+	 * database to retrieve the data to be used as a the value of the match,
+	 * while building the insert query
 	 * 
 	 * @param match
 	 * @param curr
 	 * @return
 	 */
-	private String selectMatch(final MatchType match, final TupleTree tree) throws SystemException {
+	private String selectMatch(final MatchType match, final TupleTree tree)
+			throws SystemException {
 		return new SQL() {
 			{
 				SELECT(match.getRight().getTable() + "."
@@ -459,12 +459,11 @@ public class TranslationManager {
 					// set the right referenced value
 					if (referencedValue.equals(MatchConstants.CURR)) {
 						referencedValue = tree.getCurr();
-					}
-					else if (referencedValue.equals(MatchConstants.CURR2)) {
+					} else if (referencedValue.equals(MatchConstants.CURR2)) {
 						referencedValue = tree.getParent().getCurr();
-					}
-					else if (referencedValue.equals(MatchConstants.CURR3)) {
-						referencedValue = tree.getParent().getParent().getCurr();
+					} else if (referencedValue.equals(MatchConstants.CURR3)) {
+						referencedValue = tree.getParent().getParent()
+								.getCurr();
 					}
 					// in case the referencee exist
 					if (reference.getReferencee() != null) {
