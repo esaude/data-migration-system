@@ -188,8 +188,8 @@ public class TranslationManager {
 									sourceDAO.cast(match.getDefaultValue()));
 						}
 					} else {
-						selectQuery = selectMatch(match, tree);// generate
-																// select query
+						selectQuery = selectMatch(match, tree);// generate select query
+						
 						final List<List<Object>> results = sourceDAO
 								.executeQuery(selectQuery);// execute select
 															// statement
@@ -225,7 +225,7 @@ public class TranslationManager {
 							else if (match.getDefaultValue().equals(
 									MatchConstants.AI_SKIP_FALSE)
 									&& !boolValue) {
-								skip = true;// indicate that all the tuple must
+								skip = true;// indicate that the entire tuple must
 											// be skipped
 								break;
 							} else {
@@ -282,10 +282,6 @@ public class TranslationManager {
 										.get(MatchConstants.UNMATCHED
 												.toLowerCase());
 								if (valueMatch == null) {
-									System.out.println(value.toString()
-											.toLowerCase());
-									System.out
-											.println(valueMatchGroup.keySet());
 									throw new SystemException(
 											"An error ocurred during translation phase while processing value match in match with id: "
 													+ match.getId());
@@ -364,7 +360,7 @@ public class TranslationManager {
 		return new SQL() {
 			{
 				TupleType tuple = tree.getHead();
-				// the select should be constructed based on L-References of one
+				// the select should be constructed based on R-References of one
 				// of the PKs match of the tuple
 				MatchType pkMatch = findPkMatch(tuple);
 				boolean isFirstDirectReference = true;// used to flag whether or
@@ -391,25 +387,30 @@ public class TranslationManager {
 								.getParent().getCurr();
 					}
 					// check whether the reference is direct or indirect
-					if (reference.getPredecessor().equals(Integer.valueOf(0))
-							&& isFirstDirectReference) {
+					if (reference.getPredecessor().equals(Integer.valueOf(0))) {
 						// start from reference value if exists
 						if (reference.getReferencee() != null) {
 							// the referencee should be used in the result set
-							SELECT(reference.getReferencee().getTable() + "."
-									+ reference.getReferencee().getColumn());
-							FROM(reference.getReferencee().getTable());
+							if (isFirstDirectReference) { // select from, only for first reference
+								SELECT(reference.getReferencee().getTable()
+										+ "."
+										+ reference.getReferencee().getColumn());
+								FROM(reference.getReferencee().getTable());
+							}
 						} else {
 							// the referenced should be used in the result set
-							SELECT(referencedTable + "." + referencedColumn);
-							FROM(referencedTable);
+							if (isFirstDirectReference) { // select from, only for first reference
+								SELECT(referencedTable + "." + referencedColumn);
+								FROM(referencedTable);
+							}
 						}
 						if (referencedValue.equals(MatchConstants.ALL)) {
 							break;// no more references must be processed
 						}
 						WHERE(referencedTable + "." + referencedColumn + " = "
 								+ sourceDAO.cast(referencedValue));
-
+						
+						if (isFirstDirectReference) //select only for first reference
 						isFirstDirectReference = false;
 					} else {
 						String referenceeTable = reference.getReferencee()
