@@ -40,8 +40,19 @@ public class ValidationManager {
 	private DatatypeMappingReader dmr;
 	private TupleTree tree;
 	private EventCode eventCode;
+	private final Map<Integer, TupleType> LINEAR_TUPLES = new HashMap<Integer, TupleType>();// allow
+																							// to
+																							// order
+																							// and
+																							// access
+																							// tuples
+																							// in
+																							// a
+																							// linear
+																							// fashion
 	// counters for log report
-	private int warningCount, tupleCount, matchCount = 0;
+	private int warningCount, tupleCount, matchCount, leftRefCount,
+			rightRefCount = 0;
 
 	/**
 	 * Parameterized constructor
@@ -95,6 +106,8 @@ public class ValidationManager {
 				.getSize(Sheets.TUPLE.INDEX); i++) {
 			// set tuple values
 			createTuple(tupleBuilder, i);
+			LINEAR_TUPLES.put(tupleBuilder.getTuple().getId(),
+					tupleBuilder.getTuple());// for validation purposes only
 			tupleCount++;// keep counting the number of tuples affected
 		}
 		// process and validate tuple matches
@@ -137,9 +150,15 @@ public class ValidationManager {
 			matches.put(matchBuilder.getMatch().getId(),
 					matchBuilder.getMatch());
 			// add match to tuple
+			try {
 			tupleBuilder.process()
 					.getTree(matchBuilder.getMatch().getTupleId()).getHead()
 					.getMatches().add(matchBuilder.getMatch());
+			} catch (Throwable t) {
+				System.err.println("An error occured processing the match in line: " + matchCount);
+				t.printStackTrace();
+				throw t;
+			}
 
 			matchCount++;// keep counting the number of matches affected
 		}
@@ -152,9 +171,19 @@ public class ValidationManager {
 
 			createReference(referenceBuilder, row, Sheets.REFERENCES.INDEX_L);
 
-			Integer tupleId = Integer.valueOf(processor.process(
-					Sheets.REFERENCES.INDEX_L,
-					Sheets.REFERENCES.TUPLE_MATCH_ID, row));
+			Integer tupleId = null;
+			
+			try {
+				tupleId = Integer.valueOf(processor.process(
+						Sheets.REFERENCES.INDEX_L,
+						Sheets.REFERENCES.TUPLE_MATCH_ID, row));
+			} catch (Throwable t) {
+				System.err
+						.println("A processing error occured after L-References in line: "
+								+ (leftRefCount + 1));
+				t.printStackTrace();
+				throw t;
+			}
 
 			TupleType tuple = tupleBuilder.process().getTree(tupleId).getHead();
 			// validate referenced value
@@ -167,6 +196,7 @@ public class ValidationManager {
 			// add reference to tuple
 			tuple.getReferences().put(referenceBuilder.getReference().getId(),
 					referenceBuilder.getReference());
+			leftRefCount++;// keep counting the number of matches affected
 		}
 		// create and validate right references
 		for (int row = Sheets.REFERENCES.ROW_START; row < processor
@@ -175,9 +205,18 @@ public class ValidationManager {
 			// create right reference
 			ReferenceBuilder referenceBuilder = new ReferenceBuilder();
 			// retrieve match that this reference is part of
-			Integer matchId = Integer.valueOf(processor.process(
-					Sheets.REFERENCES.INDEX_R,
-					Sheets.REFERENCES.TUPLE_MATCH_ID, row));
+			Integer matchId = null;
+			try {
+				matchId = Integer.valueOf(processor.process(
+						Sheets.REFERENCES.INDEX_R,
+						Sheets.REFERENCES.TUPLE_MATCH_ID, row));
+			} catch (Throwable t) {
+				System.err
+						.println("A processing error occured after R-References in line: "
+								+ (rightRefCount + 1));
+				t.printStackTrace();
+				throw t;
+			}
 
 			MatchType match = matches.get(matchId);
 
@@ -194,9 +233,14 @@ public class ValidationManager {
 			// add reference to match
 			match.getReferences().put(referenceBuilder.getReference().getId(),
 					referenceBuilder.getReference());
+			rightRefCount++; // keep counting the number of matches affected
 		}
 		// update the tree
 		tree = tupleBuilder.process();
+		// validate the structure of all the tuples after composed
+		if (!validateTupleStructure()) {
+			return false;
+		}
 		// log end of process
 		logEndOfProcess();
 
@@ -276,47 +320,62 @@ public class ValidationManager {
 	 */
 	private void createReference(final ReferenceBuilder referenceBuilder,
 			final int row, final int sheetIndex) throws SystemException {
-		Integer referenceId = Integer.valueOf(processor.process(sheetIndex,
-				Sheets.REFERENCES.ID, row));
-		String datatype = processor.process(sheetIndex,
-				Sheets.REFERENCES.DATATYPE, row);
-		Integer size = Integer.valueOf(processor.process(sheetIndex,
-				Sheets.REFERENCES.SIZE, row));
-		String predecessorStr = processor.process(sheetIndex,
-				Sheets.REFERENCES.SEQUENCE, row);
-		Integer predecessor = (predecessorStr.equals(MatchConstants.NA)) ? 0
-				: Integer.valueOf(predecessorStr);
-		String nameDesc = processor.process(sheetIndex,
-				Sheets.REFERENCES.NAME_DESC, row);
-		// referencee side values
-		String table_l = processor.process(sheetIndex,
-				Sheets.REFERENCES.REFERENCE_TABLE, row);
-		String column_l = processor.process(sheetIndex,
-				Sheets.REFERENCES.REFERENCE_COLUMN, row);
-		// referenced side values
-		String table_r = processor.process(sheetIndex,
-				Sheets.REFERENCES.REFERENCED_TABLE, row);
-		String column_r = processor.process(sheetIndex,
-				Sheets.REFERENCES.REFERENCED_COLUMN, row);
-		// referenced value
-		Object value = processor.process(sheetIndex,
-				Sheets.REFERENCES.REFERENCED_VALUE, row);
+		try {
+			Integer referenceId = Integer.valueOf(processor.process(sheetIndex,
+					Sheets.REFERENCES.ID, row));
+			String datatype = processor.process(sheetIndex,
+					Sheets.REFERENCES.DATATYPE, row);
+			Integer size = Integer.valueOf(processor.process(sheetIndex,
+					Sheets.REFERENCES.SIZE, row));
+			String predecessorStr = processor.process(sheetIndex,
+					Sheets.REFERENCES.SEQUENCE, row);
+			Integer predecessor = (predecessorStr.equals(MatchConstants.NA)) ? 0
+					: Integer.valueOf(predecessorStr);
+			String nameDesc = processor.process(sheetIndex,
+					Sheets.REFERENCES.NAME_DESC, row);
+			// referencee side values
+			String table_l = processor.process(sheetIndex,
+					Sheets.REFERENCES.REFERENCE_TABLE, row);
+			String column_l = processor.process(sheetIndex,
+					Sheets.REFERENCES.REFERENCE_COLUMN, row);
+			// referenced side values
+			String table_r = processor.process(sheetIndex,
+					Sheets.REFERENCES.REFERENCED_TABLE, row);
+			String column_r = processor.process(sheetIndex,
+					Sheets.REFERENCES.REFERENCED_COLUMN, row);
+			// referenced value
+			Object value = processor.process(sheetIndex,
+					Sheets.REFERENCES.REFERENCED_VALUE, row);
 
-		referenceBuilder
-				.createReference(referenceId, datatype, size, nameDesc,
-						predecessor)
-				.createReferenceSide(table_r, column_r,
-						ReferenceBuilder.REFERENCED)
-				.createReferencedValue(value);
-		// create left side if exist
-		if (!table_l.equals(MatchConstants.NA)) {
-			referenceBuilder.createReferenceSide(table_l, column_l,
-					ReferenceBuilder.REFERENCEE);
+			referenceBuilder
+					.createReference(referenceId, datatype, size, nameDesc,
+							predecessor)
+					.createReferenceSide(table_r, column_r,
+							ReferenceBuilder.REFERENCED)
+					.createReferencedValue(value);
+			// create left side if exist
+			if (!table_l.equals(MatchConstants.NA)) {
+				referenceBuilder.createReferenceSide(table_l, column_l,
+						ReferenceBuilder.REFERENCEE);
+			}
+		} catch (Throwable t) {
+			if (sheetIndex == 2) {
+				System.err
+						.println("A processing error occured after L-References in line: "
+								+ (leftRefCount + 1));
+			} else {
+				System.err
+						.println("A processing error occured after R-References in line: "
+								+ (rightRefCount + 1));
+			}
+
+			t.printStackTrace();
+			throw t;
 		}
 	}
 
 	/**
-	 * Validates the sequence of left reference according to validation logic
+	 * Validates the sequence of reference according to validation logic
 	 * 
 	 * @param reference
 	 *            the reference to be validated
@@ -342,11 +401,9 @@ public class ValidationManager {
 			final String tableName) {
 
 		// A reference is direct if its reference table is equal to the table
-		// of its part
-		if (reference.getReferencee() == null
-				|| tableName
-						.equals((reference.getReferencee() == null) ? MatchConstants.NA
-								: reference.getReferencee().getTable())) {
+		// of its part or N/A
+		if (reference.getReferencee() == null) {
+
 			// If a left reference is direct (the reference table is equal to
 			// the tuple table)
 			// then it should not have sequence value, an error must be logged
@@ -364,50 +421,72 @@ public class ValidationManager {
 				return false;
 			}
 		} else {
-			if (reference.getPredecessor().equals(Integer.valueOf(0))) {
+			if (tableName
+					.equalsIgnoreCase(reference.getReferencee().getTable())
+					&& !reference.getPredecessor().equals(Integer.valueOf(0))) {
 				// write error log
 				writer.writeLog(new Error(eventCode
-						.getString(EventCodeContants.ERR009),
+						.getString(EventCodeContants.ERR008),
 						ProcessPhases.VALIDATION, Calendar.getInstance()
-								.getTime(), EventCodeContants.ERR009,
+								.getTime(), EventCodeContants.ERR008,
 						Integer.valueOf(processor.process(sheetIndex,
 								Sheets.REFERENCES.TUPLE_MATCH_ID, row)),
 						Integer.valueOf(processor.process(sheetIndex,
 								Sheets.REFERENCES.ID, row)), sheetName));
 				return false;
 			}
-			// The sequence of a left reference must belong to the same tuple,
-			// an error must be logged otherwise
-			if (!part.getReferences().containsKey(reference.getPredecessor())) {
-				// write error log
-				writer.writeLog(new Error(eventCode
-						.getString(EventCodeContants.ERR010),
-						ProcessPhases.VALIDATION, Calendar.getInstance()
-								.getTime(), EventCodeContants.ERR010,
-						Integer.valueOf(processor.process(sheetIndex,
-								Sheets.REFERENCES.TUPLE_MATCH_ID, row)),
-						Integer.valueOf(processor.process(sheetIndex,
-								Sheets.REFERENCES.ID, row)), sheetName));
-				return false;
-			}
-			// The REFERENCE TABLE of an indirect reference must be the same as
-			// the REFERENCED TABLE of its sequence, an error must be logged
-			// otherwise
-			String indirectReferenceTable = reference.getReferencee()
-					.getTable();
-			String sequenceReferencedTable = part.getReferences()
-					.get(reference.getPredecessor()).getReferenced().getTable();
-			if (!indirectReferenceTable.equals(sequenceReferencedTable)) {
-				// write error log
-				writer.writeLog(new Error(eventCode
-						.getString(EventCodeContants.ERR011),
-						ProcessPhases.VALIDATION, Calendar.getInstance()
-								.getTime(), EventCodeContants.ERR011,
-						Integer.valueOf(processor.process(sheetIndex,
-								Sheets.REFERENCES.TUPLE_MATCH_ID, row)),
-						Integer.valueOf(processor.process(sheetIndex,
-								Sheets.REFERENCES.ID, row)), sheetName));
-				return false;
+			//indirect reference
+			if (!tableName.equalsIgnoreCase(reference.getReferencee()
+					.getTable()) && ! tableName.equalsIgnoreCase(MatchConstants.NA)) {
+				if (reference.getPredecessor().equals(Integer.valueOf(0))) {
+					// write error log
+					writer.writeLog(new Error(eventCode
+							.getString(EventCodeContants.ERR009),
+							ProcessPhases.VALIDATION, Calendar.getInstance()
+									.getTime(), EventCodeContants.ERR009,
+							Integer.valueOf(processor.process(sheetIndex,
+									Sheets.REFERENCES.TUPLE_MATCH_ID, row)),
+							Integer.valueOf(processor.process(sheetIndex,
+									Sheets.REFERENCES.ID, row)), sheetName));
+					return false;
+				}
+				// The sequence of a left reference must belong to the same
+				// tuple,
+				// an error must be logged otherwise
+				if (!part.getReferences().containsKey(
+						reference.getPredecessor())) {
+					// write error log
+					writer.writeLog(new Error(eventCode
+							.getString(EventCodeContants.ERR010),
+							ProcessPhases.VALIDATION, Calendar.getInstance()
+									.getTime(), EventCodeContants.ERR010,
+							Integer.valueOf(processor.process(sheetIndex,
+									Sheets.REFERENCES.TUPLE_MATCH_ID, row)),
+							Integer.valueOf(processor.process(sheetIndex,
+									Sheets.REFERENCES.ID, row)), sheetName));
+					return false;
+				}
+				// The REFERENCE TABLE of an indirect reference must be the same
+				// as
+				// the REFERENCED TABLE of its sequence, an error must be logged
+				// otherwise
+				String indirectReferenceTable = reference.getReferencee()
+						.getTable();
+				String sequenceReferencedTable = part.getReferences()
+						.get(reference.getPredecessor()).getReferenced()
+						.getTable();
+				if (!indirectReferenceTable.equals(sequenceReferencedTable)) {
+					// write error log
+					writer.writeLog(new Error(eventCode
+							.getString(EventCodeContants.ERR011),
+							ProcessPhases.VALIDATION, Calendar.getInstance()
+									.getTime(), EventCodeContants.ERR011,
+							Integer.valueOf(processor.process(sheetIndex,
+									Sheets.REFERENCES.TUPLE_MATCH_ID, row)),
+							Integer.valueOf(processor.process(sheetIndex,
+									Sheets.REFERENCES.ID, row)), sheetName));
+					return false;
+				}
 			}
 		}
 		return true;
@@ -422,21 +501,28 @@ public class ValidationManager {
 	 */
 	private void createTuple(final TupleBuilder tupleBuilder, final int index)
 			throws SystemException {
-		tupleBuilder
-				.createTuple(
-						Integer.valueOf(processor.process(Sheets.TUPLE.INDEX,
-								Sheets.TUPLE.ID, index)),
-						processor.process(Sheets.TUPLE.INDEX,
-								Sheets.TUPLE.TERMINOLOGY, index),
-						processor.process(Sheets.TUPLE.INDEX,
-								Sheets.TUPLE.TABLE, index),
-						processor.process(Sheets.TUPLE.INDEX,
-								Sheets.TUPLE.DESC, index),
-						(processor.process(Sheets.TUPLE.INDEX,
-								Sheets.TUPLE.PREDECESSOR, index).equals(
-								MatchConstants.NA) ? null : Integer
-								.valueOf(processor.process(Sheets.TUPLE.INDEX,
-										Sheets.TUPLE.PREDECESSOR, index))));
+		try {
+			tupleBuilder.createTuple(
+					Integer.valueOf(processor.process(Sheets.TUPLE.INDEX,
+							Sheets.TUPLE.ID, index)),
+					processor.process(Sheets.TUPLE.INDEX,
+							Sheets.TUPLE.TERMINOLOGY, index),
+					processor.process(Sheets.TUPLE.INDEX, Sheets.TUPLE.TABLE,
+							index),
+					processor.process(Sheets.TUPLE.INDEX, Sheets.TUPLE.DESC,
+							index),
+					(processor.process(Sheets.TUPLE.INDEX,
+							Sheets.TUPLE.PREDECESSOR, index).equals(
+							MatchConstants.NA) ? null : Integer
+							.valueOf(processor.process(Sheets.TUPLE.INDEX,
+									Sheets.TUPLE.PREDECESSOR, index))));
+		} catch (Throwable t) {
+			System.err
+					.println("A processing error occured after Tuple in line: "
+							+ (tupleCount + 1));
+			t.printStackTrace();
+			throw t;
+		}
 
 	}
 
@@ -447,22 +533,31 @@ public class ValidationManager {
 	 * @param row
 	 */
 	private void createMatch(final MatchBuilder matchBuilder, final int row) {
-
-		Integer tupleId = Integer.valueOf(processor.process(
-				Sheets.MATCH_L_TO_R.INDEX, Sheets.MATCH_L_TO_R.TUPLE_ID, row));
-		Integer matchId = Integer.valueOf(processor.process(
-				Sheets.MATCH_L_TO_R.INDEX, Sheets.MATCH_L_TO_R.MATCH_ID, row));
-		String terminology = processor.process(Sheets.MATCH_L_TO_R.INDEX,
-				Sheets.MATCH_L_TO_R.TERMINOLOGY, row);
-		Object valueMatch = processor.process(Sheets.MATCH_L_TO_R.INDEX,
-				Sheets.MATCH_L_TO_R.VALUE_MATCH, row);
-		Object defaultValue = processor.process(Sheets.MATCH_L_TO_R.INDEX,
-				Sheets.MATCH_L_TO_R.DEFAULT_VALUE, row);
-		String pk = processor.process(Sheets.MATCH_L_TO_R.INDEX,
-				Sheets.MATCH_L_TO_R.PK, row);
-		// create the match using builder
-		matchBuilder.createMatch(tupleId, matchId, terminology, valueMatch,
-				defaultValue, pk);
+		try {
+			Integer tupleId = Integer.valueOf(processor.process(
+					Sheets.MATCH_L_TO_R.INDEX, Sheets.MATCH_L_TO_R.TUPLE_ID,
+					row));
+			Integer matchId = Integer.valueOf(processor.process(
+					Sheets.MATCH_L_TO_R.INDEX, Sheets.MATCH_L_TO_R.MATCH_ID,
+					row));
+			String terminology = processor.process(Sheets.MATCH_L_TO_R.INDEX,
+					Sheets.MATCH_L_TO_R.TERMINOLOGY, row);
+			Object valueMatch = processor.process(Sheets.MATCH_L_TO_R.INDEX,
+					Sheets.MATCH_L_TO_R.VALUE_MATCH, row);
+			Object defaultValue = processor.process(Sheets.MATCH_L_TO_R.INDEX,
+					Sheets.MATCH_L_TO_R.DEFAULT_VALUE, row);
+			String pk = processor.process(Sheets.MATCH_L_TO_R.INDEX,
+					Sheets.MATCH_L_TO_R.PK, row);
+			// create the match using builder
+			matchBuilder.createMatch(tupleId, matchId, terminology, valueMatch,
+					defaultValue, pk);
+		} catch (Throwable t) {
+			System.err
+					.println("A processing error occured after Match-L-to-R in line: "
+							+ (matchCount + 2));
+			t.printStackTrace();
+			throw t;
+		}
 
 	}
 
@@ -692,14 +787,83 @@ public class ValidationManager {
 		// 20. If in a Match-L-to-R the default value is NOW, then its right
 		// side datatype must be DATE or DATETIME compatible.
 		if (defaultValue.equals(MatchConstants.NOW)) {
-			if(!Arrays.asList(MatchConstants.DATETIME, MatchConstants.DATE).contains(match.getLeft().getDatatype())) {
+			if (!Arrays.asList(MatchConstants.DATETIME, MatchConstants.DATE)
+					.contains(match.getLeft().getDatatype())) {
 				writer.writeLog(new Error(eventCode
 						.getString(EventCodeContants.ERR016),
-						ProcessPhases.VALIDATION, Calendar.getInstance().getTime(),
-						EventCodeContants.ERR016, match.getTupleId(),
-						match.getId(), Sheets.MATCH_L_TO_R.NAME));
+						ProcessPhases.VALIDATION, Calendar.getInstance()
+								.getTime(), EventCodeContants.ERR016, match
+								.getTupleId(), match.getId(),
+						Sheets.MATCH_L_TO_R.NAME));
 
 				return false;// end execution
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * This method validates the structure of the Tuple after composed.
+	 * 
+	 * @return
+	 */
+	private boolean validateTupleStructure() {
+		// linear search tuples
+		for (TupleType tuple : LINEAR_TUPLES.values()) {
+			MatchType pkMatch = null;
+			// validate tuple must have a PK match
+			for (MatchType match : tuple.getMatches()) {
+				if (match.isPk().equals(MatchConstants.YES)) {
+					pkMatch = match;
+					break;
+				}
+			}
+			// print and log error message
+			if (pkMatch == null) {
+				writer.writeLog(new Error(eventCode
+						.getString(EventCodeContants.ERR017),
+						ProcessPhases.VALIDATION, Calendar.getInstance()
+								.getTime(), EventCodeContants.ERR017, tuple
+								.getId(), 0, Sheets.TUPLE.NAME));
+
+				return false;// end execution
+			}
+			// validate PK match must have L-References
+			if (pkMatch.getReferences() == null
+					|| pkMatch.getReferences().isEmpty()) {
+				writer.writeLog(new Error(eventCode
+						.getString(EventCodeContants.ERR018),
+						ProcessPhases.VALIDATION, Calendar.getInstance()
+								.getTime(), EventCodeContants.ERR018, tuple
+								.getId(), pkMatch.getId(),
+						Sheets.TUPLE.NAME));
+
+				return false;// end execution
+			}
+			// validate Tuple must have L-References with direct parent
+			boolean hasReferenceWithParent = true;
+			TupleTree parentTree = tree.getTree(tuple.getId()).getParent();
+			//skip root element
+			if (parentTree != null) {
+				for (ReferenceType lReference : tuple.getReferences().values()) {
+					if (parentTree
+							.getHead()
+							.getTable()
+							.equalsIgnoreCase(
+									lReference.getReferenced().getTable())) {
+						hasReferenceWithParent = true;
+						break;
+					}
+				}
+				if (!hasReferenceWithParent) {
+					writer.writeLog(new Error(eventCode
+							.getString(EventCodeContants.ERR019),
+							ProcessPhases.VALIDATION, Calendar.getInstance()
+									.getTime(), EventCodeContants.ERR019, tuple
+									.getId(), 0, Sheets.TUPLE.NAME));
+
+					return false;// end execution
+				}
 			}
 		}
 		return true;

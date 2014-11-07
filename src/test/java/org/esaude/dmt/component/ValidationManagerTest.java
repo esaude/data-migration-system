@@ -88,31 +88,32 @@ public class ValidationManagerTest {
 		assertEquals(MatchConstants.NO, match3.getRight().isIsRequired());
 		
 		
-		assertEquals(2, tree.getTree(14).getHead().getMatches().size());
+		assertEquals(2, tree.getTree(15).getHead().getMatches().size());
 		
-		matchIds = extract(tree.getTree(14).getHead().getMatches(), on(MatchType.class).getId());
+		matchIds = extract(tree.getTree(15).getHead().getMatches(), on(MatchType.class).getId());
 		
-		assertTrue(matchIds.contains(57));
-		assertTrue(matchIds.contains(58));
+		assertTrue(matchIds.contains(60));
+		assertTrue(matchIds.contains(61));
 		
-		//tuple 14 references
-		Map<Integer, ReferenceType> references14 = tree.getTree(14).getHead().getReferences();
+		//tuple 15 references
+		Map<Integer, ReferenceType> references15 = tree.getTree(15).getHead().getReferences();
 		
-		assertNotNull(references14);
-		assertEquals(3, references14.size());
-		assertTrue(references14.containsKey(Integer.valueOf(22)));
-		assertTrue(references14.containsKey(Integer.valueOf(23)));
-		assertTrue(references14.containsKey(Integer.valueOf(24)));
+		assertNotNull(references15);
+		assertEquals(4, references15.size());
+		assertTrue(references15.containsKey(Integer.valueOf(24)));
+		assertTrue(references15.containsKey(Integer.valueOf(25)));
+		assertTrue(references15.containsKey(Integer.valueOf(26)));
+		assertTrue(references15.containsKey(Integer.valueOf(27)));
 		
-		ReferenceType reference14id22 = references14.get(22);
-		assertEquals(Integer.valueOf(22), reference14id22.getId());
-		assertEquals("ENCOUNTER", reference14id22.getReferencee().getTable());
-		assertEquals("patient_id", reference14id22.getReferencee().getColumn());
-		assertEquals("PATIENT", reference14id22.getReferenced().getTable());
-		assertEquals("patient_id", reference14id22.getReferenced().getColumn());
-		assertEquals(MatchConstants.TOP, reference14id22.getReferencedValue().toString());
-		assertEquals(MatchConstants.INT, reference14id22.getDatatype());
-		assertEquals(Integer.valueOf(11), reference14id22.getSize());
+		ReferenceType reference14id24 = references15.get(24);
+		assertEquals(Integer.valueOf(24), reference14id24.getId());
+		assertEquals("ENCOUNTER", reference14id24.getReferencee().getTable());
+		assertEquals("patient_id", reference14id24.getReferencee().getColumn());
+		assertEquals("PATIENT", reference14id24.getReferenced().getTable());
+		assertEquals("patient_id", reference14id24.getReferenced().getColumn());
+		assertEquals(MatchConstants.TOP2, reference14id24.getReferencedValue().toString());
+		assertEquals(MatchConstants.INT, reference14id24.getDatatype());
+		assertEquals(Integer.valueOf(11), reference14id24.getSize());
 		
 	}
 }

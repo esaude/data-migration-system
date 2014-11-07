@@ -1,13 +1,10 @@
 package org.esaude.dmt.util;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-
-import org.esaude.dmt.config.schema.Config;
-
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
+
+import org.esaude.dmt.config.schema.Config;
 
 /**
  * Tool that reads info from XML configuration file. This tool uses JAXB API to
@@ -17,7 +14,6 @@ import javax.xml.bind.Unmarshaller;
  * @since 21-08-2014
  *
  */
-@SuppressWarnings("restriction")
 public final class ConfigReader {
 	private static ConfigReader instance;
 
@@ -47,9 +43,9 @@ public final class ConfigReader {
 			JAXBContext jaxbContext = JAXBContext.newInstance("org.esaude.dmt.config.schema");
 
 			Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-			config  = (Config) jaxbUnmarshaller.unmarshal(new FileInputStream("src/main/resources/config.xml"));
+			config  = (Config) jaxbUnmarshaller.unmarshal(ClassLoader.class.getResourceAsStream("/config.xml"));
 
-		} catch (JAXBException | FileNotFoundException e) {
+		} catch (JAXBException e) {
 			e.printStackTrace();
 		}
 		return config;

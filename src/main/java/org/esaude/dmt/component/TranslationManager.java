@@ -1,5 +1,7 @@
 package org.esaude.dmt.component;
 
+import java.io.PrintStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -10,11 +12,14 @@ import org.esaude.dmt.dao.DatabaseUtil;
 import org.esaude.dmt.helper.DAOTypes;
 import org.esaude.dmt.helper.MatchConstants;
 import org.esaude.dmt.helper.SystemException;
+import org.esaude.dmt.util.DatatypeEnforcer;
 import org.esaude.dmt.util.TupleTree;
 import org.esaude.matchingschema.MatchType;
 import org.esaude.matchingschema.ReferenceType;
 import org.esaude.matchingschema.TupleType;
 import org.esaude.matchingschema.ValueMatchType;
+
+import static ch.lambdaj.Lambda.*;
 
 /**
  * This manager is responsible to generate SQL queries to either SELECT or
@@ -29,6 +34,7 @@ public class TranslationManager {
 	private TupleTree tree;
 	private DatabaseUtil sourceDAO;
 	private DatabaseUtil targetDAO;
+	private DatatypeEnforcer de;
 	private boolean skip;// this variable indicates whether or not a tuple must
 							// return an insert query or an empty string.
 
@@ -45,6 +51,7 @@ public class TranslationManager {
 		try {
 			sourceDAO = DAOFactory.getInstance().getDAO(DAOTypes.SOURCE);
 			targetDAO = DAOFactory.getInstance().getDAO(DAOTypes.TARGET);
+			de = new DatatypeEnforcer();
 		} catch (SystemException e) {
 			e.printStackTrace();
 		}
@@ -87,9 +94,6 @@ public class TranslationManager {
 		String selectCurrsQuery = this.selectCurrs(t);
 		List<List<Object>> currs = sourceDAO.executeQuery(selectCurrsQuery);
 
-		System.out
-				.println("---------------------------------------------------------");
-
 		for (int currIndex = 0; /* the index of CURRS */currIndex < currs
 				.size(); currIndex++) {
 			// init a transaction from root
@@ -103,8 +107,17 @@ public class TranslationManager {
 			String uuid = UUID.randomUUID().toString();
 			// build insert statement based on translation logic
 			String insertTupleQuery = insertTuple(t, uuid, currIndex);
+			
 			// TODO remove print
-			System.out.println(insertTupleQuery);
+			synchronized (System.out) {
+				System.out.println(
+						"---------- " + t.getHead().getId() + " : "
+								+ t.getHead().getTable() + " - "
+								+ t.getHead().getTerminology() + " > CURR : "
+								+ t.getCurr() + " -------------");
+				System.out.println(insertTupleQuery);
+			}
+			
 			// continue if query was skipped
 			if (insertTupleQuery.isEmpty()) {
 				continue;
@@ -188,8 +201,9 @@ public class TranslationManager {
 									sourceDAO.cast(match.getDefaultValue()));
 						}
 					} else {
-						selectQuery = selectMatch(match, tree);// generate select query
-						
+						selectQuery = selectMatch(match, tree);// generate
+																// select query
+
 						final List<List<Object>> results = sourceDAO
 								.executeQuery(selectQuery);// execute select
 															// statement
@@ -225,7 +239,8 @@ public class TranslationManager {
 							else if (match.getDefaultValue().equals(
 									MatchConstants.AI_SKIP_FALSE)
 									&& !boolValue) {
-								skip = true;// indicate that the entire tuple must
+								skip = true;// indicate that the entire tuple
+											// must
 											// be skipped
 								break;
 							} else {
@@ -286,12 +301,19 @@ public class TranslationManager {
 											"An error ocurred during translation phase while processing value match in match with id: "
 													+ match.getId());
 								}
+								// SKIP entire tuple if value match is SKIP
+								if (valueMatch
+										.equalsIgnoreCase(MatchConstants.SKIP)) {
+									skip = true;// indicate that all the tuple
+												// must be skipped
+									break;
+								}
 							}
 							VALUES(match.getLeft().getColumn(),
 									sourceDAO.cast(valueMatch));
 						} else {
 							VALUES(match.getLeft().getColumn(),
-									sourceDAO.cast(value));
+									de.enforce(match.getLeft().getDatatype(), value));
 						}
 					}
 				}
@@ -308,19 +330,25 @@ public class TranslationManager {
 							// tuple
 							if (referencedValue.startsWith(MatchConstants.TOP)) {
 								// compute the type of top
-								int topType = (referencedValue.length() == 3) ? 1
-										: Integer.valueOf(referencedValue
-												.substring(3));
 
 								TupleTree parentTree = tree;// parent tree is
 															// equal to current
 															// tree for now
-								for (int i = 0; i < topType; i++) {
+								//find the parent
+								while (true) {
 									parentTree = parentTree.getParent();// back
 																		// to
 																		// the
 																		// desired
 																		// parent
+									if (reference
+											.getReferenced()
+											.getTable()
+											.equalsIgnoreCase(
+													parentTree.getHead()
+															.getTable())) {
+										break;
+									}
 								}
 								VALUES(reference.getReferencee().getColumn(),
 										targetDAO.cast(parentTree.getTop()));
@@ -363,12 +391,24 @@ public class TranslationManager {
 				// the select should be constructed based on R-References of one
 				// of the PKs match of the tuple
 				MatchType pkMatch = findPkMatch(tuple);
+				if (pkMatch == null) {
+					throw new SystemException("PK match not found in tuple "
+							+ tuple.getId());
+				}
+				if (pkMatch.getReferences() == null
+						|| pkMatch.getReferences().isEmpty()) {
+					throw new SystemException(
+							"R-References not found in PK match "
+									+ pkMatch.getId());
+				}
 				boolean isFirstDirectReference = true;// used to flag whether or
 														// not the reference
 				// is the first direct, in case there are many direct references
 				// construct the select query using the L-References of the PK
 				// match of the tuple
-				for (ReferenceType reference : pkMatch.getReferences().values()) {
+				List<ReferenceType> references = new ArrayList<ReferenceType>(pkMatch.getReferences().values());
+				references =  sort(references, on(ReferenceType.class).getId());
+				for (ReferenceType reference : references) {
 
 					String referencedTable = reference.getReferenced()
 							.getTable();
@@ -391,17 +431,23 @@ public class TranslationManager {
 						// start from reference value if exists
 						if (reference.getReferencee() != null) {
 							// the referencee should be used in the result set
-							if (isFirstDirectReference) { // select from, only for first reference
+							if (isFirstDirectReference) { // select from, only
+															// for first
+															// reference
 								SELECT(reference.getReferencee().getTable()
 										+ "."
 										+ reference.getReferencee().getColumn());
 								FROM(reference.getReferencee().getTable());
+								isFirstDirectReference = false;// no longer first direct
 							}
 						} else {
 							// the referenced should be used in the result set
-							if (isFirstDirectReference) { // select from, only for first reference
+							if (isFirstDirectReference) { // select from, only
+															// for first
+															// reference
 								SELECT(referencedTable + "." + referencedColumn);
 								FROM(referencedTable);
+								isFirstDirectReference = false;// no longer first direct
 							}
 						}
 						if (referencedValue.equals(MatchConstants.ALL)) {
@@ -409,9 +455,10 @@ public class TranslationManager {
 						}
 						WHERE(referencedTable + "." + referencedColumn + " = "
 								+ sourceDAO.cast(referencedValue));
-						
-						if (isFirstDirectReference) //select only for first reference
-						isFirstDirectReference = false;
+
+						if (isFirstDirectReference) // select only for first
+													// reference
+							isFirstDirectReference = false;
 					} else {
 						String referenceeTable = reference.getReferencee()
 								.getTable();

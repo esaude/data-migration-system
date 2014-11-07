@@ -9,7 +9,7 @@
 <config xmlns="http://schema.config.dmt.esaude.org" targetNamespace="http://schema.config.dmt.esaude.org">
 	<!-- the matching file in XLS info goes here -->
 	<matching_input>
-		<file_name>OpenMRS_SESP_Matching_Table_210820141022</file_name>
+		<file_name>OpenMRS_SESP_Matching_Table_061120141110</file_name>
 		<format>xls</format>
 		<location>C:/EMR_Architecture</location>
 	</matching_input>
