@@ -9,7 +9,7 @@
 <config xmlns="http://schema.config.dmt.esaude.org" targetNamespace="http://schema.config.dmt.esaude.org">
 	<!-- the matching file in XLS info goes here -->
 	<matching_input>
-		<file_name>OpenMRS_SESP_Matching_Table_061120141110</file_name>
+		<file_name>OpenMRS_SESP_Matching_Table_Providers_271020140818</file_name>
 		<format>xls</format>
 		<location>C:/EMR_Architecture</location>
 	</matching_input>
@@ -29,5 +29,8 @@
 		<database_name>Sistema Hdd_be.mdb</database_name>
 		<database_location>jdbc:odbc:DRIVER={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=C:/Sistema Hdd_be/</database_location>
 	</sourceDs>
-	
+	<!-- the limit number of trees to be processed, zero (0) or negative (-x) = unlimited -->
+	<tree_limit>0</tree_limit>
+	<!-- whether or not the results will be commited -->
+	<allow_commit>true</allow_commit>
 </config>

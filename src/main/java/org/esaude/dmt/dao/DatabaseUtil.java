@@ -32,8 +32,6 @@ public class DatabaseUtil {
 	private Connection connection;
 	private Statement statement;
 	private ResultSet resultSet;
-	private Savepoint savePoint;
-
 	/**
 	 * Parameterized constructor
 	 * 
@@ -80,7 +78,7 @@ public class DatabaseUtil {
 	 */
 	public void setSavePoint() {
 		try {
-			savePoint = connection.setSavepoint();
+			connection.setSavepoint();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

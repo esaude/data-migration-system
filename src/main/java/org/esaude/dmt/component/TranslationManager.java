@@ -7,11 +7,13 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.apache.ibatis.jdbc.SQL;
+import org.esaude.dmt.config.schema.Config;
 import org.esaude.dmt.dao.DAOFactory;
 import org.esaude.dmt.dao.DatabaseUtil;
 import org.esaude.dmt.helper.DAOTypes;
 import org.esaude.dmt.helper.MatchConstants;
 import org.esaude.dmt.helper.SystemException;
+import org.esaude.dmt.util.ConfigReader;
 import org.esaude.dmt.util.DatatypeEnforcer;
 import org.esaude.dmt.util.TupleTree;
 import org.esaude.matchingschema.MatchType;
@@ -37,9 +39,7 @@ public class TranslationManager {
 	private DatatypeEnforcer de;
 	private boolean skip;// this variable indicates whether or not a tuple must
 							// return an insert query or an empty string.
-
-	// This is an attribute just because the a local field must be final in SQL
-	// class
+	private final Config config = ConfigReader.getInstance().getConfig();
 
 	/**
 	 * Parameterized constructor
@@ -88,6 +88,7 @@ public class TranslationManager {
 	 */
 	private void read(final TupleTree t, final String parentUUID)
 			throws SystemException {
+		int executionCount = 0;//count the number of executed trees
 		// how many tuples?
 		// select from source using the reference of the target side PK´s
 		// r_reference
@@ -131,7 +132,14 @@ public class TranslationManager {
 			}
 			// commit a transaction from root
 			if (t.getParent() == null) {
-				targetDAO.commit();
+				if (config.isAllowCommit()) {
+					targetDAO.commit();
+				}
+				executionCount++;
+				//stop if reached the limit of executions
+				if(executionCount == config.getTreeLimit().longValue()) {
+					break;
+				}
 			}
 		}
 		// close DAOs
