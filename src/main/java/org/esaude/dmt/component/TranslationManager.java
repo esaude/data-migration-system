@@ -1,6 +1,8 @@
 package org.esaude.dmt.component;
 
-import java.io.PrintStream;
+import static ch.lambdaj.Lambda.on;
+import static ch.lambdaj.Lambda.sort;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -20,8 +22,6 @@ import org.esaude.matchingschema.MatchType;
 import org.esaude.matchingschema.ReferenceType;
 import org.esaude.matchingschema.TupleType;
 import org.esaude.matchingschema.ValueMatchType;
-
-import static ch.lambdaj.Lambda.*;
 
 /**
  * This manager is responsible to generate SQL queries to either SELECT or
@@ -88,7 +88,7 @@ public class TranslationManager {
 	 */
 	private void read(final TupleTree t, final String parentUUID)
 			throws SystemException {
-		int executionCount = 0;//count the number of executed trees
+		int executionCount = 0;// count the number of executed trees
 		// how many tuples?
 		// select from source using the reference of the target side PK´s
 		// r_reference
@@ -108,17 +108,16 @@ public class TranslationManager {
 			String uuid = UUID.randomUUID().toString();
 			// build insert statement based on translation logic
 			String insertTupleQuery = insertTuple(t, uuid, currIndex);
-			
+
 			// TODO remove print
 			synchronized (System.out) {
-				System.out.println(
-						"---------- " + t.getHead().getId() + " : "
-								+ t.getHead().getTable() + " - "
-								+ t.getHead().getTerminology() + " > CURR : "
-								+ t.getCurr() + " -------------");
+				System.out.println("---------- " + t.getHead().getId() + " : "
+						+ t.getHead().getTable() + " - "
+						+ t.getHead().getTerminology() + " > CURR : "
+						+ t.getCurr() + " -------------");
 				System.out.println(insertTupleQuery);
 			}
-			
+
 			// continue if query was skipped
 			if (insertTupleQuery.isEmpty()) {
 				continue;
@@ -136,8 +135,8 @@ public class TranslationManager {
 					targetDAO.commit();
 				}
 				executionCount++;
-				//stop if reached the limit of executions
-				if(executionCount == config.getTreeLimit().longValue()) {
+				// stop if reached the limit of executions
+				if (executionCount == config.getTreeLimit().longValue()) {
 					break;
 				}
 			}
@@ -211,17 +210,29 @@ public class TranslationManager {
 					} else {
 						selectQuery = selectMatch(match, tree);// generate
 																// select query
-
 						final List<List<Object>> results = sourceDAO
 								.executeQuery(selectQuery);// execute select
 															// statement
 						// in case the database return more than one result, use
 						// the one at curr index
 						int rowIndex = (results.size() > 1) ? currIndex : 0;
-						final Object value = results.get(rowIndex).get(0);// gets
-																			// the
-																			// database
-																			// result
+						Object value = null;
+						try {
+							value = results.get(rowIndex).get(0);// gets
+																	// the
+																	// database
+																	// result
+						} catch (java.lang.IndexOutOfBoundsException ex) {
+							System.err
+									.println("The # of results of the query: \""
+											+ selectQuery
+											+ "\" is not equal to the # of results of its CURRS. Found "
+											+ results.size()
+											+ " results but expected "
+											+ currIndex + " results or more. In match: " + match.getId());
+							ex.printStackTrace();
+							throw new SystemException();
+						}
 						// in case the default value is AI_SKIP_TRUE or
 						// AI_SKIP_FALSE
 						if (match.getDefaultValue().equals(
@@ -320,8 +331,8 @@ public class TranslationManager {
 							VALUES(match.getLeft().getColumn(),
 									sourceDAO.cast(valueMatch));
 						} else {
-							VALUES(match.getLeft().getColumn(),
-									de.enforce(match.getLeft().getDatatype(), value));
+							VALUES(match.getLeft().getColumn(), de.enforce(
+									match.getLeft().getDatatype(), value));
 						}
 					}
 				}
@@ -342,7 +353,7 @@ public class TranslationManager {
 								TupleTree parentTree = tree;// parent tree is
 															// equal to current
 															// tree for now
-								//find the parent
+								// find the parent
 								while (true) {
 									parentTree = parentTree.getParent();// back
 																		// to
@@ -414,8 +425,9 @@ public class TranslationManager {
 				// is the first direct, in case there are many direct references
 				// construct the select query using the L-References of the PK
 				// match of the tuple
-				List<ReferenceType> references = new ArrayList<ReferenceType>(pkMatch.getReferences().values());
-				references =  sort(references, on(ReferenceType.class).getId());
+				List<ReferenceType> references = new ArrayList<ReferenceType>(
+						pkMatch.getReferences().values());
+				references = sort(references, on(ReferenceType.class).getId());
 				for (ReferenceType reference : references) {
 
 					String referencedTable = reference.getReferenced()
@@ -446,7 +458,8 @@ public class TranslationManager {
 										+ "."
 										+ reference.getReferencee().getColumn());
 								FROM(reference.getReferencee().getTable());
-								isFirstDirectReference = false;// no longer first direct
+								isFirstDirectReference = false;// no longer
+																// first direct
 							}
 						} else {
 							// the referenced should be used in the result set
@@ -455,7 +468,8 @@ public class TranslationManager {
 															// reference
 								SELECT(referencedTable + "." + referencedColumn);
 								FROM(referencedTable);
-								isFirstDirectReference = false;// no longer first direct
+								isFirstDirectReference = false;// no longer
+																// first direct
 							}
 						}
 						if (referencedValue.equals(MatchConstants.ALL)) {
