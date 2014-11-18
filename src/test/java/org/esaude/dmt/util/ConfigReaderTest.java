@@ -28,6 +28,7 @@ public class ConfigReaderTest {
 		assertNotNull(config.getMatchingInput().getFileName());
 		assertNotNull(config.getMatchingInput().getFormat());
 		assertNotNull(config.getMatchingInput().getLocation());
+		assertNotNull(config.isResetProcess());
 	}
 	
 	@Test

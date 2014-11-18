@@ -33,5 +33,7 @@
 	<tree_limit>2</tree_limit>
 	<!-- whether or not the results will be commited -->
 	<allow_commit>false</allow_commit>
+	<!-- whether the process should start from zero or last stop point  -->
+	<reset_process>false</reset_process>
 	
 </config>

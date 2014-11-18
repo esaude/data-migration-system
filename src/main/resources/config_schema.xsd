@@ -24,6 +24,7 @@
 				<xsd:element name="log_output" type="fileType" />
 				<xsd:element name="tree_limit" type="xsd:integer" minOccurs="1" />
 				<xsd:element name="allow_commit" type="xsd:boolean" minOccurs="1" />
+				<xsd:element name="reset_process" type="xsd:boolean" minOccurs="1" />
 			</xsd:sequence>
 		</xsd:complexType>
 	</xsd:element>

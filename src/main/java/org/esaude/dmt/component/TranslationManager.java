@@ -4,12 +4,14 @@ import static ch.lambdaj.Lambda.on;
 import static ch.lambdaj.Lambda.sort;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 import org.apache.ibatis.jdbc.SQL;
 import org.esaude.dmt.config.schema.Config;
+import org.esaude.dmt.process.schema.Process;
 import org.esaude.dmt.dao.DAOFactory;
 import org.esaude.dmt.dao.DatabaseUtil;
 import org.esaude.dmt.helper.DAOTypes;
@@ -17,6 +19,8 @@ import org.esaude.dmt.helper.MatchConstants;
 import org.esaude.dmt.helper.SystemException;
 import org.esaude.dmt.util.ConfigReader;
 import org.esaude.dmt.util.DatatypeEnforcer;
+import org.esaude.dmt.util.ProcessReader;
+import org.esaude.dmt.util.ProcessStatuses;
 import org.esaude.dmt.util.TupleTree;
 import org.esaude.matchingschema.MatchType;
 import org.esaude.matchingschema.ReferenceType;
@@ -40,6 +44,8 @@ public class TranslationManager {
 	private boolean skip;// this variable indicates whether or not a tuple must
 							// return an insert query or an empty string.
 	private final Config config = ConfigReader.getInstance().getConfig();
+	private int processCount, treeCount, totalTreeNo;
+	private boolean firstRun = true;
 
 	/**
 	 * Parameterized constructor
@@ -64,11 +70,23 @@ public class TranslationManager {
 	 * @throws SystemException
 	 */
 	public boolean execute() throws SystemException {
+		// reset processing point if config says so
+		if (config.isResetProcess()) {
+			ProcessReader.getInstance().recordProcess(0,
+					Calendar.getInstance().getTime(), ProcessStatuses.RESET);
+		}
+		// set the process position to start
+		processCount = ProcessReader.getInstance().getProcess()
+				.getLastStopPoint().intValue();
+
 		try {
 			read(tree, null);
 		} catch (SystemException ex) {
 			ex.printStackTrace();
 			targetDAO.rollback();
+			// record current process as failed
+			ProcessReader.getInstance().recordProcess(processCount,
+					Calendar.getInstance().getTime(), ProcessStatuses.FAILED);
 			throw new SystemException(
 					"An error occured durring translation/execution phase");
 		}
@@ -88,16 +106,22 @@ public class TranslationManager {
 	 */
 	private void read(final TupleTree t, final String parentUUID)
 			throws SystemException {
-		int executionCount = 0;// count the number of executed trees
 		// how many tuples?
 		// select from source using the reference of the target side PK´s
 		// r_reference
 		String selectCurrsQuery = this.selectCurrs(t);
 		List<List<Object>> currs = sourceDAO.executeQuery(selectCurrsQuery);
 
-		for (int currIndex = 0; /* the index of CURRS */currIndex < currs
-				.size(); currIndex++) {
-			// init a transaction from root
+		// in case this is the first run, start from last run point
+		int currIndex = 0;
+		if (firstRun) {
+			currIndex = processCount;
+			totalTreeNo = currs.size();
+			firstRun = false;
+		}
+
+		for (; currIndex < currs.size(); currIndex++) {
+			// init transaction from root
 			if (t.getParent() == null) {
 				targetDAO.setSavePoint();// rollback till this point
 			}
@@ -105,9 +129,9 @@ public class TranslationManager {
 			Object curr = currs.get(currIndex).get(0);
 			t.setCurr(curr);
 			// keep the UUID of current insert
-			String uuid = UUID.randomUUID().toString();
+			final String uuid = UUID.randomUUID().toString();
 			// build insert statement based on translation logic
-			String insertTupleQuery = insertTuple(t, uuid, currIndex);
+			final String insertTupleQuery = insertTuple(t, uuid, currIndex);
 
 			// TODO remove print
 			synchronized (System.out) {
@@ -122,7 +146,8 @@ public class TranslationManager {
 			if (insertTupleQuery.isEmpty()) {
 				continue;
 			}
-			List<List<Object>> tops = targetDAO.executeUpdate(insertTupleQuery);
+			final List<List<Object>> tops = targetDAO
+					.executeUpdate(insertTupleQuery);
 			top = tops.get(0).get(0);
 			t.setTop(top);// set top value to tuple
 			// do the same for children
@@ -134,9 +159,16 @@ public class TranslationManager {
 				if (config.isAllowCommit()) {
 					targetDAO.commit();
 				}
-				executionCount++;
+				// increment process counter for each tree
+				processCount++;
+				treeCount++;
 				// stop if reached the limit of executions
-				if (executionCount == config.getTreeLimit().longValue()) {
+				if (treeCount == config.getTreeLimit().longValue()) {
+					// record current process as paused
+					ProcessReader.getInstance()
+							.recordProcess(processCount,
+									Calendar.getInstance().getTime(),
+									ProcessStatuses.PAUSED);
 					break;
 				}
 			}
@@ -148,6 +180,14 @@ public class TranslationManager {
 				sourceDAO.close();
 			} catch (Exception e) {
 				e.printStackTrace();
+			}
+			//record end of process
+			if (processCount == totalTreeNo) {
+				// record current process as completed
+				ProcessReader.getInstance()
+						.recordProcess(0/* next time start one tree ahead*/,
+								Calendar.getInstance().getTime(),
+								ProcessStatuses.COMPLETED);
 			}
 		}
 	}
@@ -223,15 +263,16 @@ public class TranslationManager {
 																	// database
 																	// result
 						} catch (java.lang.IndexOutOfBoundsException ex) {
-							System.err
-									.println("The # of results of the query: \""
+							ex.printStackTrace();
+							throw new SystemException(
+									"The # of results of the query: \""
 											+ selectQuery
 											+ "\" is not equal to the # of results of its CURRS. Found "
 											+ results.size()
 											+ " results but expected "
-											+ currIndex + " results or more. In match: " + match.getId());
-							ex.printStackTrace();
-							throw new SystemException();
+											+ currIndex
+											+ " results or more. In match: "
+											+ match.getId());
 						}
 						// in case the default value is AI_SKIP_TRUE or
 						// AI_SKIP_FALSE
