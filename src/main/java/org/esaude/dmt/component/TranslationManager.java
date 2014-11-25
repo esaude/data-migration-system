@@ -11,7 +11,6 @@ import java.util.UUID;
 
 import org.apache.ibatis.jdbc.SQL;
 import org.esaude.dmt.config.schema.Config;
-import org.esaude.dmt.process.schema.Process;
 import org.esaude.dmt.dao.DAOFactory;
 import org.esaude.dmt.dao.DatabaseUtil;
 import org.esaude.dmt.helper.DAOTypes;
@@ -44,7 +43,7 @@ public class TranslationManager {
 	private boolean skip;// this variable indicates whether or not a tuple must
 							// return an insert query or an empty string.
 	private final Config config = ConfigReader.getInstance().getConfig();
-	private int processCount, treeCount, totalTreeNo;
+	private int processCount, treeCount, totalTreeNo, currTupleId;
 	private boolean firstRun = true;
 
 	/**
@@ -88,7 +87,8 @@ public class TranslationManager {
 			ProcessReader.getInstance().recordProcess(processCount,
 					Calendar.getInstance().getTime(), ProcessStatuses.FAILED);
 			throw new SystemException(
-					"An error occured durring translation/execution phase");
+					"An error occured durring translation/execution phase while processing tuple # "
+							+ currTupleId);
 		}
 
 		return true;
@@ -109,6 +109,7 @@ public class TranslationManager {
 		// how many tuples?
 		// select from source using the reference of the target side PK´s
 		// r_reference
+		currTupleId = t.getHead().getId();// the current tuple ID
 		String selectCurrsQuery = this.selectCurrs(t);
 		List<List<Object>> currs = sourceDAO.executeQuery(selectCurrsQuery);
 
@@ -123,11 +124,15 @@ public class TranslationManager {
 		for (; currIndex < currs.size(); currIndex++) {
 			// init transaction from root
 			if (t.getParent() == null) {
-				targetDAO.setSavePoint();// rollback till this point
+				targetDAO.setSavePoint();// rollback should go till this point
 			}
 			Object top = null;
-			Object curr = currs.get(currIndex).get(0);
+			final Object curr = currs.get(currIndex).get(0);
 			t.setCurr(curr);
+			// stop this tree here if curr was not found
+			if (curr == null) {
+				continue;
+			}
 			// keep the UUID of current insert
 			final String uuid = UUID.randomUUID().toString();
 			// build insert statement based on translation logic
@@ -142,7 +147,7 @@ public class TranslationManager {
 				System.out.println(insertTupleQuery);
 			}
 
-			// continue if query was skipped
+			// stop here if query was skipped
 			if (insertTupleQuery.isEmpty()) {
 				continue;
 			}
@@ -150,7 +155,7 @@ public class TranslationManager {
 					.executeUpdate(insertTupleQuery);
 			top = tops.get(0).get(0);
 			t.setTop(top);// set top value to tuple
-			// do the same for children
+			// do all the same process for each child
 			for (TupleTree eachTree : t.getSubTrees()) {
 				read(eachTree, uuid);
 			}
@@ -165,10 +170,9 @@ public class TranslationManager {
 				// stop if reached the limit of executions
 				if (treeCount == config.getTreeLimit().longValue()) {
 					// record current process as paused
-					ProcessReader.getInstance()
-							.recordProcess(processCount,
-									Calendar.getInstance().getTime(),
-									ProcessStatuses.PAUSED);
+					ProcessReader.getInstance().recordProcess(processCount,
+							Calendar.getInstance().getTime(),
+							ProcessStatuses.PAUSED);
 					break;
 				}
 			}
@@ -181,13 +185,15 @@ public class TranslationManager {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			//record end of process
+			// record end of process
 			if (processCount == totalTreeNo) {
 				// record current process as completed
-				ProcessReader.getInstance()
-						.recordProcess(0/* next time start one tree ahead*/,
-								Calendar.getInstance().getTime(),
-								ProcessStatuses.COMPLETED);
+				ProcessReader.getInstance().recordProcess(0/*
+															 * next time start
+															 * one tree ahead
+															 */,
+						Calendar.getInstance().getTime(),
+						ProcessStatuses.COMPLETED);
 			}
 		}
 	}
@@ -270,7 +276,7 @@ public class TranslationManager {
 											+ "\" is not equal to the # of results of its CURRS. Found "
 											+ results.size()
 											+ " results but expected "
-											+ currIndex
+											+ (currIndex + 1)
 											+ " results or more. In match: "
 											+ match.getId());
 						}
@@ -451,16 +457,7 @@ public class TranslationManager {
 				// the select should be constructed based on R-References of one
 				// of the PKs match of the tuple
 				MatchType pkMatch = findPkMatch(tuple);
-				if (pkMatch == null) {
-					throw new SystemException("PK match not found in tuple "
-							+ tuple.getId());
-				}
-				if (pkMatch.getReferences() == null
-						|| pkMatch.getReferences().isEmpty()) {
-					throw new SystemException(
-							"R-References not found in PK match "
-									+ pkMatch.getId());
-				}
+				
 				boolean isFirstDirectReference = true;// used to flag whether or
 														// not the reference
 				// is the first direct, in case there are many direct references
@@ -469,6 +466,7 @@ public class TranslationManager {
 				List<ReferenceType> references = new ArrayList<ReferenceType>(
 						pkMatch.getReferences().values());
 				references = sort(references, on(ReferenceType.class).getId());
+				
 				for (ReferenceType reference : references) {
 
 					String referencedTable = reference.getReferenced()
@@ -543,8 +541,8 @@ public class TranslationManager {
 
 	/**
 	 * This method generates and returns SQL query to be executed in the source
-	 * database to retrieve the data to be used as a the value of the match,
-	 * while building the insert query
+	 * database to retrieve the data to be used as the value of the match, while
+	 * building the insert query
 	 * 
 	 * @param match
 	 * @param curr

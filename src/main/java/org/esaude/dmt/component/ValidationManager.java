@@ -570,36 +570,47 @@ public class ValidationManager {
 	 */
 	private void createMatchSides(final MatchBuilder matchBuilder, final int row)
 			throws SystemException {
-		// create left side of match
-		String table_l = null;
-		String column_l = processor.process(Sheets.MATCH_L_TO_R.INDEX,
-				Sheets.MATCH_L_TO_R.COLUMN_L, row);
-		String datatype_l = processor.process(Sheets.MATCH_L_TO_R.INDEX,
-				Sheets.MATCH_L_TO_R.DATATYPE_L, row);
-		Integer size_l = Integer.valueOf(processor.process(
-				Sheets.MATCH_L_TO_R.INDEX, Sheets.MATCH_L_TO_R.SIZE_L, row));
-		String required_l = processor.process(Sheets.MATCH_L_TO_R.INDEX,
-				Sheets.MATCH_L_TO_R.REQUIRED_L, row);
-
-		matchBuilder.createMatchSide(table_l, column_l, datatype_l, size_l,
-				required_l, MatchBuilder.LEFT_SIDE);
-		// create right side match if there is any
-		if (!processor.process(Sheets.MATCH_L_TO_R.INDEX,
-				Sheets.MATCH_L_TO_R.TABLE_R, row).equals(MatchConstants.NA)) {
-			String table_r = processor.process(Sheets.MATCH_L_TO_R.INDEX,
-					Sheets.MATCH_L_TO_R.TABLE_R, row);
-			String column_r = processor.process(Sheets.MATCH_L_TO_R.INDEX,
-					Sheets.MATCH_L_TO_R.COLUMN_R, row);
-			String datatype_r = processor.process(Sheets.MATCH_L_TO_R.INDEX,
-					Sheets.MATCH_L_TO_R.DATATYPE_R, row);
-			Integer size_r = Integer
+		try {
+			// create left side of match
+			String table_l = null;
+			String column_l = processor.process(Sheets.MATCH_L_TO_R.INDEX,
+					Sheets.MATCH_L_TO_R.COLUMN_L, row);
+			String datatype_l = processor.process(Sheets.MATCH_L_TO_R.INDEX,
+					Sheets.MATCH_L_TO_R.DATATYPE_L, row);
+			Integer size_l = Integer
 					.valueOf(processor.process(Sheets.MATCH_L_TO_R.INDEX,
-							Sheets.MATCH_L_TO_R.SIZE_R, row));
-			String required_r = processor.process(Sheets.MATCH_L_TO_R.INDEX,
-					Sheets.MATCH_L_TO_R.REQUIRED_R, row);
+							Sheets.MATCH_L_TO_R.SIZE_L, row));
+			String required_l = processor.process(Sheets.MATCH_L_TO_R.INDEX,
+					Sheets.MATCH_L_TO_R.REQUIRED_L, row);
 
-			matchBuilder.createMatchSide(table_r, column_r, datatype_r, size_r,
-					required_r, MatchBuilder.RIGHT_SIDE);
+			matchBuilder.createMatchSide(table_l, column_l, datatype_l, size_l,
+					required_l, MatchBuilder.LEFT_SIDE);
+			// create right side match if there is any
+			if (!processor.process(Sheets.MATCH_L_TO_R.INDEX,
+					Sheets.MATCH_L_TO_R.TABLE_R, row).equals(MatchConstants.NA)) {
+				String table_r = processor.process(Sheets.MATCH_L_TO_R.INDEX,
+						Sheets.MATCH_L_TO_R.TABLE_R, row);
+				String column_r = processor.process(Sheets.MATCH_L_TO_R.INDEX,
+						Sheets.MATCH_L_TO_R.COLUMN_R, row);
+				String datatype_r = processor.process(
+						Sheets.MATCH_L_TO_R.INDEX,
+						Sheets.MATCH_L_TO_R.DATATYPE_R, row);
+				Integer size_r = Integer.valueOf(processor.process(
+						Sheets.MATCH_L_TO_R.INDEX, Sheets.MATCH_L_TO_R.SIZE_R,
+						row));
+				String required_r = processor.process(
+						Sheets.MATCH_L_TO_R.INDEX,
+						Sheets.MATCH_L_TO_R.REQUIRED_R, row);
+
+				matchBuilder.createMatchSide(table_r, column_r, datatype_r,
+						size_r, required_r, MatchBuilder.RIGHT_SIDE);
+			}
+		} catch (Throwable t) {
+			System.err
+					.println("A processing error occured after Match-L-to-R in line: "
+							+ (matchCount + 2));
+			t.printStackTrace();
+			throw t;
 		}
 	}
 
