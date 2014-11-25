@@ -484,6 +484,9 @@ public class TranslationManager {
 					} else if (referencedValue.equals(MatchConstants.CURR3)) {
 						referencedValue = tree.getParent().getParent()
 								.getParent().getCurr();
+					} else if (referencedValue.equals(MatchConstants.CURR4)) {
+						referencedValue = tree.getParent().getParent().getParent()
+								.getParent().getCurr();
 					}
 					// check whether the reference is direct or indirect
 					if (reference.getPredecessor().equals(Integer.valueOf(0))) {
@@ -572,6 +575,9 @@ public class TranslationManager {
 						referencedValue = tree.getParent().getCurr();
 					} else if (referencedValue.equals(MatchConstants.CURR3)) {
 						referencedValue = tree.getParent().getParent()
+								.getCurr();
+					} else if (referencedValue.equals(MatchConstants.CURR4)) {
+						referencedValue = tree.getParent().getParent().getParent()
 								.getCurr();
 					}
 					// in case the referencee exist
