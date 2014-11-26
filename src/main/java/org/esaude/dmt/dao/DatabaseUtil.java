@@ -406,7 +406,14 @@ public class DatabaseUtil {
 		if(value == null) {
 			throw new SystemException("Invalid database value to cast");
 		}
+		
 		String valueStr = value.toString();
+		
+		if(value instanceof java.util.Date) {
+			String valueDateStr = valueStr.substring(0, valueStr.lastIndexOf('.'));
+			
+			return "#" + valueDateStr + "#";
+		}
 		
 		if(!valueStr.matches("^[-+]?\\d+(\\.\\d+)?$")) {
 			if(valueStr.equalsIgnoreCase(MatchConstants.NULL)) {
