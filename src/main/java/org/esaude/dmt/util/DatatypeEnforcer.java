@@ -48,7 +48,7 @@ public class DatatypeEnforcer {
 			return Double.parseDouble(value);
 		} catch (NumberFormatException nfe) {
 			throw new SystemException(
-					"Failed to enforce the value of argument to double");
+					"Failed to enforce the argument value: " + value + " to double");
 		}
 	}
 	

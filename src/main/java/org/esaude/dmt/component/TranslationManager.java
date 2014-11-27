@@ -248,6 +248,11 @@ public class TranslationManager {
 							}
 							VALUES(match.getLeft().getColumn(),
 									targetDAO.cast(parentTree.getTop()));
+						} 
+						// 14. NOW – Should use the current system datetime
+						else if (match.getDefaultValue().equals(
+								MatchConstants.NOW)) {
+							VALUES(match.getLeft().getColumn(), "NOW()");
 						} else {
 							// use default value
 							VALUES(match.getLeft().getColumn(),
