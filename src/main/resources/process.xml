@@ -1,13 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-	<!-- Migration process Schema VERSION 0.1.0 -->
-
-	<!--
-		Changes log: Valério João - EGPAF (18/11/2014): Created basic structure
-	-->
-
-<process xmlns="http://schema.process.dmt.esaude.org" targetNamespace="http://schema.process.dmt.esaude.org">
-	<last_stop_point>0</last_stop_point>
-	<last_stop_date></last_stop_date>
-	<last_stop_status></last_stop_status>
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<process xmlns="http://schema.process.dmt.esaude.org">
+    <last_stop_point>0</last_stop_point>
+    <last_stop_date>2014-12-02T15:59:24.071+02:00</last_stop_date>
+    <last_stop_status>COMPLETED</last_stop_status>
 </process>

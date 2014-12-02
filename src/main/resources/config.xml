@@ -12,7 +12,7 @@
 		<file_name>OpenMRS_SESP_Matching_Table_241120141127_fixed</file_name>
 		<!-- file_name>OpenMRS_SESP_Matching_Table_Providers_271020140818</file_name -->
 		<format>xls</format>
-		<location>C:/dmt_mapping</location>
+		<location>C:/EMR_Architecture</location>
 	</matching_input>
 	<!-- the left side database info goes here -->
 	<targetDs>
@@ -33,7 +33,7 @@
 	<!-- the limit number of trees to be processed, zero (0) or negative (-x) = unlimited -->
 	<tree_limit>0</tree_limit>
 	<!-- whether or not the results will be commited -->
-	<allow_commit>true</allow_commit>
+	<allow_commit>false</allow_commit>
 	<!-- whether the process should start from zero or last stop point  -->
-	<reset_process>false</reset_process>
+	<reset_process>true</reset_process>
 </config>

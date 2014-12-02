@@ -36,10 +36,10 @@ public class ProcessReaderTest {
 	@Test
 	public void testRecordProcess() {
 		Date now = Calendar.getInstance().getTime();
-		pr.recordProcess(6, now, ProcessStatuses.COMPLETED);
+		pr.recordProcess(0, now, ProcessStatuses.COMPLETED);
 		
 		Process p = pr.getProcess();
-		assertEquals(new BigInteger("6"), p.getLastStopPoint());
+		assertEquals(new BigInteger("0"), p.getLastStopPoint());
 		assertEquals(now, p.getLastStopDate().toGregorianCalendar().getTime());
 		assertEquals(ProcessStatuses.COMPLETED, p.getLastStopStatus());
 		
