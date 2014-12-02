@@ -1,6 +1,8 @@
 package org.esaude.dmt.util;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -20,6 +22,7 @@ import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.transform.Result;
 
+import org.esaude.dmt.App;
 import org.esaude.dmt.process.schema.Process;
 
 /**
@@ -63,9 +66,9 @@ public final class ProcessReader {
 		Process process = null;
 		try {
 			Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-			process  = (Process) jaxbUnmarshaller.unmarshal(ClassLoader.class.getResourceAsStream("/process.xml"));
+			process  = (Process) jaxbUnmarshaller.unmarshal(new FileInputStream(App.MAIN_PATH + "/process.xml"));
 
-		} catch (JAXBException e) {
+		} catch (JAXBException | FileNotFoundException e) {
 			e.printStackTrace();
 		}
 		return process;
@@ -93,7 +96,7 @@ public final class ProcessReader {
 		process.setLastStopStatus(status);
 		
 		try {
-			File file = new File(ClassLoader.class.getResource("/process.xml").getFile());
+			File file = new File(App.MAIN_PATH + "/process.xml");
 			Marshaller m = jaxbContext.createMarshaller();
 			m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 			m.marshal(process, file);

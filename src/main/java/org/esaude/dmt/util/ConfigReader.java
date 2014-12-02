@@ -1,9 +1,14 @@
 package org.esaude.dmt.util;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
+import org.esaude.dmt.App;
 import org.esaude.dmt.config.schema.Config;
 
 /**
@@ -18,6 +23,7 @@ public final class ConfigReader {
 	private static ConfigReader instance;
 
 	private ConfigReader() {
+		
 	}
 	
 	/**
@@ -36,16 +42,16 @@ public final class ConfigReader {
 	 * Used to get the configuration objects
 	 * @return
 	 */
-	public Config getConfig() {
+	public Config getConfig(/*final String path*/) {
 
 		Config config = null;
 		try {
 			JAXBContext jaxbContext = JAXBContext.newInstance("org.esaude.dmt.config.schema");
 
 			Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-			config  = (Config) jaxbUnmarshaller.unmarshal(ClassLoader.class.getResourceAsStream("/config.xml"));
+			config  = (Config) jaxbUnmarshaller.unmarshal(new FileInputStream(App.MAIN_PATH + "/config.xml"));
 
-		} catch (JAXBException e) {
+		} catch (JAXBException | FileNotFoundException e) {
 			e.printStackTrace();
 		}
 		return config;

@@ -10,6 +10,7 @@ import org.esaude.dmt.process.schema.Process;
 import org.esaude.dmt.util.ProcessReader;
 import org.esaude.dmt.util.ProcessStatuses;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class ProcessReaderTest {
@@ -23,6 +24,7 @@ public class ProcessReaderTest {
 	public void setUp() throws Exception {
 	}
 
+	@Ignore("Not Ready to Run")
 	@Test
 	public void testReadProcess() {
 		Process p = pr.getProcess();

@@ -70,3 +70,26 @@ If you see such errors, you may need to tell Maven to use the correct encoding b
 
 In `src/main/resources/config.xml`, there are references to `C:/EMR_Architecture/OpenMRS_SESP_Matching_Table_210820141022.xls`. You'll need to change these to valid locations on your local filesystem in order to run the tests.
 
+Test Environment Specs
+------------------------------
+
+In order to execute the system in test environment make sure you have the following tools installed:
+
+-         Java 7 (http://www.oracle.com/technetwork/java/javase/downloads/jre7-downloads-1880261.html)
+-         Apache Maven 3 (http://maven.apache.org/download.cgi)
+-         Git (http://git-scm.com/downloads)
+
+Perform the following steps using command line:
+
+#### 1. Clone the project repository from github (git clone https://github.com/esaude/data-migration-system.git)
+
+#### 2. Navigate to your project root directory and run the command (mvn package)
+
+This step will generate the distribution of the tool `data-migration-system-1.0-SNAPSHOT-dist` in zip format. The generated file will be located in `PROJECT_ROOT\data-migration-system\target`
+
+#### 3. Extract the distribution file to a suitable location
+
+#### 4. Configure the input and runtime properties in `...\data-migration-system-1.0-SNAPSHOT\src\main\resources\config.xml`
+
+#### 5. Execute the jar file `PROJECT_ROOT\data-migration-system-1.0-SNAPSHOT.jar` located in `PROJECT_ROOT\data-migration-system-1.0-SNAPSHOT`
+
