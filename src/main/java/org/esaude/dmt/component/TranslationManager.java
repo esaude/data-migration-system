@@ -356,7 +356,7 @@ public class TranslationManager {
 							if (valueMatchGroup == null) {
 								throw new SystemException(
 										"An error ocurred during translation phase while processing value match group in match with id: "
-												+ match.getId());
+												+ match.getId()+ ".\n Couldn't find group for id: " + value);
 							}
 							String valueMatch = valueMatchGroup.get(value
 									.toString().toLowerCase());
@@ -370,7 +370,7 @@ public class TranslationManager {
 								if (valueMatch == null) {
 									throw new SystemException(
 											"An error ocurred during translation phase while processing value match in match with id: "
-													+ match.getId());
+													+ match.getId() + ".\n Couldn't find match for value: " + value);
 								}
 								// SKIP entire tuple if value match is SKIP
 								if (valueMatch
