@@ -93,7 +93,7 @@ Perform the following steps using command line:
 
 6. Change your PATH to use Java 7 32 bit: `path=%PATH%;YOUR_JAVA32_INSTALATION_LOCATION\bin`;
 
-7. Make sure you are now using Java 7 32 bit: `java --version` should display the details of your java in the classpath
+7. Make sure you are now using Java 7 32 bit: `java -version` should display the details of your java in the classpath
 
 8. Execute the jar file `PROJECT_ROOT\data-migration-system-1.0-SNAPSHOT.jar` located in `PROJECT_ROOT\data-migration-system-1.0-SNAPSHOT`. Run the command `java -jar data-migration-system-1.0-SNAPSHOT.jar`
 
