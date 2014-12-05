@@ -75,21 +75,27 @@ Test Environment Specs
 
 In order to execute the system in test environment make sure you have the following tools installed:
 
--         Java 7 (http://www.oracle.com/technetwork/java/javase/downloads/jre7-downloads-1880261.html)
+-         Java 7 (http://www.oracle.com/technetwork/java/javase/downloads/jre7-downloads-1880261.html) - Make sure you download a 32 bit JDK (Windows X86)
 -         Apache Maven 3 (http://maven.apache.org/download.cgi)
 -         Git (http://git-scm.com/downloads)
 
 Perform the following steps using command line:
 
-#### 1. Clone the project repository from github (git clone https://github.com/esaude/data-migration-system.git)
+1. Clone the project repository from github `git clone https://github.com/esaude/data-migration-system.git`
 
-#### 2. Navigate to your project root directory and run the command (mvn package)
+2. Navigate to your project root directory and run the command `mvn package`
 
-This step will generate the distribution of the tool `data-migration-system-1.0-SNAPSHOT-dist` in zip format. The generated file will be located in `PROJECT_ROOT\data-migration-system\target`
+This step will generate the distribution of the tool `data-migration-system-1.0-SNAPSHOT-dist.zip` in zip format. The generated file will be located in `PROJECT_ROOT\data-migration-system\target`
 
-#### 3. Extract the distribution file to a suitable location
+3. Extract the distribution file to a suitable location
 
-#### 4. Configure the input and runtime properties in `...\data-migration-system-1.0-SNAPSHOT\src\main\resources\config.xml`
+4. Configure the input and runtime properties in `...\data-migrationx-system-1.0-SNAPSHOT\src\main\resources\config.xml`
 
-#### 5. Execute the jar file `PROJECT_ROOT\data-migration-system-1.0-SNAPSHOT.jar` located in `PROJECT_ROOT\data-migration-system-1.0-SNAPSHOT`
+5. Open command line
+
+6. Change your PATH to use Java 7 32 bit: `path=%PATH%;YOUR_JAVA32_INSTALATION_LOCATION\bin`;
+
+7. Make sure you are now using Java 7 32 bit: `java --version` should display the details of your java in the classpath
+
+8. Execute the jar file `PROJECT_ROOT\data-migration-system-1.0-SNAPSHOT.jar` located in `PROJECT_ROOT\data-migration-system-1.0-SNAPSHOT`
 
