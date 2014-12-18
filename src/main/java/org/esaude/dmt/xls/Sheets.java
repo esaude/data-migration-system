@@ -39,6 +39,7 @@ public class Sheets {
 		public static final int OBS = 13;
 		public static final int DEFAULT_VALUE = 14;
 		public static final int VALUE_MATCH = 15;
+		public static final int POOL = 16;
 	}
 	
 	public static final class REFERENCES {

@@ -22,7 +22,7 @@ public class DatatypeEnforcer {
 		Object enforced = null;
 		// value should not be null
 		if (value == null) {
-			throw new SystemException("The double enforced value is null");
+			throw new SystemException("The enforced value is null");
 		}
 		String valueStr = value.toString();
 		//enforce based on datatype

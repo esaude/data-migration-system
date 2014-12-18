@@ -31,11 +31,12 @@ public class MatchBuilder {
 	 * @param terminology
 	 * @param hasValueMatch
 	 * @param defaultValue
+	 *  @param pool
 	 * @return
 	 * @throws SystemException
 	 */
 	public MatchBuilder createMatch(final Integer tupleId, final Integer id, final String terminology,
-			final Object valueMatchId, final Object defaultValue, final String pk) {
+			final Object valueMatchId, final Object defaultValue, final String pk, final String pool) {
 
 		matchType = new MatchType();
 		matchType.setTupleId(tupleId);
@@ -44,6 +45,7 @@ public class MatchBuilder {
 		matchType.setValueMatchId(valueMatchId);
 		matchType.setDefaultValue(defaultValue);
 		matchType.setPk(pk);
+		matchType.setPool(pool);
 
 		matches.add(matchType);
 

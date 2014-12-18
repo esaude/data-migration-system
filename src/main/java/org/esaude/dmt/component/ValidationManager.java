@@ -9,6 +9,7 @@ import org.esaude.dmt.helper.EventCodeContants;
 import org.esaude.dmt.helper.MatchConstants;
 import org.esaude.dmt.helper.ProcessPhases;
 import org.esaude.dmt.helper.SystemException;
+import org.esaude.dmt.util.KeyPoolUtil;
 import org.esaude.dmt.util.MatchBuilder;
 import org.esaude.dmt.util.ReferenceBuilder;
 import org.esaude.dmt.util.TupleBuilder;
@@ -50,25 +51,27 @@ public class ValidationManager {
 																							// a
 																							// linear
 																							// fashion
+	private KeyPoolUtil keyPool;
 	// counters for log report
 	private int warningCount, tupleCount, matchCount, leftRefCount,
 			rightRefCount = 0;
 
 	/**
 	 * Parameterized constructor
-	 * 
 	 * @param processor
 	 * @param writer
 	 * @param dmr
 	 * @param eventCode
+	 * @param keyPool
 	 */
 	public ValidationManager(final XlsProcessor processor,
 			final LogWriter writer, final DatatypeMappingReader dmr,
-			final EventCode eventCode) {
+			final EventCode eventCode, final KeyPoolUtil keyPool) {
 		this.processor = processor;
 		this.writer = writer;
 		this.dmr = dmr;
 		this.eventCode = eventCode;
+		this.keyPool = keyPool;
 	}
 
 	/**
@@ -80,6 +83,7 @@ public class ValidationManager {
 		dmr = new DatatypeMappingReader();
 		dmr.process();
 		eventCode = new EventCode();
+		keyPool = new KeyPoolUtil();
 	}
 
 	/**
@@ -548,9 +552,11 @@ public class ValidationManager {
 					Sheets.MATCH_L_TO_R.DEFAULT_VALUE, row);
 			String pk = processor.process(Sheets.MATCH_L_TO_R.INDEX,
 					Sheets.MATCH_L_TO_R.PK, row);
+			String pool = processor.process(Sheets.MATCH_L_TO_R.INDEX,
+					Sheets.MATCH_L_TO_R.POOL, row);
 			// create the match using builder
 			matchBuilder.createMatch(tupleId, matchId, terminology, valueMatch,
-					defaultValue, pk);
+					defaultValue, pk, pool);
 		} catch (Throwable t) {
 			System.err
 					.println("A processing error occured after Match-L-to-R in line: "

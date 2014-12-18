@@ -83,7 +83,7 @@ Perform the following steps using command line:
 
 1. Clone the project repository from github `git clone https://github.com/esaude/data-migration-system.git`
 
-2. Navigate to your project root directory and run the command `mvn package`. This step will generate the distribution of the tool `data-migration-system-1.0-SNAPSHOT-dist.zip` in zip format. The generated file will be located in `PROJECT_ROOT\data-migration-system\target`
+2. Navigate to your project root directory and run the command `mvn package`. This step will generate the distribution of the tool `data-migration-system-1.0-SNAPSHOT-dist.zip` in zip format. The generated file will be located in `PROJECT_ROOT\target`
 
 3. Extract the distribution file to a suitable location
 

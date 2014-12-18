@@ -28,7 +28,8 @@ public class MatchBuilderTest {
 	@Test
 	public void testCreateMatchWithoutSides() {
 		List<MatchType> matches = matchBuilder.createMatch(1, 1, "personal", 1,
-				MatchConstants.AI, MatchConstants.YES).process();
+				MatchConstants.AI, MatchConstants.YES, MatchConstants.NO)
+				.process();
 
 		assertNotNull(matches);
 		assertFalse(matches.isEmpty());
@@ -47,8 +48,10 @@ public class MatchBuilderTest {
 	@Test
 	public void testCreatesMatchWithoutSides() {
 		List<MatchType> matches = matchBuilder
-				.createMatch(1, 1, "personal", 1, MatchConstants.AI, MatchConstants.YES)
-				.createMatch(1, 2, "identifier", 1, MatchConstants.NULL, MatchConstants.YES).process();
+				.createMatch(1, 1, "personal", 1, MatchConstants.AI,
+						MatchConstants.YES, MatchConstants.NO)
+				.createMatch(1, 2, "identifier", 1, MatchConstants.NULL,
+						MatchConstants.YES, MatchConstants.NO).process();
 
 		assertNotNull(matches);
 		assertFalse(matches.isEmpty());
@@ -76,7 +79,8 @@ public class MatchBuilderTest {
 	@Test
 	public void testCreateMatchWithSides() throws SystemException {
 		List<MatchType> matches = matchBuilder
-				.createMatch(1, 1, "personal", 1, MatchConstants.AI, MatchConstants.YES)
+				.createMatch(1, 1, "personal", 1, MatchConstants.AI,
+						MatchConstants.YES, MatchConstants.NO)
 				.createMatchSide(null, "left_column", "INT", 10, "YES",
 						MatchBuilder.LEFT_SIDE)
 				.createMatchSide("RIGHT_TABLE", "right_column", "VARCHAR", 100,
@@ -114,12 +118,14 @@ public class MatchBuilderTest {
 	@Test
 	public void testCreateMatchesWithSides() throws SystemException {
 		List<MatchType> matches = matchBuilder
-				.createMatch(1, 1, "personal", 1, MatchConstants.AI, MatchConstants.YES)
+				.createMatch(1, 1, "personal", 1, MatchConstants.AI,
+						MatchConstants.YES, MatchConstants.NO)
 				.createMatchSide(null, "left_column", "INT", 10, "YES",
 						MatchBuilder.LEFT_SIDE)
 				.createMatchSide("RIGHT_TABLE", "right_column", "VARCHAR", 100,
 						"YES", MatchBuilder.RIGHT_SIDE)
-				.createMatch(1, 2, "identifier", 1, MatchConstants.NULL, MatchConstants.YES)
+				.createMatch(1, 2, "identifier", 1, MatchConstants.NULL,
+						MatchConstants.YES, MatchConstants.NO)
 				.createMatchSide(null, "left_column", "INT", 10, "YES",
 						MatchBuilder.LEFT_SIDE)
 				.createMatchSide("RIGHT_TABLE", "right_column", "VARCHAR", 100,
@@ -176,16 +182,16 @@ public class MatchBuilderTest {
 
 	@Test(expected = SystemException.class)
 	public void testCreateMatchSideWithoutMatchType() throws SystemException {
-		matchBuilder.createMatchSide(
-				"RIGHT_TABLE", "right_column", "VARCHAR", 100, "YES",
-				MatchBuilder.RIGHT_SIDE);
+		matchBuilder.createMatchSide("RIGHT_TABLE", "right_column", "VARCHAR",
+				100, "YES", MatchBuilder.RIGHT_SIDE);
 	}
-	
+
 	@Test(expected = SystemException.class)
 	public void testCreateMatchSideWithInvalidSide() throws SystemException {
-		matchBuilder.createMatch(1, 1, "personal", true, MatchConstants.AI, MatchConstants.YES).createMatchSide(
-				"RIGHT_TABLE", "right_column", "VARCHAR", 100, "YES",
-				"invalid");
+		matchBuilder.createMatch(1, 1, "personal", true, MatchConstants.AI,
+				MatchConstants.YES, MatchConstants.NO)
+				.createMatchSide("RIGHT_TABLE", "right_column", "VARCHAR", 100,
+						"YES", "invalid");
 	}
 
 }

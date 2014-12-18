@@ -78,6 +78,8 @@ public class MatchType implements ReferencedPart {
     protected Integer id;
     @XmlElement(required = true)
 	private String pk;
+    @XmlElement(required = true)
+	private String pool;
     private List<ValidationStatuses> validationStatuses;
 
     /**
@@ -298,5 +300,31 @@ public class MatchType implements ReferencedPart {
      */
 	public void setPk(String pk) {
 		this.pk = pk;
+	}
+
+	/**
+     * Sets the value of the pool property.
+     * 
+     * @param
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+	public void setPool(String pool) {
+		this.pool = pool;
+		
+	}
+	
+	/**
+     * Gets the value of the pool property.
+     * 
+     * return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+	public String setPool() {
+		return pool;
+		
 	}
 }

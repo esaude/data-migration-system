@@ -111,6 +111,10 @@ public class TranslationManager {
 		// r_reference
 		currTupleId = t.getHead().getId();// the current tuple ID
 		String selectCurrsQuery = this.selectCurrs(t);
+		
+//		if(t.getHead().getId().equals(Integer.valueOf(177))) {
+//			System.out.println(selectCurrsQuery);
+//		}
 		List<List<Object>> currs = sourceDAO.executeQuery(selectCurrsQuery);
 
 		// in case this is the first run, start from last run point
@@ -465,6 +469,7 @@ public class TranslationManager {
 				
 				boolean isFirstDirectReference = true;// used to flag whether or
 														// not the reference
+				String prevReferencedTable = null;//keep the referenced table of previous loop
 				// is the first direct, in case there are many direct references
 				// construct the select query using the L-References of the PK
 				// match of the tuple
@@ -514,11 +519,16 @@ public class TranslationManager {
 															// for first
 															// reference
 								SELECT(referencedTable + "." + referencedColumn);
-								FROM(referencedTable);
 								isFirstDirectReference = false;// no longer
 																// first direct
+								FROM(referencedTable);
+							}
+							//check whether or not the current referenced table is equal to the previous
+							else if(!referencedTable.equalsIgnoreCase(prevReferencedTable)) {
+								FROM(referencedTable);
 							}
 						}
+						
 						if (referencedValue.equals(MatchConstants.ALL)) {
 							break;// no more references must be processed
 						}
@@ -533,7 +543,12 @@ public class TranslationManager {
 								.getTable();
 						String referenceeColumn = reference.getReferencee()
 								.getColumn();
-						FROM(referencedTable);
+						// check whether or not the current referenced table is
+						// equal to the previous
+						if (!referencedTable
+								.equalsIgnoreCase(prevReferencedTable)) {
+							FROM(referencedTable);
+						}
 						WHERE(referenceeTable + "." + referenceeColumn + " = "
 								+ referencedTable + "." + referencedColumn);
 						// in case the referenced value is not EQUALS
@@ -542,6 +557,7 @@ public class TranslationManager {
 									+ " = " + sourceDAO.cast(referencedValue));
 						}
 					}
+					prevReferencedTable = referencedTable;//keep the referenced table for comparison in the next loop
 				}
 			}
 		}.toString();
