@@ -70,7 +70,7 @@ If you see such errors, you may need to tell Maven to use the correct encoding b
 
 In `src/main/resources/config.xml`, there are references to `C:/EMR_Architecture/OpenMRS_SESP_Matching_Table_210820141022.xls`. You'll need to change these to valid locations on your local filesystem in order to run the tests.
 
-Test Environment Specs
+Test and Production Environments Specs
 ------------------------------
 
 In order to execute the system in test environment make sure you have the following tools installed:
@@ -83,17 +83,19 @@ Perform the following steps using command line:
 
 1. Clone the project repository from github `git clone https://github.com/esaude/data-migration-system.git`
 
-2. Navigate to your project root directory and run the command `mvn package`. This step will generate the distribution of the tool `data-migration-system-1.0-SNAPSHOT-dist.zip` in zip format. The generated file will be located in `PROJECT_ROOT\target`
+2. Navigate to your project root directory and run the command `mvn package`. This step will generate the distribution of the tool `data-migration-system-[VERSION]-dist.zip` in zip format. The generated file will be located in `PROJECT_ROOT\target`
 
 3. Extract the distribution file to a suitable location
 
-4. Configure the input and runtime properties in `...\data-migrationx-system-1.0-SNAPSHOT\src\main\resources\config.xml`
+4. Configure the input and runtime properties in `...\data-migration-system-[VERSION]\src\main\resources\config.xml`
 
 5. Open command line
 
-6. Change your PATH to use Java 7 32 bit: `path=%PATH%;YOUR_JAVA32_INSTALATION_LOCATION\bin`;
+6. Change your PATH to use Java 7 32 bit: `path=%PATH%;YOUR_JAVA32_INSTALATION_LOCATION\bin` or set the classpath in Environment Variables;
 
 7. Make sure you are now using Java 7 32 bit: `java -version` should display the details of your java in the classpath
 
-8. Execute the jar file `PROJECT_ROOT\data-migration-system-1.0-SNAPSHOT.jar` located in `PROJECT_ROOT\data-migration-system-1.0-SNAPSHOT`. Run the command `java -jar data-migration-system-1.0-SNAPSHOT.jar`
+8. Execute the data cleaning tool `esaude-dct-cleaner.jar` for SESP located in `...\data-migration-system-[VERSION]\src\main\resources` - use the command `java -jar esaude-dct-cleaner.jar` and provide the absolute path of your SESP database when requested, e.g. `C:/databases/Bkup_CS Namige_2014-09-22 11.28.mdb` and press `enter` key
+
+9. Execute the jar file `PROJECT_ROOT\data-migration-system-1.0-SNAPSHOT.jar` located in `PROJECT_ROOT\data-migration-system-[VERSION]`. Run the command `java -jar data-migration-system-[VERSION].jar`
 

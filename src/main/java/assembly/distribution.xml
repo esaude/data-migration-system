@@ -43,6 +43,7 @@
 				<include>NOTICE*</include>
 				<include>log4j.xml</include>
 				<include>*log</include>
+				<include>*jar</include>
 			</includes>
 		</fileSet>
 	</fileSets>

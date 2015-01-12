@@ -29,5 +29,6 @@ public interface MatchConstants {
 	public static final String DATE = "DATE";
 	public static final String DATETIME = "DATETIME";
 	public static final String DOUBLE = "DOUBLE";
+	public static final String OR = ">>";
 
 }

@@ -51,7 +51,6 @@ public class ValidationManager {
 																							// a
 																							// linear
 																							// fashion
-	private KeyPoolUtil keyPool;
 	// counters for log report
 	private int warningCount, tupleCount, matchCount, leftRefCount,
 			rightRefCount = 0;
@@ -66,12 +65,11 @@ public class ValidationManager {
 	 */
 	public ValidationManager(final XlsProcessor processor,
 			final LogWriter writer, final DatatypeMappingReader dmr,
-			final EventCode eventCode, final KeyPoolUtil keyPool) {
+			final EventCode eventCode) {
 		this.processor = processor;
 		this.writer = writer;
 		this.dmr = dmr;
 		this.eventCode = eventCode;
-		this.keyPool = keyPool;
 	}
 
 	/**
@@ -83,7 +81,6 @@ public class ValidationManager {
 		dmr = new DatatypeMappingReader();
 		dmr.process();
 		eventCode = new EventCode();
-		keyPool = new KeyPoolUtil();
 	}
 
 	/**

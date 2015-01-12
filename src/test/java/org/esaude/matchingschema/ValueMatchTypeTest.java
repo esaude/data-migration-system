@@ -23,7 +23,7 @@ public class ValueMatchTypeTest {
 	public void testCorrectGroupOneSize() {
 		Map<String, String> groupOne = ValueMatchType.valueMatches.get(1);
 		
-		assertEquals(6, groupOne.size());
+		assertEquals(8, groupOne.size());
 	}
 	
 	@Test

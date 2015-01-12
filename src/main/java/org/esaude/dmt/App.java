@@ -1,5 +1,6 @@
 package org.esaude.dmt;
 
+import org.esaude.dmt.component.GAACManager;
 import org.esaude.dmt.component.TranslationManager;
 import org.esaude.dmt.component.ValidationManager;
 import org.esaude.dmt.helper.SystemException;
@@ -15,6 +16,9 @@ public class App
 
     public static void main( String[] args ) throws SystemException
     {
+//    	GAACManager gm = new GAACManager();
+//    	gm.createGAAC();
+    	
     	ValidationManager vm = new ValidationManager();
     	if(!vm.execute()) return;
     	TranslationManager tm = new TranslationManager(vm.getTree());

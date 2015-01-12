@@ -112,9 +112,6 @@ public class TranslationManager {
 		currTupleId = t.getHead().getId();// the current tuple ID
 		String selectCurrsQuery = this.selectCurrs(t);
 		
-//		if(t.getHead().getId().equals(Integer.valueOf(177))) {
-//			System.out.println(selectCurrsQuery);
-//		}
 		List<List<Object>> currs = sourceDAO.executeQuery(selectCurrsQuery);
 
 		// in case this is the first run, start from last run point
@@ -264,7 +261,7 @@ public class TranslationManager {
 						}
 					} else {
 						selectQuery = selectMatch(match, tree);// generate
-																// select query
+						
 						final List<List<Object>> results = sourceDAO
 								.executeQuery(selectQuery);// execute select
 															// statement
@@ -498,6 +495,15 @@ public class TranslationManager {
 						referencedValue = tree.getParent().getParent().getParent()
 								.getParent().getCurr();
 					}
+					
+					//split referenced value if contais >> or <<
+					String[] referencedValues = null;
+					final CharSequence OR = MatchConstants.OR;
+					
+					if(referencedValue.toString().contains(OR)) {
+						referencedValues = referencedValue.toString().split(MatchConstants.OR);
+					}
+					
 					// check whether the reference is direct or indirect
 					if (reference.getPredecessor().equals(Integer.valueOf(0))) {
 						// start from reference value if exists
@@ -510,6 +516,7 @@ public class TranslationManager {
 										+ "."
 										+ reference.getReferencee().getColumn());
 								FROM(reference.getReferencee().getTable());
+								
 								isFirstDirectReference = false;// no longer
 																// first direct
 							}
@@ -519,9 +526,10 @@ public class TranslationManager {
 															// for first
 															// reference
 								SELECT(referencedTable + "." + referencedColumn);
-								isFirstDirectReference = false;// no longer
-																// first direct
 								FROM(referencedTable);
+								
+								isFirstDirectReference = false;// no longer
+								// first direct
 							}
 							//check whether or not the current referenced table is equal to the previous
 							else if(!referencedTable.equalsIgnoreCase(prevReferencedTable)) {
@@ -532,8 +540,25 @@ public class TranslationManager {
 						if (referencedValue.equals(MatchConstants.ALL)) {
 							break;// no more references must be processed
 						}
-						WHERE(referencedTable + "." + referencedColumn + " = "
-								+ sourceDAO.cast(referencedValue));
+						//in care there is >> condition
+						if (referencedValues != null
+								&& referencedValues.length > 1) {
+							
+							String orCondition = "";
+							
+							for (int i = 0; i < referencedValues.length; i++) {
+								if(references.indexOf(reference) != 0 && i == 0) AND();//in case it's not the first reference use AND with separated braces
+								
+								orCondition += referencedTable + "." + referencedColumn + " = "  + sourceDAO.cast(referencedValues[i].trim());
+								
+								if(i < referencedValues.length - 1) orCondition += " OR ";
+							}
+							WHERE(orCondition);
+						} else {
+							WHERE(referencedTable + "." + referencedColumn
+									+ " = "
+									+ sourceDAO.cast(referencedValue));
+						}
 
 						if (isFirstDirectReference) // select only for first
 													// reference
@@ -551,10 +576,29 @@ public class TranslationManager {
 						}
 						WHERE(referenceeTable + "." + referenceeColumn + " = "
 								+ referencedTable + "." + referencedColumn);
+						
 						// in case the referenced value is not EQUALS
 						if (!referencedValue.equals(MatchConstants.EQUALS)) {
-							WHERE(referenceeTable + "." + referenceeColumn
-									+ " = " + sourceDAO.cast(referencedValue));
+							//in care there is >> condition
+							if (referencedValues != null
+									&& referencedValues.length > 1) {
+								
+								String orCondition = null;
+								
+								for (int i = 0; i < referencedValues.length; i++) {
+									if(references.indexOf(reference) != 0 && i == 0) AND();//in case it's not the first reference use AND with separated braces
+									
+									orCondition += referencedTable + "." + referencedColumn + " = "  + sourceDAO.cast(referencedValues[i].trim());
+									
+									if(i < referencedValues.length - 1) orCondition += " OR ";
+								}
+								WHERE(referenceeTable + "." + referenceeColumn
+										+ " = "
+										+ orCondition);
+							} else {
+								WHERE(referenceeTable + "." + referenceeColumn
+										+ " = " + sourceDAO.cast(referencedValue));
+							}
 						}
 					}
 					prevReferencedTable = referencedTable;//keep the referenced table for comparison in the next loop
@@ -598,8 +642,8 @@ public class TranslationManager {
 						referencedValue = tree.getParent().getParent()
 								.getCurr();
 					} else if (referencedValue.equals(MatchConstants.CURR4)) {
-						referencedValue = tree.getParent().getParent().getParent()
-								.getCurr();
+						referencedValue = tree.getParent().getParent()
+								.getParent().getCurr();
 					}
 					// in case the referencee exist
 					if (reference.getReferencee() != null) {
