@@ -14,13 +14,20 @@ import org.esaude.dmt.config.schema.Config;
 import org.esaude.dmt.dao.DAOFactory;
 import org.esaude.dmt.dao.DatabaseUtil;
 import org.esaude.dmt.helper.DAOTypes;
+import org.esaude.dmt.helper.EventCodeContants;
 import org.esaude.dmt.helper.MatchConstants;
+import org.esaude.dmt.helper.ProcessPhases;
 import org.esaude.dmt.helper.SystemException;
 import org.esaude.dmt.util.ConfigReader;
 import org.esaude.dmt.util.DatatypeEnforcer;
 import org.esaude.dmt.util.ProcessReader;
 import org.esaude.dmt.util.ProcessStatuses;
 import org.esaude.dmt.util.TupleTree;
+import org.esaude.dmt.util.log.Event;
+import org.esaude.dmt.util.log.EventCode;
+import org.esaude.dmt.util.log.Info;
+import org.esaude.dmt.util.log.LogIt;
+import org.esaude.dmt.util.log.LogWriter;
 import org.esaude.matchingschema.MatchType;
 import org.esaude.matchingschema.ReferenceType;
 import org.esaude.matchingschema.TupleType;
@@ -35,11 +42,13 @@ import org.esaude.matchingschema.ValueMatchType;
  * @since 5-09-2014
  *
  */
-public class TranslationManager {
+public class TranslationManager implements LogIt {
 	private TupleTree tree;
 	private DatabaseUtil sourceDAO;
 	private DatabaseUtil targetDAO;
 	private DatatypeEnforcer de;
+	private LogWriter writer;
+	private EventCode eventCode;
 	private boolean skip;// this variable indicates whether or not a tuple must
 							// return an insert query or an empty string.
 	private final Config config = ConfigReader.getInstance().getConfig();
@@ -56,7 +65,9 @@ public class TranslationManager {
 		try {
 			sourceDAO = DAOFactory.getInstance().getDAO(DAOTypes.SOURCE);
 			targetDAO = DAOFactory.getInstance().getDAO(DAOTypes.TARGET);
+			writer = LogWriter.getWriter();
 			de = new DatatypeEnforcer();
+			eventCode = new EventCode();
 		} catch (SystemException e) {
 			e.printStackTrace();
 		}
@@ -69,6 +80,15 @@ public class TranslationManager {
 	 * @throws SystemException
 	 */
 	public boolean execute() throws SystemException {
+
+		// log start of process
+		writeSimpleInfoLog(null,
+				eventCode.getString(EventCodeContants.SEPARATOR));
+		writeSimpleInfoLog(ProcessPhases.EXECUTION,
+				eventCode.getString(EventCodeContants.INF001));
+		writeSimpleInfoLog(null,
+				eventCode.getString(EventCodeContants.SEPARATOR));
+
 		// reset processing point if config says so
 		if (config.isResetProcess()) {
 			ProcessReader.getInstance().recordProcess(0,
@@ -90,6 +110,8 @@ public class TranslationManager {
 					"An error occured durring translation/execution phase while processing tuple # "
 							+ currTupleId);
 		}
+		// log end of process
+		logEndOfProcess();
 
 		return true;
 	}
@@ -685,4 +707,35 @@ public class TranslationManager {
 		}
 		return pkMatch;
 	}
+	
+	/**
+	 * Writes a simple text report containing the phase and message
+	 * 
+	 * @param phase
+	 * @param text
+	 */
+	public void writeSimpleInfoLog(final String phase, final String text) {
+		Event event = new Info();
+		event.setFase(phase);
+		event.setDescricao(text);
+		writer.writeLog(event);
+	}
+	
+	/**
+	 * Write the log report at the end of the validation process
+	 */
+	 public void logEndOfProcess() {
+		writeSimpleInfoLog(null,
+				eventCode.getString(EventCodeContants.SEPARATOR));
+		writeSimpleInfoLog(ProcessPhases.EXECUTION,
+				eventCode.getString(EventCodeContants.INF002));
+		writeSimpleInfoLog(null,
+				eventCode.getString(EventCodeContants.SEPARATOR));
+		writeSimpleInfoLog(
+				null,
+				treeCount + " "
+						+ eventCode.getString(EventCodeContants.INF007));
+		
+	}
+
 }

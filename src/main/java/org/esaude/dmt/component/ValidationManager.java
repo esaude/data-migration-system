@@ -19,6 +19,7 @@ import org.esaude.dmt.util.log.Error;
 import org.esaude.dmt.util.log.Event;
 import org.esaude.dmt.util.log.EventCode;
 import org.esaude.dmt.util.log.Info;
+import org.esaude.dmt.util.log.LogIt;
 import org.esaude.dmt.util.log.LogWriter;
 import org.esaude.dmt.util.log.Warning;
 import org.esaude.dmt.xls.Sheets;
@@ -35,7 +36,7 @@ import org.esaude.matchingschema.TupleType;
  * @since 28-08-2014
  *
  */
-public class ValidationManager {
+public class ValidationManager implements LogIt {
 	private XlsProcessor processor;
 	private LogWriter writer;
 	private DatatypeMappingReader dmr;
@@ -270,7 +271,7 @@ public class ValidationManager {
 	/**
 	 * Write the log report at the end of the validation process
 	 */
-	private void logEndOfProcess() {
+	public void logEndOfProcess() {
 		writeSimpleInfoLog(null,
 				eventCode.getString(EventCodeContants.SEPARATOR));
 		// check if there is any warning
@@ -303,7 +304,7 @@ public class ValidationManager {
 	 * @param phase
 	 * @param text
 	 */
-	private void writeSimpleInfoLog(final String phase, final String text) {
+	public void writeSimpleInfoLog(final String phase, final String text) {
 		Event event = new Info();
 		event.setFase(phase);
 		event.setDescricao(text);

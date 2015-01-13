@@ -37,5 +37,6 @@ public interface EventCodeContants {
 	public static final String INF004 = "INF004";
 	public static final String INF005 = "INF005";
 	public static final String INF006 = "INF006";
+	public static final String INF007 = "INF007";
 	public static final String SEPARATOR = "common.separator";
 }
