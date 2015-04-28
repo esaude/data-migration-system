@@ -17,11 +17,11 @@ import org.esaude.dmt.helper.DAOTypes;
 import org.esaude.dmt.helper.EventCodeContants;
 import org.esaude.dmt.helper.MatchConstants;
 import org.esaude.dmt.helper.ProcessPhases;
+import org.esaude.dmt.helper.ProcessStatuses;
 import org.esaude.dmt.helper.SystemException;
 import org.esaude.dmt.util.ConfigReader;
 import org.esaude.dmt.util.DatatypeEnforcer;
 import org.esaude.dmt.util.ProcessReader;
-import org.esaude.dmt.util.ProcessStatuses;
 import org.esaude.dmt.util.TupleTree;
 import org.esaude.dmt.util.log.Event;
 import org.esaude.dmt.util.log.EventCode;
@@ -136,7 +136,7 @@ public class TranslationManager implements LogIt {
 		
 		List<List<Object>> currs = sourceDAO.executeQuery(selectCurrsQuery);
 
-		// in case this is the first run, start from last run point
+		// in case this is the first run, start from last run final point
 		int currIndex = 0;
 		if (firstRun) {
 			currIndex = processCount;
@@ -163,7 +163,7 @@ public class TranslationManager implements LogIt {
 
 			// TODO remove print
 			synchronized (System.out) {
-				System.out.println("---------- " + t.getHead().getId() + " : "
+				System.out.println(processCount + " ---------- " + t.getHead().getId() + " : "
 						+ t.getHead().getTable() + " - "
 						+ t.getHead().getTerminology() + " > CURR : "
 						+ t.getCurr() + " -------------");

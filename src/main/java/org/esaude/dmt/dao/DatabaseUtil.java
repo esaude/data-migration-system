@@ -66,7 +66,6 @@ public class DatabaseUtil {
 	public void rollback() {
 		try {
 			connection.rollback();
-			System.out.println("rolling back...");
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

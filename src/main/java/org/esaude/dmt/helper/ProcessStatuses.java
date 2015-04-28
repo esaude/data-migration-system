@@ -1,4 +1,4 @@
-package org.esaude.dmt.util;
+package org.esaude.dmt.helper;
 
 /**
  * This class represents the constant statuses of the translation/execution processes

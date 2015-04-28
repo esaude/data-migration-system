@@ -6,9 +6,9 @@ import java.math.BigInteger;
 import java.util.Calendar;
 import java.util.Date;
 
+import org.esaude.dmt.helper.ProcessStatuses;
 import org.esaude.dmt.process.schema.Process;
 import org.esaude.dmt.util.ProcessReader;
-import org.esaude.dmt.util.ProcessStatuses;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
