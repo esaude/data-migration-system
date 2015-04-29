@@ -9,8 +9,8 @@
 <config xmlns="http://schema.config.dmt.esaude.org" targetNamespace="http://schema.config.dmt.esaude.org">
 	<!-- the matching file in XLS info goes here -->
 	<matching_input>
-		<file_name>OpenMRS_SESP_Matching_Table_241120141127_fixed</file_name>
-		<!-- file_name>OpenMRS_SESP_Matching_Table_Providers_271020140818</file_name -->
+		<file_name>OpenMRS_SESP_Matching_Table_110420151921</file_name>
+		<!-- file_name>OpenMRS_SESP_Matching_Table_Providers_271020140818</file_name-->
 		<format>xls</format>
 		<location>C:/EMR_Architecture</location>
 	</matching_input>
@@ -27,13 +27,13 @@
 		<drive_name>sun.jdbc.odbc.JdbcOdbcDriver</drive_name>
 		<username></username>
 		<password></password>
-		<database_name>Sistema Hdd_be.mdb</database_name>
-		<database_location>jdbc:odbc:DRIVER={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=C:/Sistema Hdd_be/</database_location>
+		<database_name>Bkup_CSCXX_2015-02-23 13.32 - Copy.mdb</database_name>
+		<database_location>jdbc:odbc:DRIVER={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=C:/Backup actual Cidade de XaiXai/</database_location>
 	</sourceDs>
 	<!-- the limit number of trees to be processed, zero (0) or negative (-x) = unlimited -->
 	<tree_limit>0</tree_limit>
-	<!-- whether or not the results will be commited -->
-	<allow_commit>false</allow_commit>
-	<!-- whether the process should start from zero or last stop point  -->
-	<reset_process>true</reset_process>
+	<!-- whether or not the results will be committed -->
+	<allow_commit>true</allow_commit>
+	<!-- whether the process should start from zero or last stopped point  -->
+	<reset_process>false</reset_process>
 </config>
