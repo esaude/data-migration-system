@@ -12,23 +12,23 @@
 		<file_name>OpenMRS_SESP_Matching_Table_110420151921</file_name>
 		<!-- file_name>OpenMRS_SESP_Matching_Table_Providers_271020140818</file_name-->
 		<format>xls</format>
-		<location>C:/EMR_Architecture</location>
+		<location>/home/localhost/Documents/Code/OpenMRS/data-migration-system/src/main/resources/</location>
 	</matching_input>
 	<!-- the left side database info goes here -->
 	<targetDs>
 		<drive_name>com.mysql.jdbc.Driver</drive_name>
-		<username>esaude</username>
-		<password>esaude</password>
+		<username>root</username>
+		<password>blackboard</password>
 		<database_name>openmrs</database_name>
 		<database_location>jdbc:mysql://localhost:3306/</database_location>
 	</targetDs>
 	<!-- the right side databases info goes here -->
 	<sourceDs>
-		<drive_name>sun.jdbc.odbc.JdbcOdbcDriver</drive_name>
-		<username></username>
-		<password></password>
-		<database_name>Bkup_CSCXX_2015-02-23 13.32 - Copy.mdb</database_name>
-		<database_location>jdbc:odbc:DRIVER={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=C:/Backup actual Cidade de XaiXai/</database_location>
+		<drive_name>com.mysql.jdbc.Driver</drive_name>
+		<username>root</username>
+		<password>blackboard</password>
+		<database_name>source_medical_dummy</database_name>
+		<database_location>jdbc:mysql://localhost:3306/</database_location>
 	</sourceDs>
 	<!-- the limit number of trees to be processed, zero (0) or negative (-x) = unlimited -->
 	<tree_limit>0</tree_limit>
