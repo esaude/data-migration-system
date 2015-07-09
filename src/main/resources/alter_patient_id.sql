@@ -1,0 +1,3 @@
+SET FOREIGN_KEY_CHECKS = 0;
+ALTER TABLE patient MODIFY COLUMN patient_id INT auto_increment;
+SET FOREIGN_KEY_CHECKS = 1;
