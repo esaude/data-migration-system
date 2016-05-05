@@ -4,9 +4,12 @@ import static ch.lambdaj.Lambda.on;
 import static ch.lambdaj.Lambda.sort;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import org.apache.ibatis.jdbc.SQL;
@@ -21,6 +24,7 @@ import org.esaude.dmt.helper.ProcessStatuses;
 import org.esaude.dmt.helper.SystemException;
 import org.esaude.dmt.util.ConfigReader;
 import org.esaude.dmt.util.DatatypeEnforcer;
+import org.esaude.dmt.util.MatchUtil;
 import org.esaude.dmt.util.ProcessReader;
 import org.esaude.dmt.util.TupleTree;
 import org.esaude.dmt.util.log.Event;
@@ -49,6 +53,7 @@ public class TranslationManager implements LogIt {
 	private DatatypeEnforcer de;
 	private LogWriter writer;
 	private EventCode eventCode;
+	private MatchUtil matchUtil;
 	private boolean skip;// this variable indicates whether or not a tuple must
 							// return an insert query or an empty string.
 	private final Config config = ConfigReader.getInstance().getConfig();
@@ -68,6 +73,7 @@ public class TranslationManager implements LogIt {
 			writer = LogWriter.getWriter();
 			de = new DatatypeEnforcer();
 			eventCode = new EventCode();
+			matchUtil = new MatchUtil();
 		} catch (SystemException e) {
 			e.printStackTrace();
 		}
@@ -133,7 +139,7 @@ public class TranslationManager implements LogIt {
 		// r_reference
 		currTupleId = t.getHead().getId();// the current tuple ID
 		String selectCurrsQuery = this.selectCurrs(t);
-		
+
 		List<List<Object>> currs = sourceDAO.executeQuery(selectCurrsQuery);
 
 		// in case this is the first run, start from last run final point
@@ -163,9 +169,9 @@ public class TranslationManager implements LogIt {
 
 			// TODO remove print
 			synchronized (System.out) {
-				System.out.println(processCount + " ---------- " + t.getHead().getId() + " : "
-						+ t.getHead().getTable() + " - "
-						+ t.getHead().getTerminology() + " > CURR : "
+				System.out.println(processCount + " ---------- "
+						+ t.getHead().getId() + " : " + t.getHead().getTable()
+						+ " - " + t.getHead().getTerminology() + " > CURR : "
 						+ t.getCurr() + " -------------");
 				System.out.println(insertTupleQuery);
 			}
@@ -271,11 +277,17 @@ public class TranslationManager implements LogIt {
 							}
 							VALUES(match.getLeft().getColumn(),
 									targetDAO.cast(parentTree.getTop()));
-						} 
+						}
 						// 14. NOW – Should use the current system datetime
 						else if (match.getDefaultValue().equals(
 								MatchConstants.NOW)) {
-							VALUES(match.getLeft().getColumn(), "NOW()");
+							// TODO: This must use mysql function "NOW()"
+							// instead. This is a replacement that works
+							// for SESP migration. A better solution is to
+							// change the mapping to use 0000-00-00 00:00:00
+							// as the default value for certain mappings
+							VALUES(match.getLeft().getColumn(),
+									"'0000-00-00 00:00:00'");
 						} else {
 							// use default value
 							VALUES(match.getLeft().getColumn(),
@@ -283,7 +295,7 @@ public class TranslationManager implements LogIt {
 						}
 					} else {
 						selectQuery = selectMatch(match, tree);// generate
-						
+
 						final List<List<Object>> results = sourceDAO
 								.executeQuery(selectQuery);// execute select
 															// statement
@@ -356,7 +368,8 @@ public class TranslationManager implements LogIt {
 						else if (match.getDefaultValue().equals(
 								MatchConstants.NOW)
 								&& value == null) {
-							VALUES(match.getLeft().getColumn(), "NOW()");
+							VALUES(match.getLeft().getColumn(),
+									"'0000-00-00 00:00:00'");
 						}
 						// 4. If right side of the match is not required, it
 						// must insert default value in case the right side
@@ -379,7 +392,9 @@ public class TranslationManager implements LogIt {
 							if (valueMatchGroup == null) {
 								throw new SystemException(
 										"An error ocurred during translation phase while processing value match group in match with id: "
-												+ match.getId()+ ".\n Couldn't find group for id: " + value);
+												+ match.getId()
+												+ ".\n Couldn't find group for id: "
+												+ value);
 							}
 							String valueMatch = valueMatchGroup.get(value
 									.toString().toLowerCase());
@@ -393,7 +408,9 @@ public class TranslationManager implements LogIt {
 								if (valueMatch == null) {
 									throw new SystemException(
 											"An error ocurred during translation phase while processing value match in match with id: "
-													+ match.getId() + ".\n Couldn't find match for value: " + value);
+													+ match.getId()
+													+ ".\n Couldn't find match for value: "
+													+ value);
 								}
 								// SKIP entire tuple if value match is SKIP
 								if (valueMatch
@@ -485,10 +502,10 @@ public class TranslationManager implements LogIt {
 				// the select should be constructed based on R-References of one
 				// of the PKs match of the tuple
 				MatchType pkMatch = findPkMatch(tuple);
-				
+
 				boolean isFirstDirectReference = true;// used to flag whether or
 														// not the reference
-				String prevReferencedTable = null;//keep the referenced table of previous loop
+				
 				// is the first direct, in case there are many direct references
 				// construct the select query using the L-References of the PK
 				// match of the tuple
@@ -496,6 +513,9 @@ public class TranslationManager implements LogIt {
 						pkMatch.getReferences().values());
 				references = sort(references, on(ReferenceType.class).getId());
 				
+				//store the tables already in FROM clause, avoid duplications
+				Set<String> fromTables = new HashSet<String>();
+
 				for (ReferenceType reference : references) {
 
 					String referencedTable = reference.getReferenced()
@@ -514,21 +534,24 @@ public class TranslationManager implements LogIt {
 						referencedValue = tree.getParent().getParent()
 								.getParent().getCurr();
 					} else if (referencedValue.equals(MatchConstants.CURR4)) {
-						referencedValue = tree.getParent().getParent().getParent()
-								.getParent().getCurr();
+						referencedValue = tree.getParent().getParent()
+								.getParent().getParent().getCurr();
 					}
+
+					// split referenced value if contains logic operator
+					String[] referencedValues = matchUtil.splitReferencedValuesForOrCondition(referencedValue);
 					
-					//split referenced value if contais >> or <<
-					String[] referencedValues = null;
-					final CharSequence OR = MatchConstants.OR;
-					
-					if(referencedValue.toString().contains(OR)) {
-						referencedValues = referencedValue.toString().split(MatchConstants.OR);
+
+					// spit and assign the values of relational operation if not
+					// done yet in the line of code above
+					if (referencedValues == null) {
+						referencedValue = matchUtil.assignReferencedValueOperationForRelationalCondition(referencedValue);
+
 					}
-					
+
 					// check whether the reference is direct or indirect
 					if (reference.getPredecessor().equals(Integer.valueOf(0))) {
-						// start from reference value if exists
+						// start from referencee value if exists
 						if (reference.getReferencee() != null) {
 							// the referencee should be used in the result set
 							if (isFirstDirectReference) { // select from, only
@@ -539,6 +562,9 @@ public class TranslationManager implements LogIt {
 										+ reference.getReferencee().getColumn());
 								FROM(reference.getReferencee().getTable());
 								
+								//say that the table is in FROM clause
+								fromTables.add(reference.getReferencee().getTable());
+
 								isFirstDirectReference = false;// no longer
 																// first direct
 							}
@@ -550,80 +576,73 @@ public class TranslationManager implements LogIt {
 								SELECT(referencedTable + "." + referencedColumn);
 								FROM(referencedTable);
 								
+								//say that the table is in FROM
+								fromTables.add(referencedTable);
+
 								isFirstDirectReference = false;// no longer
 								// first direct
 							}
-							//check whether or not the current referenced table is equal to the previous
-							else if(!referencedTable.equalsIgnoreCase(prevReferencedTable)) {
+							// check whether or not this current referenced
+							// table is already in FROM
+							else if (!fromTables.contains(referencedTable)) {
 								FROM(referencedTable);
+								
+								//say that the table is in FROM
+								fromTables.add(referencedTable);
 							}
 						}
-						
+
 						if (referencedValue.equals(MatchConstants.ALL)) {
-							break;// no more references must be processed
+							break;// no more references can be processed
 						}
-						//in care there is >> condition
+						// in care there is >> condition
 						if (referencedValues != null
 								&& referencedValues.length > 1) {
-							
-							String orCondition = "";
-							
-							for (int i = 0; i < referencedValues.length; i++) {
-								if(references.indexOf(reference) != 0 && i == 0) AND();//in case it's not the first reference use AND with separated braces
-								
-								orCondition += referencedTable + "." + referencedColumn + " = "  + sourceDAO.cast(referencedValues[i].trim());
-								
-								if(i < referencedValues.length - 1) orCondition += " OR ";
-							}
+
+							String orCondition = matchUtil.assignReferencedValuesWithMultipleOr(
+									references.indexOf(reference),
+									referencedValues, referencedTable,
+									referencedColumn, " OR ", this);
+
 							WHERE(orCondition);
 						} else {
 							WHERE(referencedTable + "." + referencedColumn
-									+ " = "
-									+ sourceDAO.cast(referencedValue));
+									+ referencedValue);
 						}
-
-						if (isFirstDirectReference) // select only for first
-													// reference
-							isFirstDirectReference = false;
 					} else {
 						String referenceeTable = reference.getReferencee()
 								.getTable();
 						String referenceeColumn = reference.getReferencee()
 								.getColumn();
 						// check whether or not the current referenced table is
-						// equal to the previous
-						if (!referencedTable
-								.equalsIgnoreCase(prevReferencedTable)) {
+						// in FROM clause
+						if (!fromTables.contains(referencedTable)) {
 							FROM(referencedTable);
+							
+							//say that the table is in FROM
+							fromTables.add(referencedTable);
 						}
 						WHERE(referenceeTable + "." + referenceeColumn + " = "
 								+ referencedTable + "." + referencedColumn);
-						
+
 						// in case the referenced value is not EQUALS
 						if (!referencedValue.equals(MatchConstants.EQUALS)) {
-							//in care there is >> condition
+							// in care there is >> condition
 							if (referencedValues != null
 									&& referencedValues.length > 1) {
-								
-								String orCondition = null;
-								
-								for (int i = 0; i < referencedValues.length; i++) {
-									if(references.indexOf(reference) != 0 && i == 0) AND();//in case it's not the first reference use AND with separated braces
-									
-									orCondition += referencedTable + "." + referencedColumn + " = "  + sourceDAO.cast(referencedValues[i].trim());
-									
-									if(i < referencedValues.length - 1) orCondition += " OR ";
-								}
-								WHERE(referenceeTable + "." + referenceeColumn
-										+ " = "
-										+ orCondition);
+
+								String orCondition = matchUtil.assignReferencedValuesWithMultipleOr(
+										references.indexOf(reference),
+										referencedValues, referenceeTable,
+										referenceeColumn, " OR ", this);
+
+								WHERE(orCondition);
 							} else {
 								WHERE(referenceeTable + "." + referenceeColumn
-										+ " = " + sourceDAO.cast(referencedValue));
+										+ referencedValue);
 							}
 						}
 					}
-					prevReferencedTable = referencedTable;//keep the referenced table for comparison in the next loop
 				}
 			}
 		}.toString();
@@ -653,6 +672,7 @@ public class TranslationManager implements LogIt {
 							.getColumn();
 					Object referencedValue = reference.getReferencedValue()
 							.toString();
+					
 					String referenceeTable = null;
 					String referenceeColumn = null;
 					// set the right referenced value
@@ -667,6 +687,9 @@ public class TranslationManager implements LogIt {
 						referencedValue = tree.getParent().getParent()
 								.getParent().getCurr();
 					}
+					// spit and assign the values of relational operation
+					referencedValue = matchUtil.assignReferencedValueOperationForRelationalCondition(referencedValue);
+					
 					// in case the referencee exist
 					if (reference.getReferencee() != null) {
 						referenceeTable = reference.getReferencee().getTable();
@@ -679,11 +702,11 @@ public class TranslationManager implements LogIt {
 						// in case the referenced value is not EQUALS
 						if (!referencedValue.equals(MatchConstants.EQUALS)) {
 							WHERE(referencedTable + "." + referencedColumn
-									+ " = " + sourceDAO.cast(referencedValue));
+									+ referencedValue);
 						}
 					} else {
-						WHERE(referencedTable + "." + referencedColumn + " = "
-								+ sourceDAO.cast(referencedValue));
+						WHERE(referencedTable + "." + referencedColumn
+								+ referencedValue);
 					}
 				}
 			}
@@ -707,7 +730,7 @@ public class TranslationManager implements LogIt {
 		}
 		return pkMatch;
 	}
-	
+
 	/**
 	 * Writes a simple text report containing the phase and message
 	 * 
@@ -720,22 +743,20 @@ public class TranslationManager implements LogIt {
 		event.setDescricao(text);
 		writer.writeLog(event);
 	}
-	
+
 	/**
 	 * Write the log report at the end of the validation process
 	 */
-	 public void logEndOfProcess() {
+	public void logEndOfProcess() {
 		writeSimpleInfoLog(null,
 				eventCode.getString(EventCodeContants.SEPARATOR));
 		writeSimpleInfoLog(ProcessPhases.EXECUTION,
 				eventCode.getString(EventCodeContants.INF002));
 		writeSimpleInfoLog(null,
 				eventCode.getString(EventCodeContants.SEPARATOR));
-		writeSimpleInfoLog(
-				null,
-				treeCount + " "
-						+ eventCode.getString(EventCodeContants.INF007));
-		
+		writeSimpleInfoLog(null,
+				treeCount + " " + eventCode.getString(EventCodeContants.INF007));
+
 	}
 
 }

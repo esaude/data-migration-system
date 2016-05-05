@@ -29,6 +29,17 @@ public interface MatchConstants {
 	public static final String DATE = "DATE";
 	public static final String DATETIME = "DATETIME";
 	public static final String DOUBLE = "DOUBLE";
+	//operators logic
 	public static final String OR = ">>";
+	public static final String AND = "<<";
+	//operators relational
+	public static final String EQ = "=";
+	public static final String LT = "<";
+	public static final String GT = ">";
+	public static final String LTEQ = "<=";
+	public static final String GTEQ = ">=";
+	public static final String NEQ = "!=";
+	
+	public static final String CONDITIONAL_OPERATION_SEPARATOR = "&&";
 
 }
