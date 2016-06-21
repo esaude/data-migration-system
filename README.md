@@ -1,7 +1,7 @@
 data-migration-system
 =====================
 
-A system to migrate from SQL-based databases into OpenMRS
+A system to migrate from SQL-based databases into OpenMRS.
 
 Overview
 --------
@@ -15,7 +15,7 @@ To accomplish the underlying idea the tool must be:
 
 Development Environment Specs
 ------------------------------
-For the development of data migration tool here are the minimum specs of the development environment:
+For the development of the data migration tool, here are the minimum specs required for the development environment:
  
 -         Windows OS 7+ (currently being used by the majority)
 -         Eclipse IDE (preferably Indigo, Juno, Kepler or Luna)
